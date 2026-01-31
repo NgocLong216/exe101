@@ -1,0 +1,32 @@
+package com.wego.wego_backend.controller;
+
+import com.wego.wego_backend.dto.CreateGroupRequest;
+import com.wego.wego_backend.entity.Group;
+import com.wego.wego_backend.entity.User;
+import com.wego.wego_backend.service.GroupService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/groups")
+@RequiredArgsConstructor
+public class GroupController {
+
+    private final GroupService meetupService;
+
+    @PostMapping
+    public ResponseEntity<?> createGroup(
+            @RequestBody @Valid CreateGroupRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        Group meetup = meetupService.createGroup(request, user);
+        return ResponseEntity.ok(meetup);
+    }
+}
+
