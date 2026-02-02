@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { GoogleMap, LoadScript, Marker, Polyline, Autocomplete } from "@react-google-maps/api";
 import { ref, set, onValue, onDisconnect } from "firebase/database";
 import { db } from "../../firebase";
+import { useNavigate } from "react-router-dom";
+
 
 const USER_NAME = "Long";
 const FALLBACK_CENTER = { lat: 10.762622, lng: 106.660172 }; // HCM
@@ -18,6 +20,8 @@ export default function HomePage() {
   const [autoComplete, setAutoComplete] = useState(null);
   const [creating, setCreating] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+
 
 
   const lastRouteTime = useRef({});
@@ -41,14 +45,14 @@ export default function HomePage() {
     });
     return unsub;
   }, []);
-  
+
 
   /* =========================
       SEND MY GPS
   ========================= */
   useEffect(() => {
     if (!authUser) return;
-  
+
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
         const loc = {
@@ -58,30 +62,30 @@ export default function HomePage() {
           lng: pos.coords.longitude,
           updatedAt: Date.now(),
         };
-  
+
         setMyLocation({ lat: loc.lat, lng: loc.lng });
         set(ref(db, `live_locations/${authUser.uid}`), loc);
       },
       console.error,
       { enableHighAccuracy: true, maximumAge: 3000 }
     );
-  
+
     onDisconnect(ref(db, `live_locations/${authUser.uid}`)).remove();
     return () => navigator.geolocation.clearWatch(watchId);
   }, [authUser]);
-  
+
 
   /* =========================
       LISTEN FRIENDS GPS
   ========================= */
   useEffect(() => {
     if (!authUser) return;
-  
+
     const locationsRef = ref(db, "live_locations");
     return onValue(locationsRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
-  
+
       const users = Object.entries(data)
         .filter(([uid]) => uid !== authUser.uid)
         .map(([uid, u]) => ({
@@ -90,21 +94,16 @@ export default function HomePage() {
           lat: u.lat,
           lng: u.lng,
         }));
-  
+
       setFriends(users);
     });
   }, [authUser]);
-  
+
 
   /* =========================
       DIRECTIONS
   ========================= */
   const createGroup = async () => {
-    if (!destination) {
-      alert("Vui lòng chọn điểm hẹn trên bản đồ");
-      return;
-    }
-
     const token = await getAuth().currentUser?.getIdToken();
     if (!token) {
       alert("Chưa đăng nhập");
@@ -122,23 +121,23 @@ export default function HomePage() {
         },
         body: JSON.stringify({
           title: "Đi cafe cuối tuần",
-          description: "Tạo từ map",
+          description: "Tạo nhanh từ bản đồ",
           meetingTime: null,
-          lat: destination.lat,
-          lng: destination.lng,
-          placeId: "from-map",
-          memberIds: [], // sau này mời bạn
+          lat: null,
+          lng: null,
+          placeId: null,
+          memberIds: [],
         }),
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
+      if (!res.ok) throw new Error(await res.text());
 
       const data = await res.json();
       alert("Tạo group thành công 🎉");
-      console.log("Meetup:", data);
+
+      //  chuyển sang trang chi tiết group
+      // navigate(`/groups/${data.id}`);
+
     } catch (err) {
       console.error(err);
       alert("Tạo group thất bại");
@@ -146,6 +145,7 @@ export default function HomePage() {
       setCreating(false);
     }
   };
+
 
   const fetchRoute = (id, origin, destination) => {
     const now = Date.now();
@@ -255,21 +255,6 @@ export default function HomePage() {
       libraries={["places"]}
     >
       {/* TEST BUTTON */}
-      <button
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          top: 10,
-          left: 10,
-          padding: "8px 12px",
-        }}
-        onClick={() => {
-          if (!myLocation) return alert("Chưa có GPS");
-          searchNearby(myLocation, "restaurant");
-        }}
-      >
-        Test Nearby Restaurant
-      </button>
 
       <button
         style={{
@@ -289,6 +274,44 @@ export default function HomePage() {
       >
         {creating ? "Đang tạo..." : "Tạo group"}
       </button>
+
+      <button
+        style={{
+          position: "absolute",
+          zIndex: 10,
+          top: 10,
+          left: 10,
+          padding: "8px 12px",
+          background: "#2e7d32",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/groups")}
+      >
+        👥 Group của tôi
+      </button>
+
+      <button
+        style={{
+          position: "absolute",
+          zIndex: 10,
+          top: 60,
+          left: 10,
+          padding: "8px 12px",
+          background: "#1976d2",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+        disabled={creating}
+        onClick={createGroup}
+      >
+        {creating ? "Đang tạo..." : "➕ Tạo group"}
+      </button>
+
 
 
       <Autocomplete

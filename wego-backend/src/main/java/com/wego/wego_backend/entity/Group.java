@@ -29,9 +29,8 @@ public class Group {
     private Double locationLng;
     private String placeId;
 
-    @ManyToOne
-    @JoinColumn(name = "host_id")
-    private User host;
+    @Column(name = "host_id")
+    private String hostFirebaseUid;
 
     @Enumerated(EnumType.STRING)
     private GroupStatus status;

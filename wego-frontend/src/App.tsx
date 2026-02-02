@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
-
+import MyGroupsPage from "./pages/MyGroupsPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,6 +25,7 @@ function App() {
     <Routes>
         <Route path="/" element={<LoginPage setUser={setUser} />} /> 
         <Route path="/home" element={<HomePage/>} />
+        <Route path="/groups" element={<MyGroupsPage />} />
     </Routes>
   );
 }

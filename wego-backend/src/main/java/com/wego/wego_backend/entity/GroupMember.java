@@ -20,8 +20,8 @@ public class GroupMember {
     @ManyToOne
     private Group group;
 
-    @ManyToOne
-    private User user;
+    @Column(name = "user_firebase_uid")
+    private String userFirebaseUid;
 
     @Enumerated(EnumType.STRING)
     private GroupRole role;

@@ -3,6 +3,7 @@ package com.wego.wego_backend.service;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.CreateGroupRequest;
+import com.wego.wego_backend.dto.MyGroupResponse;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.entity.GroupMember;
 import com.wego.wego_backend.entity.User;
@@ -13,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -36,7 +40,7 @@ public class GroupService {
         group.setLocationLng(request.getLng());
         group.setPlaceId(request.getPlaceId());
 
-        group.setHost(host);
+        group.setHostFirebaseUid(host.getFirebaseUid());
         group.setStatus(GroupStatus.WAITING);
         group.setCreatedAt(LocalDateTime.now());
 
@@ -45,7 +49,7 @@ public class GroupService {
         // Add host as member
         GroupMember hostMember = new GroupMember();
         hostMember.setGroup(group);
-        hostMember.setUser(host);
+        hostMember.setUserFirebaseUid(host.getFirebaseUid());
         hostMember.setRole(GroupRole.HOST);
         hostMember.setJoinedAt(LocalDateTime.now());
 
@@ -61,7 +65,7 @@ public class GroupService {
 
                 GroupMember member = new GroupMember();
                 member.setGroup(group);
-                member.setUser(user);
+                member.setUserFirebaseUid(user.getFirebaseUid());
                 member.setRole(GroupRole.MEMBER);
                 member.setJoinedAt(LocalDateTime.now());
 
@@ -70,6 +74,50 @@ public class GroupService {
         }
 
         return group;
+    }
+
+    public List<MyGroupResponse> getMyGroups(String firebaseUid) {
+
+        System.out.println(" Firebase UID from token = " + firebaseUid);
+
+        // 1. Group mà user là member
+        List<GroupMember> memberships =
+                groupMemberRepository.findByUserFirebaseUid(firebaseUid);
+
+        System.out.println(" Membership count = " + memberships.size());
+
+        Map<UUID, Group> groupMap = new HashMap<>();
+
+        for (GroupMember gm : memberships) {
+            groupMap.put(gm.getGroup().getId(), gm.getGroup());
+        }
+
+        // 2. Group mà user là host
+        List<Group> hostGroups =
+                groupRepository.findByHostFirebaseUid(firebaseUid);
+
+        System.out.println(" Host group count = " + hostGroups.size());
+
+        for (Group g : hostGroups) {
+            groupMap.put(g.getId(), g);
+        }
+
+        // 3. Convert sang DTO
+        return groupMap.values().stream()
+                .map(g -> new MyGroupResponse(
+                        g.getId(),
+                        g.getTitle(),
+                        g.getDescription(),
+                        g.getLocationLat(),
+                        g.getLocationLng(),
+                        g.getMeetingTime(),
+                        g.getStatus(),
+                        (int) memberships.stream()
+                                .filter(m -> m.getGroup().getId().equals(g.getId()))
+                                .count() + 1, // + host
+                        g.getHostFirebaseUid().equals(firebaseUid)
+                ))
+                .toList();
     }
 
 }
