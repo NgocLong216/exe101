@@ -19,59 +19,59 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GroupService {
 
-    private final GroupRepository meetupRepository;
-    private final GroupMemberRepository meetupMemberRepository;
+    private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
     public Group createGroup(CreateGroupRequest request, User host) {
 
-        // Validate time
-        if (request.getMeetingTime().isBefore(LocalDateTime.now().plusMinutes(10))) {
-            throw new RuntimeException("Meeting time must be at least 10 minutes later");
-        }
+        Group group = new Group();
+        group.setTitle(request.getTitle());
+        group.setDescription(request.getDescription());
 
-        //  Create meetup
-        Group meetup = new Group();
-        meetup.setTitle(request.getTitle());
-        meetup.setDescription(request.getDescription());
-        meetup.setMeetingTime(request.getMeetingTime());
-        meetup.setLocationLat(request.getLat());
-        meetup.setLocationLng(request.getLng());
-        meetup.setPlaceId(request.getPlaceId());
-        meetup.setHost(host);
-        meetup.setStatus(GroupStatus.WAITING);
-        meetup.setCreatedAt(LocalDateTime.now());
+        // Có thể null – set sau
+        group.setMeetingTime(request.getMeetingTime());
 
-        meetupRepository.save(meetup);
+        group.setLocationLat(request.getLat());
+        group.setLocationLng(request.getLng());
+        group.setPlaceId(request.getPlaceId());
 
-        //  Add host as member
+        group.setHost(host);
+        group.setStatus(GroupStatus.WAITING);
+        group.setCreatedAt(LocalDateTime.now());
+
+        groupRepository.save(group);
+
+        // Add host as member
         GroupMember hostMember = new GroupMember();
-        hostMember.setGroup(meetup);
+        hostMember.setGroup(group);
         hostMember.setUser(host);
         hostMember.setRole(GroupRole.HOST);
         hostMember.setJoinedAt(LocalDateTime.now());
 
-        meetupMemberRepository.save(hostMember);
+        groupMemberRepository.save(hostMember);
 
-        //  Add invited members
-        if (request.getMemberIds() != null) {
-            for (Long userId : request.getMemberIds()) {
-                if (userId.equals(host.getId())) continue;
+        // Invite members (nếu có)
+        if (request.getMemberFirebaseUids() != null) {
+            for (String firebaseUid : request.getMemberFirebaseUids()) {
+                if (firebaseUid.equals(host.getFirebaseUid())) continue;
 
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+                User user = userRepository.findById(firebaseUid)
+                        .orElseThrow(() -> new RuntimeException("User not found: " + firebaseUid));
 
                 GroupMember member = new GroupMember();
-                member.setGroup(meetup);
+                member.setGroup(group);
                 member.setUser(user);
                 member.setRole(GroupRole.MEMBER);
                 member.setJoinedAt(LocalDateTime.now());
 
-                meetupMemberRepository.save(member);
+                groupMemberRepository.save(member);
             }
         }
 
-        return meetup;
+        return group;
     }
+
 }
+
 

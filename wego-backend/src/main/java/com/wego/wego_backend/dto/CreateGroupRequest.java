@@ -18,13 +18,12 @@ public class CreateGroupRequest {
 
     private String description;
 
-    @NotNull
     private LocalDateTime meetingTime;
 
     private Double lat;
     private Double lng;
     private String placeId;
 
-    private List<Long> memberIds;
+    private List<String> memberFirebaseUids;
 }
 

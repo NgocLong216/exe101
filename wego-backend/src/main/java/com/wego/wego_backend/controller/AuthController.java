@@ -1,5 +1,7 @@
 package com.wego.wego_backend.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.wego.wego_backend.config.JwtUtil;
 import com.wego.wego_backend.dto.GoogleLoginRequest;
 import com.wego.wego_backend.dto.GoogleUserInfo;
@@ -31,29 +33,25 @@ public class AuthController {
     public ResponseEntity<?> loginWithGoogle(
             @RequestBody GoogleLoginRequest request
     ) {
-        GoogleUserInfo googleUser =
-                googleAuthService.getUserInfo(request.getToken());
-
-        if (googleUser.getEmail() == null) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Không lấy được email từ Google");
+        FirebaseToken decoded;
+        try {
+            decoded = FirebaseAuth.getInstance()
+                    .verifyIdToken(request.getToken());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
 
-        User user = userRepository
-                .findByEmail(googleUser.getEmail())
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setEmail(googleUser.getEmail());
-                    newUser.setName(
-                            googleUser.getName() != null
-                                    ? googleUser.getName()
-                                    : googleUser.getEmail()
-                    );
-                    newUser.setAvatar(googleUser.getAvatar());
-                    return userRepository.save(newUser);
-                });
+        String firebaseUid = decoded.getUid();
 
+        User user = userRepository.findById(firebaseUid)
+                .orElseGet(() -> {
+                    User u = new User();
+                    u.setFirebaseUid(firebaseUid);
+                    u.setEmail(decoded.getEmail());
+                    u.setName(decoded.getName());
+                    u.setAvatar(decoded.getPicture());
+                    return userRepository.save(u);
+                });
 
         String jwt = jwtUtil.generateToken(user);
 
@@ -62,4 +60,5 @@ public class AuthController {
                 "user", user
         ));
     }
+
 }

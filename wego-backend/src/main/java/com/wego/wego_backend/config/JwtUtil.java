@@ -28,11 +28,12 @@ public class JwtUtil {
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(user.getEmail()) // DÙNG EMAIL
-                .claim("id", user.getId())
+                .setSubject(user.getFirebaseUid())
+                .claim("email", user.getEmail())
+                .claim("name", user.getName())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -54,5 +55,9 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getFirebaseUid(String token) {
+        return getClaims(token).getSubject();
     }
 }

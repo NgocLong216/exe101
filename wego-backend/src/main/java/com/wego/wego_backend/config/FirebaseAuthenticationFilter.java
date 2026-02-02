@@ -2,6 +2,8 @@ package com.wego.wego_backend.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+import com.wego.wego_backend.entity.User;
+import com.wego.wego_backend.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,18 +11,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     private final FirebaseAuth firebaseAuth;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -35,20 +37,21 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             try {
-                FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
+                FirebaseToken decoded = firebaseAuth.verifyIdToken(token);
+                String firebaseUid = decoded.getUid();
 
-                UserDetails userDetails =
-                        User.withUsername(decodedToken.getUid())
-                                .password("")
-                                .authorities("ROLE_USER")
-                                .build();
+                User user = userRepository.findById(firebaseUid)
+                        .orElseGet(() -> {
+                            User u = new User();
+                            u.setFirebaseUid(firebaseUid);
+                            u.setEmail(decoded.getEmail());
+                            u.setName(decoded.getName());
+                            u.setAvatar(decoded.getPicture());
+                            return userRepository.save(u);
+                        });
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+                        new UsernamePasswordAuthenticationToken(user, null, List.of());
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -61,3 +64,5 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
+

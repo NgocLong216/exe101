@@ -15,8 +15,8 @@ import lombok.AllArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "firebase_uid", nullable = false, unique = true)
+    private String firebaseUid;
 
     private String email;
     private String name;

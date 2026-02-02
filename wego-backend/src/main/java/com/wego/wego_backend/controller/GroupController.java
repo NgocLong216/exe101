@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GroupController {
 
-    private final GroupService meetupService;
+    private final GroupService groupService;
 
     @PostMapping
     public ResponseEntity<?> createGroup(
             @RequestBody @Valid CreateGroupRequest request,
             @AuthenticationPrincipal User user
     ) {
-        Group meetup = meetupService.createGroup(request, user);
-        return ResponseEntity.ok(meetup);
+        Group group = groupService.createGroup(request, user);
+        return ResponseEntity.ok(group);
     }
 }
 

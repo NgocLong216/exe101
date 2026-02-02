@@ -8,7 +8,8 @@ const USER_NAME = "Long";
 const FALLBACK_CENTER = { lat: 10.762622, lng: 106.660172 }; // HCM
 
 export default function HomePage() {
-  const [userId, setUserId] = useState(null);
+  const [authUser, setAuthUser] = useState(null);
+
   const [myLocation, setMyLocation] = useState(null);
   const [friends, setFriends] = useState([]);
   const [destination, setDestination] = useState(null);
@@ -27,60 +28,73 @@ export default function HomePage() {
   useEffect(() => {
     const auth = getAuth();
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) setUserId(user.uid);
+      if (user) {
+        setAuthUser({
+          uid: user.uid,
+          name: user.displayName || "Anonymous",
+          email: user.email,
+          avatar: user.photoURL,
+        });
+      } else {
+        setAuthUser(null);
+      }
     });
     return unsub;
   }, []);
+  
 
   /* =========================
       SEND MY GPS
   ========================= */
   useEffect(() => {
-    if (!userId) return;
-
+    if (!authUser) return;
+  
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
         const loc = {
-          name: USER_NAME,
+          firebaseUid: authUser.uid,
+          name: authUser.name,
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
           updatedAt: Date.now(),
         };
-
+  
         setMyLocation({ lat: loc.lat, lng: loc.lng });
-        set(ref(db, `live_locations/${userId}`), loc);
+        set(ref(db, `live_locations/${authUser.uid}`), loc);
       },
       console.error,
       { enableHighAccuracy: true, maximumAge: 3000 }
     );
-
-    onDisconnect(ref(db, `live_locations/${userId}`)).remove();
+  
+    onDisconnect(ref(db, `live_locations/${authUser.uid}`)).remove();
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [userId]);
+  }, [authUser]);
+  
 
   /* =========================
       LISTEN FRIENDS GPS
   ========================= */
   useEffect(() => {
-    if (!userId) return;
-
+    if (!authUser) return;
+  
     const locationsRef = ref(db, "live_locations");
     return onValue(locationsRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
-
+  
       const users = Object.entries(data)
-        .filter(([id]) => id !== userId)
-        .map(([id, u]) => ({
-          id,
+        .filter(([uid]) => uid !== authUser.uid)
+        .map(([uid, u]) => ({
+          uid,
           name: u.name,
           lat: u.lat,
           lng: u.lng,
         }));
-
+  
       setFriends(users);
     });
-  }, [userId]);
+  }, [authUser]);
+  
 
   /* =========================
       DIRECTIONS
@@ -109,7 +123,7 @@ export default function HomePage() {
         body: JSON.stringify({
           title: "Đi cafe cuối tuần",
           description: "Tạo từ map",
-          meetingTime: "2026-02-02T08:30:00",
+          meetingTime: null,
           lat: destination.lat,
           lng: destination.lng,
           placeId: "from-map",
