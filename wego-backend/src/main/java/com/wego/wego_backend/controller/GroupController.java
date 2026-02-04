@@ -1,6 +1,8 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.dto.CreateGroupRequest;
+import com.wego.wego_backend.dto.InviteMemberRequest;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.GroupService;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -29,6 +33,44 @@ public class GroupController {
     @GetMapping("/my")
     public ResponseEntity<?> getMyGroups(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(groupService.getMyGroups(user.getFirebaseUid()));
+    }
+
+    @PostMapping("/{groupId}/invite")
+    public ResponseEntity<?> inviteMember(
+            @PathVariable UUID groupId,
+            @RequestBody InviteMemberRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        groupService.inviteMember(groupId, request, user);
+        return ResponseEntity.ok("Invite sent");
+    }
+
+    @GetMapping("/invitations")
+    public ResponseEntity<?> getInvitations(
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(
+                groupService.getMyInvitations(user.getFirebaseUid())
+        );
+    }
+
+
+    @PostMapping("/invitations/{memberId}/accept")
+    public ResponseEntity<?> acceptInvite(
+            @PathVariable UUID memberId,
+            @AuthenticationPrincipal User user
+    ) {
+        groupService.respondInvite(memberId, true, user);
+        return ResponseEntity.ok("Joined group");
+    }
+
+    @PostMapping("/invitations/{memberId}/reject")
+    public ResponseEntity<?> rejectInvite(
+            @PathVariable UUID memberId,
+            @AuthenticationPrincipal User user
+    ) {
+        groupService.respondInvite(memberId, false, user);
+        return ResponseEntity.ok("Invite rejected");
     }
 
 }

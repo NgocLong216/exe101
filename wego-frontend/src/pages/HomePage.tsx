@@ -297,6 +297,25 @@ export default function HomePage() {
         style={{
           position: "absolute",
           zIndex: 10,
+          top: 110,
+          left: 10,
+          padding: "8px 12px",
+          background: "#f57c00",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+        onClick={() => navigate("/invitations")}
+      >
+        📩 Lời mời group
+      </button>
+
+
+      <button
+        style={{
+          position: "absolute",
+          zIndex: 10,
           top: 60,
           left: 10,
           padding: "8px 12px",

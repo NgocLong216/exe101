@@ -1,5 +1,6 @@
 package com.wego.wego_backend.entity;
 
+import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +26,9 @@ public class GroupMember {
 
     @Enumerated(EnumType.STRING)
     private GroupRole role;
+
+    @Enumerated(EnumType.STRING)
+    private GroupMemberStatus status;
 
     private LocalDateTime joinedAt;
 }

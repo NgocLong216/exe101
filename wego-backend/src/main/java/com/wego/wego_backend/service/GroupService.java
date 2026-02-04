@@ -1,8 +1,11 @@
 package com.wego.wego_backend.service;
 
+import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.CreateGroupRequest;
+import com.wego.wego_backend.dto.InvitationResponse;
+import com.wego.wego_backend.dto.InviteMemberRequest;
 import com.wego.wego_backend.dto.MyGroupResponse;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.entity.GroupMember;
@@ -119,6 +122,64 @@ public class GroupService {
                 ))
                 .toList();
     }
+
+    public void inviteMember(UUID groupId, InviteMemberRequest request, User host) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getHostFirebaseUid().equals(host.getFirebaseUid())) {
+            throw new RuntimeException("Only host can invite");
+        }
+
+        boolean exists = groupMemberRepository
+                .existsByGroupIdAndUserFirebaseUid(groupId, request.getFirebaseUid());
+
+        if (exists) {
+            throw new RuntimeException("User already invited or in group");
+        }
+
+        GroupMember invite = new GroupMember();
+        invite.setGroup(group);
+        invite.setUserFirebaseUid(request.getFirebaseUid());
+        invite.setRole(GroupRole.MEMBER);
+        invite.setStatus(GroupMemberStatus.INVITED);
+
+        groupMemberRepository.save(invite);
+    }
+
+    public List<InvitationResponse> getMyInvitations(String firebaseUid) {
+        return groupMemberRepository
+                .findByUserFirebaseUidAndStatus(firebaseUid, GroupMemberStatus.INVITED)
+                .stream()
+                .map(m -> new InvitationResponse(
+                        m.getId(),
+                        m.getGroup().getId(),
+                        m.getGroup().getTitle()
+                ))
+                .toList();
+    }
+
+
+    public void respondInvite(UUID memberId, boolean accept, User user) {
+
+        GroupMember member = groupMemberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Invite not found"));
+
+        if (!member.getUserFirebaseUid().equals(user.getFirebaseUid())) {
+            throw new RuntimeException("Forbidden");
+        }
+
+        if (accept) {
+            member.setStatus(GroupMemberStatus.ACCEPTED);
+            member.setJoinedAt(LocalDateTime.now());
+        } else {
+            member.setStatus(GroupMemberStatus.REJECTED);
+        }
+
+        groupMemberRepository.save(member);
+    }
+
 
 }
 
