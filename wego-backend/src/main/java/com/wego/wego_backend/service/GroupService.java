@@ -3,16 +3,14 @@ package com.wego.wego_backend.service;
 import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
-import com.wego.wego_backend.dto.CreateGroupRequest;
-import com.wego.wego_backend.dto.InvitationResponse;
-import com.wego.wego_backend.dto.InviteMemberRequest;
-import com.wego.wego_backend.dto.MyGroupResponse;
+import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.entity.GroupMember;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.GroupMemberRepository;
 import com.wego.wego_backend.repository.GroupRepository;
 import com.wego.wego_backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +52,7 @@ public class GroupService {
         hostMember.setGroup(group);
         hostMember.setUserFirebaseUid(host.getFirebaseUid());
         hostMember.setRole(GroupRole.HOST);
+        hostMember.setStatus(GroupMemberStatus.ACCEPTED);
         hostMember.setJoinedAt(LocalDateTime.now());
 
         groupMemberRepository.save(hostMember);
@@ -107,20 +106,29 @@ public class GroupService {
 
         // 3. Convert sang DTO
         return groupMap.values().stream()
-                .map(g -> new MyGroupResponse(
-                        g.getId(),
-                        g.getTitle(),
-                        g.getDescription(),
-                        g.getLocationLat(),
-                        g.getLocationLng(),
-                        g.getMeetingTime(),
-                        g.getStatus(),
-                        (int) memberships.stream()
-                                .filter(m -> m.getGroup().getId().equals(g.getId()))
-                                .count() + 1, // + host
-                        g.getHostFirebaseUid().equals(firebaseUid)
-                ))
+                .map(g -> {
+
+                    int memberCount =
+                            groupMemberRepository.countByGroup_IdAndStatus(
+                                    g.getId(),
+                                    GroupMemberStatus.ACCEPTED
+                            );
+
+                    return new MyGroupResponse(
+                            g.getId(),
+                            g.getTitle(),
+                            g.getDescription(),
+                            g.getLocationLat(),
+                            g.getLocationLng(),
+                            g.getMeetingTime(),
+                            g.getStatus(),
+                            memberCount,
+                            g.getHostFirebaseUid().equals(firebaseUid)
+                    );
+                })
                 .toList();
+
+
     }
 
     public void inviteMember(UUID groupId, InviteMemberRequest request, User host) {
@@ -178,6 +186,55 @@ public class GroupService {
         }
 
         groupMemberRepository.save(member);
+    }
+
+    public List<String> getGroupMemberFirebaseUids(UUID groupId) {
+
+        return groupMemberRepository
+                .findByGroupIdAndStatus(groupId, GroupMemberStatus.ACCEPTED)
+                .stream()
+                .map(GroupMember::getUserFirebaseUid)
+                .toList();
+    }
+
+    @Transactional
+    public void deleteGroup(UUID groupId, User currentUser) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // chỉ host mới được xoá
+        if (!group.getHostFirebaseUid().equals(currentUser.getFirebaseUid())) {
+            throw new RuntimeException("Only host can delete group");
+        }
+
+        // 1. xoá member trước
+        groupMemberRepository.deleteByGroup_Id(groupId);
+
+        // 2. xoá group
+        groupRepository.delete(group);
+    }
+
+    public List<GroupMemberResponse> getGroupMembers(UUID groupId) {
+
+        List<GroupMember> members =
+                groupMemberRepository.findByGroup_IdAndStatus(
+                        groupId,
+                        GroupMemberStatus.ACCEPTED
+                );
+
+        return members.stream()
+                .map(m -> {
+                    User user = userRepository.findById(m.getUserFirebaseUid())
+                            .orElse(null);
+
+                    return new GroupMemberResponse(
+                            m.getUserFirebaseUid(),
+                            user != null ? user.getName() : "Unknown",
+                            m.getRole() == GroupRole.HOST
+                    );
+                })
+                .toList();
     }
 
 

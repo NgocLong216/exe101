@@ -21,13 +21,10 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private GoogleAuthService googleAuthService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private GoogleAuthService googleAuthService;
 
     @PostMapping("/google")
     public ResponseEntity<?> loginWithGoogle(
@@ -38,27 +35,29 @@ public class AuthController {
             decoded = FirebaseAuth.getInstance()
                     .verifyIdToken(request.getToken());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid token");
         }
 
-        String firebaseUid = decoded.getUid();
-
-        User user = userRepository.findById(firebaseUid)
-                .orElseGet(() -> {
-                    User u = new User();
-                    u.setFirebaseUid(firebaseUid);
-                    u.setEmail(decoded.getEmail());
-                    u.setName(decoded.getName());
-                    u.setAvatar(decoded.getPicture());
-                    return userRepository.save(u);
-                });
-
-        String jwt = jwtUtil.generateToken(user);
-
-        return ResponseEntity.ok(Map.of(
-                "token", jwt,
-                "user", user
-        ));
+        return ResponseEntity.ok(
+                googleAuthService.loginWithFirebaseToken(decoded)
+        );
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing token");
+        }
+
+        String jwt = authHeader.substring(7);
+
+        String firebaseUid = jwtUtil.extractFirebaseUid(jwt);
+
+        googleAuthService.logout(firebaseUid);
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
 }

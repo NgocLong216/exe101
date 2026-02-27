@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { GoogleMap, LoadScript, Marker, Polyline, Autocomplete } from "@react-google-maps/api";
 import { ref, set, onValue, onDisconnect } from "firebase/database";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-
 
 const USER_NAME = "Long";
 const FALLBACK_CENTER = { lat: 10.762622, lng: 106.660172 }; // HCM
@@ -21,10 +20,111 @@ export default function HomePage() {
   const [creating, setCreating] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const [currentGroupId, setCurrentGroupId] = useState(null);
+  const [allowedUids, setAllowedUids] = useState([]);
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [suggestCenter, setSuggestCenter] = useState(null);
+  const [suggestedPlaces, setSuggestedPlaces] = useState([]);
+  const [loadingSuggest, setLoadingSuggest] = useState(false);
+  const onPlaceChanged = () => {
+    if (!autoComplete) return;
+
+    const place = autoComplete.getPlace();
+
+
+    // 👉 dùng text người dùng nhập làm keyword
+    setSearchKeyword(place.name);
+
+    // 👉 gọi backend suggest
+    suggestPlace(place.name);
+  };
+  const suggestPlace = async (keyword) => {
+    if (!currentGroupId || !keyword) return;
+
+    setLoadingSuggest(true);
+    setRoutes({});
+    setNearbyPlaces([]);
+    setDestination(null);
+
+    try {
+      const token = await getAuth().currentUser.getIdToken();
+
+      const res = await fetch(
+        `${API_URL}/api/groups/${currentGroupId}/suggest-place?keyword=${encodeURIComponent(
+          keyword
+        )}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) throw new Error(await res.text());
+
+      const data = await res.json();
+
+      setSuggestCenter(data.centerPoint);
+      setSuggestedPlaces(data.places);
+    } catch (e) {
+      console.error("Suggest place error:", e);
+      alert("Không thể gợi ý địa điểm");
+    } finally {
+      setLoadingSuggest(false);
+    }
+  };
+  const selectSuggestedPlace = (p) => {
+    const dest = { lat: p.lat, lng: p.lng };
+    setDestination(dest);
+    setRoutes({});
+
+    fetchRoute("you", myLocation, dest);
+    friends.forEach((f) =>
+      fetchRoute(f.uid, { lat: f.lat, lng: f.lng }, dest)
+    );
+  };
 
 
 
   const lastRouteTime = useRef({});
+
+  useEffect(() => {
+    const fetchMyGroups = async () => {
+      const token = await getAuth().currentUser?.getIdToken();
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/groups/my`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const groups = await res.json();
+      if (groups.length > 0) {
+        setCurrentGroupId(groups[0].id); // TEST: auto chọn group đầu
+      }
+    };
+
+    fetchMyGroups();
+  }, []);
+
+
+  useEffect(() => {
+    if (!currentGroupId) return;
+
+    const fetchGroupMembers = async () => {
+      const token = await getAuth().currentUser.getIdToken();
+      const res = await fetch(
+        `${API_URL}/api/groups/${currentGroupId}/members/uids`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      setAllowedUids(data);
+    };
+
+    fetchGroupMembers();
+  }, [currentGroupId]);
+
+
 
   /* =========================
       AUTH
@@ -87,7 +187,9 @@ export default function HomePage() {
       if (!data) return;
 
       const users = Object.entries(data)
-        .filter(([uid]) => uid !== authUser.uid)
+        .filter(([uid]) =>
+          uid !== authUser.uid && allowedUids.includes(uid)
+        )
         .map(([uid, u]) => ({
           uid,
           name: u.name,
@@ -97,7 +199,8 @@ export default function HomePage() {
 
       setFriends(users);
     });
-  }, [authUser]);
+  }, [authUser, allowedUids]);
+
 
 
   /* =========================
@@ -173,22 +276,6 @@ export default function HomePage() {
     );
   };
 
-  const onPlaceChanged = () => {
-    if (!autoComplete) return;
-
-    const place = autoComplete.getPlace();
-    if (!place.geometry) return;
-
-    const loc = {
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
-    };
-
-    setDestination(loc);
-    setRoutes({});
-    setNearbyPlaces([]);
-    searchNearby(loc, "restaurant");
-  };
 
 
   useEffect(() => {
@@ -196,8 +283,10 @@ export default function HomePage() {
 
     fetchRoute("you", myLocation, destination);
     friends.forEach((f) =>
-      fetchRoute(f.id, { lat: f.lat, lng: f.lng }, destination)
-    );
+  fetchRoute(f.uid, { lat: f.lat, lng: f.lng }, [destination, friends, myLocation])
+);
+
+
   }, [destination]);
 
   /* =========================
@@ -249,31 +338,41 @@ export default function HomePage() {
     searchNearby(dest, "restaurant");
   };
 
+  const handleLogout = async () => {
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser?.getIdToken();
+  
+      // gọi backend revoke nếu có
+      if (token) {
+        await fetch(`${API_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+  
+      // logout firebase
+      await signOut(auth);
+  
+      // xoá token backend nếu bạn có lưu
+      localStorage.removeItem("token");
+  
+      navigate("/");
+  
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Logout thất bại");
+    }
+  };
+
   return (
     <LoadScript
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
       libraries={["places"]}
     >
       {/* TEST BUTTON */}
-
-      <button
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          top: 60,
-          left: 10,
-          padding: "8px 12px",
-          background: "#1976d2",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-        disabled={creating}
-        onClick={createGroup}
-      >
-        {creating ? "Đang tạo..." : "Tạo group"}
-      </button>
 
       <button
         style={{
@@ -331,7 +430,23 @@ export default function HomePage() {
         {creating ? "Đang tạo..." : "➕ Tạo group"}
       </button>
 
-
+      <button
+  style={{
+    position: "absolute",
+    zIndex: 10,
+    top: 160,
+    left: 10,
+    padding: "8px 12px",
+    background: "#d32f2f",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  }}
+  onClick={handleLogout}
+>
+  🚪 Logout
+</button>
 
       <Autocomplete
         onLoad={(ac) => setAutoComplete(ac)}
@@ -340,6 +455,8 @@ export default function HomePage() {
         <input
           type="text"
           placeholder="Tìm địa điểm..."
+          value={searchKeyword}
+         onChange={(e) => setSearchKeyword(e.target.value)}
           style={{
             position: "absolute",
             top: 10,
@@ -355,6 +472,20 @@ export default function HomePage() {
           }}
         />
       </Autocomplete>
+
+      <button
+          style={{
+            position: "absolute",
+            top: 60,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10,
+            padding: "6px 10px",
+          }}
+          onClick={() => suggestPlace(searchKeyword)}
+        >
+          🔍 Tìm địa điểm
+        </button>
 
 
       <GoogleMap
@@ -381,6 +512,24 @@ export default function HomePage() {
             icon="http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
           />
         ))}
+        {suggestCenter && (
+          <Marker
+            position={suggestCenter}
+            label="📍 Điểm hẹn tối ưu"
+            icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+          />
+        )}
+        {suggestedPlaces.map((p) => (
+          <Marker
+            key={p.placeId}
+            position={{ lat: p.lat, lng: p.lng }}
+            label={p.name}
+            icon="http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+            onClick={() => selectSuggestedPlace(p)}
+          />
+        ))}
+        
+
 
         {/* YOU */}
         {myLocation && (
@@ -401,18 +550,19 @@ export default function HomePage() {
 
         {/* FRIENDS */}
         {friends.map((f) => (
-          <div key={f.id}>
+          <div key={f.uid}>
             <Marker
               position={{ lat: f.lat, lng: f.lng }}
               label={f.name}
               icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
             />
-            {routes[f.id] && (
-              <Polyline
-                path={routes[f.id]}
-                options={{ strokeColor: "#00AA00", strokeWeight: 4 }}
-              />
-            )}
+            {routes[f.uid] && (
+  <Polyline
+    path={routes[f.uid]}
+    options={{ strokeColor: "#00AA00", strokeWeight: 4 }}
+  />
+)}
+
           </div>
         ))}
       </GoogleMap>

@@ -9,6 +9,8 @@ export default function GroupDetailPage() {
   const [keyword, setKeyword] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState([]);
+
 
   const searchUsers = async () => {
     if (!keyword) return;
@@ -32,6 +34,30 @@ export default function GroupDetailPage() {
       setLoading(false);
     }
   };
+
+  const deleteGroup = async () => {
+    if (!window.confirm("Bạn chắc chắn muốn xoá group này?")) return;
+
+    const token = await getAuth().currentUser.getIdToken();
+
+    try {
+      const res = await fetch(`${API_URL}/api/groups/${groupId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      alert("Đã xoá group");
+      navigate("/groups");
+    } catch (e) {
+      alert("Xoá group thất bại");
+      console.error(e);
+    }
+  };
+
 
   const inviteUser = async (firebaseUid) => {
     const token = await getAuth().currentUser.getIdToken();
@@ -57,9 +83,50 @@ export default function GroupDetailPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const token = await getAuth().currentUser.getIdToken();
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/groups/${groupId}/members`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = await res.json();
+        setMembers(data);
+      } catch (e) {
+        console.error("Fetch members failed", e);
+      }
+    };
+
+    fetchMembers();
+  }, [groupId]);
+
+
   return (
     <div style={{ padding: 24 }}>
-      <h2>Invite thành viên</h2>
+      <h1>Group Detail</h1>
+
+      {/* MEMBERS */}
+      <h2>👥 Thành viên trong group</h2>
+      <ul>
+  {members.map((m) => (
+    <li key={m.firebaseUid}>
+      {m.name}
+      <span style={{ marginLeft: 8, color: "green" }}>✔</span>
+      {m.host && <span style={{ marginLeft: 6 }}>👑</span>}
+    </li>
+  ))}
+</ul>
+
+
+      <hr />
+
+      {/* INVITE */}
+      <h2>➕ Invite thành viên</h2>
 
       <div style={{ display: "flex", gap: 8 }}>
         <input
@@ -70,11 +137,9 @@ export default function GroupDetailPage() {
         <button onClick={searchUsers}>Search</button>
       </div>
 
-      {loading && <p>Đang tìm...</p>}
-
       <ul>
         {users.map((u) => (
-          <li key={u.firebaseUid} style={{ marginTop: 8 }}>
+          <li key={u.firebaseUid}>
             {u.name}
             <button
               style={{ marginLeft: 12 }}
@@ -85,6 +150,23 @@ export default function GroupDetailPage() {
           </li>
         ))}
       </ul>
+
+      {/* DELETE */}
+      <button
+        style={{
+          background: "#d32f2f",
+          color: "white",
+          padding: "8px 12px",
+          border: "none",
+          borderRadius: 6,
+          marginTop: 24,
+          cursor: "pointer",
+        }}
+        onClick={deleteGroup}
+      >
+        🗑️ Xoá group
+      </button>
     </div>
+
   );
 }

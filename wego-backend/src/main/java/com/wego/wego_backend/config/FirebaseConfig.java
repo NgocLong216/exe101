@@ -22,6 +22,9 @@ public class FirebaseConfig {
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setDatabaseUrl(
+                        "https://crested-drive-483712-e5-default-rtdb.firebaseio.com"
+                )
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {

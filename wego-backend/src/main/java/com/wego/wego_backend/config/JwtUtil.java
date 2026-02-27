@@ -60,4 +60,13 @@ public class JwtUtil {
     public String getFirebaseUid(String token) {
         return getClaims(token).getSubject();
     }
+
+    public String extractFirebaseUid(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 }

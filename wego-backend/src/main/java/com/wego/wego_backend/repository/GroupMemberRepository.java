@@ -14,4 +14,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, UUID> 
             String userFirebaseUid,
             GroupMemberStatus status
     );
+    List<GroupMember> findByGroupIdAndStatus(UUID groupId, GroupMemberStatus status);
+    void deleteByGroup_Id(UUID groupId);
+    List<GroupMember> findByGroup_IdAndStatus(UUID groupId, GroupMemberStatus status);
+    int countByGroup_IdAndStatus(UUID groupId, GroupMemberStatus status);
+
 }
