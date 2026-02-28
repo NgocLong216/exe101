@@ -40,7 +40,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                 FirebaseToken decoded = firebaseAuth.verifyIdToken(token);
                 String firebaseUid = decoded.getUid();
 
-                User user = userRepository.findById(firebaseUid)
+                User user = userRepository.findByFirebaseUid(firebaseUid)
                         .orElseGet(() -> {
                             User u = new User();
                             u.setFirebaseUid(firebaseUid);

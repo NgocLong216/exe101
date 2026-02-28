@@ -237,6 +237,43 @@ public class GroupService {
                 .toList();
     }
 
+    @Transactional
+    public void kickMember(UUID groupId, String targetUid, String currentUid) {
+
+        // Kiểm tra người thực hiện có trong group không
+        GroupMember currentMember = groupMemberRepository
+                .findByGroup_IdAndUserFirebaseUid(groupId, currentUid)
+                .orElseThrow(() -> new RuntimeException("You are not in this group"));
+
+        // Chỉ LEADER mới được kick
+        if (currentMember.getRole() != GroupRole.HOST) {
+            throw new RuntimeException("Only leader can kick members");
+        }
+
+        // Tìm member cần kick
+        GroupMember targetMember = groupMemberRepository
+                .findByGroup_IdAndUserFirebaseUid(groupId, targetUid)
+                .orElseThrow(() -> new RuntimeException("User not found in group"));
+
+        // Không cho leader tự kick mình
+        if (targetUid.equals(currentUid)) {
+            throw new RuntimeException("Leader cannot kick themselves");
+        }
+
+        // Không kick leader khác
+        if (targetMember.getRole() == GroupRole.HOST) {
+            throw new RuntimeException("Cannot kick another leader");
+        }
+
+        // Chỉ kick member đã ACCEPTED
+        if (targetMember.getStatus() != GroupMemberStatus.ACCEPTED) {
+            throw new RuntimeException("Cannot kick non-accepted member");
+        }
+
+        // Soft delete
+         targetMember.setStatus(GroupMemberStatus.KICKED);
+         groupMemberRepository.save(targetMember);
+    }
 
 }
 

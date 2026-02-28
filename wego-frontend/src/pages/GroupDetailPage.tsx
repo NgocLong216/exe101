@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,7 +10,46 @@ export default function GroupDetailPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState([]);
+  const navigate = useNavigate();
+  const [currentUid, setCurrentUid] = useState(null);
 
+  useEffect(() => {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      setCurrentUid(auth.currentUser.uid);
+    }
+  }, []);
+
+  const kickMember = async (firebaseUid) => {
+    if (!window.confirm("Bạn chắc chắn muốn kick thành viên này?")) return;
+
+    const token = await getAuth().currentUser.getIdToken();
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/groups/${groupId}/members/${firebaseUid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error(await res.text());
+
+      alert("Đã kick thành viên ");
+
+      // reload lại member list
+      setMembers((prev) =>
+        prev.filter((m) => m.firebaseUid !== firebaseUid)
+      );
+
+    } catch (e) {
+      alert("Kick thất bại ");
+      console.error(e);
+    }
+  };
 
   const searchUsers = async () => {
     if (!keyword) return;
@@ -114,10 +153,28 @@ export default function GroupDetailPage() {
       <h2>👥 Thành viên trong group</h2>
       <ul>
   {members.map((m) => (
-    <li key={m.firebaseUid}>
+    <li key={m.firebaseUid} style={{ marginBottom: 8 }}>
       {m.name}
       <span style={{ marginLeft: 8, color: "green" }}>✔</span>
       {m.host && <span style={{ marginLeft: 6 }}>👑</span>}
+
+      {/* Không hiển thị nếu là host hoặc là chính mình */}
+      {!m.host && m.firebaseUid !== currentUid && (
+        <button
+          style={{
+            marginLeft: 12,
+            background: "#ff5252",
+            color: "white",
+            border: "none",
+            borderRadius: 4,
+            padding: "4px 8px",
+            cursor: "pointer",
+          }}
+          onClick={() => kickMember(m.firebaseUid)}
+        >
+          Kick
+        </button>
+      )}
     </li>
   ))}
 </ul>

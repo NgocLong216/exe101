@@ -1,6 +1,5 @@
 package com.wego.wego_backend.controller;
 
-import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.dto.CreateGroupRequest;
 import com.wego.wego_backend.dto.InviteMemberRequest;
 import com.wego.wego_backend.dto.SuggestPlaceRequest;
@@ -10,8 +9,11 @@ import com.wego.wego_backend.service.GroupPlaceSuggestionService;
 import com.wego.wego_backend.service.GroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -119,6 +121,25 @@ public class GroupController {
         );
     }
 
+    @DeleteMapping("/{groupId}/members/{targetUid}")
+    public ResponseEntity<?> kickMember(
+            @PathVariable UUID groupId,
+            @PathVariable String targetUid
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User currentUser = (User) authentication.getPrincipal();
+
+        groupService.kickMember(
+                groupId,
+                targetUid,
+                currentUser.getFirebaseUid()
+        );
+
+        return ResponseEntity.ok("Member kicked successfully");
+    }
 
 }
 

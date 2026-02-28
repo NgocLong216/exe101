@@ -2,7 +2,6 @@ package com.wego.wego_backend.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
-import com.wego.wego_backend.config.JwtUtil;
 import com.wego.wego_backend.dto.GoogleUserInfo;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.UserRepository;
@@ -23,8 +22,6 @@ public class GoogleAuthService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
     private static final String GOOGLE_USERINFO_URL =
             "https://www.googleapis.com/oauth2/v3/userinfo";
@@ -52,11 +49,11 @@ public class GoogleAuthService {
         }
     }
 
-    public Map<String, Object> loginWithFirebaseToken(FirebaseToken decoded) {
+    public User loginWithFirebaseToken(FirebaseToken decoded) {
 
         String firebaseUid = decoded.getUid();
 
-        User user = userRepository.findById(firebaseUid)
+        return userRepository.findByFirebaseUid(firebaseUid)
                 .orElseGet(() -> {
                     User u = new User();
                     u.setFirebaseUid(firebaseUid);
@@ -65,13 +62,6 @@ public class GoogleAuthService {
                     u.setAvatar(decoded.getPicture());
                     return userRepository.save(u);
                 });
-
-        String jwt = jwtUtil.generateToken(user);
-
-        return Map.of(
-                "token", jwt,
-                "user", user
-        );
     }
 
     public void logout(String firebaseUid) {
