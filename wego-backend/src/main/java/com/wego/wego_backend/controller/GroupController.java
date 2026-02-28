@@ -4,16 +4,12 @@ import com.wego.wego_backend.dto.CreateGroupRequest;
 import com.wego.wego_backend.dto.InviteMemberRequest;
 import com.wego.wego_backend.dto.SuggestPlaceRequest;
 import com.wego.wego_backend.entity.Group;
-import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.GroupPlaceSuggestionService;
 import com.wego.wego_backend.service.GroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,65 +20,66 @@ import java.util.UUID;
 public class GroupController {
 
     private final GroupService groupService;
-
     private final GroupPlaceSuggestionService groupPlaceSuggestionService;
 
     @PostMapping
     public ResponseEntity<?> createGroup(
             @RequestBody @Valid CreateGroupRequest request,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        Group group = groupService.createGroup(request, user);
+        String firebaseUid = authentication.getName();
+        Group group = groupService.createGroup(request, firebaseUid);
         return ResponseEntity.ok(group);
     }
 
     @GetMapping("/my")
-    public ResponseEntity<?> getMyGroups(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(groupService.getMyGroups(user.getFirebaseUid()));
+    public ResponseEntity<?> getMyGroups(Authentication authentication) {
+        String firebaseUid = authentication.getName();
+        return ResponseEntity.ok(groupService.getMyGroups(firebaseUid));
     }
 
     @PostMapping("/{groupId}/invite")
     public ResponseEntity<?> inviteMember(
             @PathVariable UUID groupId,
             @RequestBody InviteMemberRequest request,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        groupService.inviteMember(groupId, request, user);
+        String firebaseUid = authentication.getName();
+        groupService.inviteMember(groupId, request, firebaseUid);
         return ResponseEntity.ok("Invite sent");
     }
 
     @GetMapping("/invitations")
-    public ResponseEntity<?> getInvitations(
-            @AuthenticationPrincipal User user
-    ) {
+    public ResponseEntity<?> getInvitations(Authentication authentication) {
+        String firebaseUid = authentication.getName();
         return ResponseEntity.ok(
-                groupService.getMyInvitations(user.getFirebaseUid())
+                groupService.getMyInvitations(firebaseUid)
         );
     }
-
 
     @PostMapping("/invitations/{memberId}/accept")
     public ResponseEntity<?> acceptInvite(
             @PathVariable UUID memberId,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        groupService.respondInvite(memberId, true, user);
+        String firebaseUid = authentication.getName();
+        groupService.respondInvite(memberId, true, firebaseUid);
         return ResponseEntity.ok("Joined group");
     }
 
     @PostMapping("/invitations/{memberId}/reject")
     public ResponseEntity<?> rejectInvite(
             @PathVariable UUID memberId,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        groupService.respondInvite(memberId, false, user);
+        String firebaseUid = authentication.getName();
+        groupService.respondInvite(memberId, false, firebaseUid);
         return ResponseEntity.ok("Invite rejected");
     }
 
     @GetMapping("/{groupId}/members/uids")
     public ResponseEntity<?> getGroupMemberUids(
-            @PathVariable UUID groupId,
-            @AuthenticationPrincipal User user
+            @PathVariable UUID groupId
     ) {
         return ResponseEntity.ok(
                 groupService.getGroupMemberFirebaseUids(groupId)
@@ -92,16 +89,16 @@ public class GroupController {
     @DeleteMapping("/{groupId}")
     public ResponseEntity<?> deleteGroup(
             @PathVariable UUID groupId,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        groupService.deleteGroup(groupId, user);
+        String firebaseUid = authentication.getName();
+        groupService.deleteGroup(groupId, firebaseUid);
         return ResponseEntity.ok("Group deleted");
     }
 
     @GetMapping("/{groupId}/members")
     public ResponseEntity<?> getGroupMembers(
-            @PathVariable UUID groupId,
-            @AuthenticationPrincipal User user
+            @PathVariable UUID groupId
     ) {
         return ResponseEntity.ok(
                 groupService.getGroupMembers(groupId)
@@ -124,22 +121,21 @@ public class GroupController {
     @DeleteMapping("/{groupId}/members/{targetUid}")
     public ResponseEntity<?> kickMember(
             @PathVariable UUID groupId,
-            @PathVariable String targetUid
+            @PathVariable String targetUid,
+            Authentication authentication
     ) {
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-
-        User currentUser = (User) authentication.getPrincipal();
-
-        groupService.kickMember(
-                groupId,
-                targetUid,
-                currentUser.getFirebaseUid()
-        );
-
+        String firebaseUid = authentication.getName();
+        groupService.kickMember(groupId, targetUid, firebaseUid);
         return ResponseEntity.ok("Member kicked successfully");
     }
 
+    @DeleteMapping("/{groupId}/leave")
+    public ResponseEntity<?> leaveGroup(
+            @PathVariable UUID groupId,
+            Authentication authentication
+    ) {
+        String firebaseUid = authentication.getName();
+        groupService.leaveGroup(groupId, firebaseUid);
+        return ResponseEntity.ok("Left group successfully");
+    }
 }
-

@@ -1,8 +1,12 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.UpdateProfileRequest;
 import com.wego.wego_backend.repository.UserRepository;
+import com.wego.wego_backend.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,14 +14,36 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(
             @RequestParam String keyword
     ) {
         return ResponseEntity.ok(
-                userRepository.findByNameContainingIgnoreCase(keyword)
+                userService.searchUsers(keyword)
+        );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
+
+        String firebaseUid = authentication.getName();
+
+        return ResponseEntity.ok(
+                userService.getMyProfile(firebaseUid)
+        );
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(
+            @RequestBody @Valid UpdateProfileRequest request,
+            Authentication authentication
+    ) {
+        String firebaseUid = authentication.getName();
+
+        return ResponseEntity.ok(
+                userService.updateMyProfile(firebaseUid, request)
         );
     }
 }

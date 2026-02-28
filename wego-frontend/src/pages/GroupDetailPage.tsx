@@ -144,6 +144,32 @@ export default function GroupDetailPage() {
     fetchMembers();
   }, [groupId]);
 
+  const leaveGroup = async () => {
+  if (!window.confirm("Bạn chắc chắn muốn rời nhóm?")) return;
+
+  const token = await getAuth().currentUser.getIdToken();
+
+  try {
+    const res = await fetch(
+      `${API_URL}/api/groups/${groupId}/leave`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) throw new Error(await res.text());
+
+    alert("Đã rời nhóm");
+    navigate("/groups");
+  } catch (e) {
+    alert("Rời nhóm thất bại");
+    console.error(e);
+  }
+};
+
 
   return (
     <div style={{ padding: 24 }}>
@@ -175,6 +201,23 @@ export default function GroupDetailPage() {
           Kick
         </button>
       )}
+
+{!m.host && m.firebaseUid === currentUid && (
+  <button
+    style={{
+      marginLeft: 12,
+      background: "#757575",
+      color: "white",
+      border: "none",
+      borderRadius: 4,
+      padding: "4px 8px",
+      cursor: "pointer",
+    }}
+    onClick={leaveGroup}
+  >
+    Leave
+  </button>
+)}
     </li>
   ))}
 </ul>

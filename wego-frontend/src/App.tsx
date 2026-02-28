@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import MyGroupsPage from "./pages/MyGroupsPage";
 import GroupDetailPage from "./pages/GroupDetailPage";
 import InvitationsPage from "./pages/InvitationsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -30,6 +31,7 @@ function App() {
         <Route path="/groups" element={<MyGroupsPage />} />
         <Route path="/groups/:groupId" element={<GroupDetailPage />} />
         <Route path="/invitations" element={<InvitationsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
 
     </Routes>
   );

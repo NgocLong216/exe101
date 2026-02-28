@@ -434,6 +434,24 @@ export default function HomePage() {
   style={{
     position: "absolute",
     zIndex: 10,
+    top: 210,
+    left: 10,
+    padding: "8px 12px",
+    background: "#6a1b9a",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  }}
+  onClick={() => navigate("/profile")}
+>
+  👤 Xem Profile
+</button>
+
+      <button
+  style={{
+    position: "absolute",
+    zIndex: 10,
     top: 160,
     left: 10,
     padding: "8px 12px",

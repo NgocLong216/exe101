@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/groups").authenticated()
                         .anyRequest().authenticated()
                 )

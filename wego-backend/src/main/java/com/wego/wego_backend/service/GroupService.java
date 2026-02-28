@@ -28,20 +28,19 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
-    public Group createGroup(CreateGroupRequest request, User host) {
+    public Group createGroup(CreateGroupRequest request, String hostUid) {
+
+        User host = userRepository.findById(hostUid)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Group group = new Group();
         group.setTitle(request.getTitle());
         group.setDescription(request.getDescription());
-
-        // Có thể null – set sau
         group.setMeetingTime(request.getMeetingTime());
-
         group.setLocationLat(request.getLat());
         group.setLocationLng(request.getLng());
         group.setPlaceId(request.getPlaceId());
-
-        group.setHostFirebaseUid(host.getFirebaseUid());
+        group.setHostFirebaseUid(hostUid);
         group.setStatus(GroupStatus.WAITING);
         group.setCreatedAt(LocalDateTime.now());
 
@@ -50,25 +49,29 @@ public class GroupService {
         // Add host as member
         GroupMember hostMember = new GroupMember();
         hostMember.setGroup(group);
-        hostMember.setUserFirebaseUid(host.getFirebaseUid());
+        hostMember.setUserFirebaseUid(hostUid);
         hostMember.setRole(GroupRole.HOST);
         hostMember.setStatus(GroupMemberStatus.ACCEPTED);
         hostMember.setJoinedAt(LocalDateTime.now());
 
         groupMemberRepository.save(hostMember);
 
-        // Invite members (nếu có)
+        // Invite members
         if (request.getMemberFirebaseUids() != null) {
             for (String firebaseUid : request.getMemberFirebaseUids()) {
-                if (firebaseUid.equals(host.getFirebaseUid())) continue;
+
+                if (firebaseUid.equals(hostUid)) continue;
 
                 User user = userRepository.findById(firebaseUid)
-                        .orElseThrow(() -> new RuntimeException("User not found: " + firebaseUid));
+                        .orElseThrow(() ->
+                                new RuntimeException("User not found: " + firebaseUid)
+                        );
 
                 GroupMember member = new GroupMember();
                 member.setGroup(group);
                 member.setUserFirebaseUid(user.getFirebaseUid());
                 member.setRole(GroupRole.MEMBER);
+                member.setStatus(GroupMemberStatus.INVITED);
                 member.setJoinedAt(LocalDateTime.now());
 
                 groupMemberRepository.save(member);
@@ -84,7 +87,10 @@ public class GroupService {
 
         // 1. Group mà user là member
         List<GroupMember> memberships =
-                groupMemberRepository.findByUserFirebaseUid(firebaseUid);
+                groupMemberRepository.findByUserFirebaseUidAndStatus(
+                        firebaseUid,
+                        GroupMemberStatus.ACCEPTED
+                );
 
         System.out.println(" Membership count = " + memberships.size());
 
@@ -127,16 +133,14 @@ public class GroupService {
                     );
                 })
                 .toList();
-
-
     }
 
-    public void inviteMember(UUID groupId, InviteMemberRequest request, User host) {
+    public void inviteMember(UUID groupId, InviteMemberRequest request, String hostUid) {
 
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        if (!group.getHostFirebaseUid().equals(host.getFirebaseUid())) {
+        if (!group.getHostFirebaseUid().equals(hostUid)) {
             throw new RuntimeException("Only host can invite");
         }
 
@@ -169,12 +173,12 @@ public class GroupService {
     }
 
 
-    public void respondInvite(UUID memberId, boolean accept, User user) {
+    public void respondInvite(UUID memberId, boolean accept, String firebaseUid) {
 
         GroupMember member = groupMemberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Invite not found"));
 
-        if (!member.getUserFirebaseUid().equals(user.getFirebaseUid())) {
+        if (!member.getUserFirebaseUid().equals(firebaseUid)) {
             throw new RuntimeException("Forbidden");
         }
 
@@ -198,13 +202,13 @@ public class GroupService {
     }
 
     @Transactional
-    public void deleteGroup(UUID groupId, User currentUser) {
+    public void deleteGroup(UUID groupId, String firebaseUid) {
 
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
         // chỉ host mới được xoá
-        if (!group.getHostFirebaseUid().equals(currentUser.getFirebaseUid())) {
+        if (!group.getHostFirebaseUid().equals(firebaseUid)) {
             throw new RuntimeException("Only host can delete group");
         }
 
@@ -273,6 +277,36 @@ public class GroupService {
         // Soft delete
          targetMember.setStatus(GroupMemberStatus.KICKED);
          groupMemberRepository.save(targetMember);
+    }
+
+    public void leaveGroup(UUID groupId, String currentUid) {
+
+        System.out.println("Current UID: " + currentUid);
+        System.out.println("Group ID: " + groupId);
+
+        List<GroupMember> members = groupMemberRepository.findAll();
+        members.forEach(m ->
+                System.out.println(
+                        m.getGroup().getId() + " | " +
+                                m.getUserFirebaseUid() + " | " +
+                                m.getStatus()
+                )
+        );
+
+        GroupMember member = groupMemberRepository
+                .findByGroup_IdAndUserFirebaseUid(groupId, currentUid)
+                .orElseThrow(() -> new RuntimeException("Not a member"));
+
+        if (member.getRole().equals(GroupRole.HOST)) {
+            throw new RuntimeException("Host cannot leave group");
+        }
+
+        if (!member.getStatus().equals(GroupMemberStatus.ACCEPTED)) {
+            throw new RuntimeException("Only accepted members can leave");
+        }
+
+        member.setStatus(GroupMemberStatus.LEFT);
+        groupMemberRepository.save(member);
     }
 
 }

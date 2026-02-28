@@ -4,6 +4,7 @@ public enum GroupMemberStatus {
     INVITED,
     ACCEPTED,
     REJECTED,
-    KICKED
+    KICKED,
+    LEFT
 }
 
