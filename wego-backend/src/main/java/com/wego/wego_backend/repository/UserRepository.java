@@ -11,5 +11,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
     Optional<User> findByFirebaseUid(String firebaseUid);
     List<User> findByNameContainingIgnoreCase(String name);
+    Optional<User> findByFcmToken(String fcmToken);
 
 }

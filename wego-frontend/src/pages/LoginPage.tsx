@@ -2,6 +2,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
+import { requestFcmToken } from "../firebase-messaging";
 
 export default function LoginPage({ setUser }) {
   const navigate = useNavigate();
@@ -11,14 +12,14 @@ export default function LoginPage({ setUser }) {
     try {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
-
+  
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // FIREBASE ID TOKEN
-      const firebaseIdToken = await user.getIdToken();
-
-      // Gửi token lên backend
+      const firebaseUser = result.user;
+  
+      // 🔥 FIREBASE ID TOKEN
+      const firebaseIdToken = await firebaseUser.getIdToken();
+  
+      // 🔥 LOGIN BACKEND
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/google`,
         {
@@ -27,19 +28,39 @@ export default function LoginPage({ setUser }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token: firebaseIdToken, 
+            token: firebaseIdToken,
           }),
         }
       );
-
+  
       if (!res.ok) throw new Error("Backend login failed");
-
+  
       const data = await res.json();
-
+  
+      // Lưu JWT
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);
-
+  
+      // =========================
+      // 🔥 LẤY FCM TOKEN
+      // =========================
+  
+      const fcmToken = await requestFcmToken();
+  
+      if (fcmToken) {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/users/save-fcm-token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${firebaseIdToken}`, // 🔥 dùng firebase token
+          },
+          body: JSON.stringify({
+            fcmToken: fcmToken,
+          }),
+        });
+      }
+  
       navigate("/home");
     } catch (err) {
       console.error(err);

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import { listenForegroundMessage } from "./firebase-messaging";
+import { Toaster } from "react-hot-toast";
 
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
@@ -23,17 +25,23 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    listenForegroundMessage();
+  }, []);
 
   return (
-    <Routes>
-        <Route path="/" element={<LoginPage setUser={setUser} />} /> 
-        <Route path="/home" element={<HomePage/>} />
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path="/" element={<LoginPage setUser={setUser} />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/groups" element={<MyGroupsPage />} />
         <Route path="/groups/:groupId" element={<GroupDetailPage />} />
         <Route path="/invitations" element={<InvitationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
 
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

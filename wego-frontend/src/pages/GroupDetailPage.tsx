@@ -12,6 +12,7 @@ export default function GroupDetailPage() {
   const [members, setMembers] = useState([]);
   const navigate = useNavigate();
   const [currentUid, setCurrentUid] = useState(null);
+  const [meetingTime, setMeetingTime] = useState("");
 
   useEffect(() => {
     const auth = getAuth();
@@ -19,6 +20,38 @@ export default function GroupDetailPage() {
       setCurrentUid(auth.currentUser.uid);
     }
   }, []);
+
+  const scheduleMeet = async () => {
+    if (!meetingTime) {
+      alert("Vui lòng chọn thời gian");
+      return;
+    }
+  
+    const token = await getAuth().currentUser.getIdToken();
+  
+    try {
+      const res = await fetch(
+        `${API_URL}/api/groups/${groupId}/schedule-meet`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            meetingTime: meetingTime,
+          }),
+        }
+      );
+  
+      if (!res.ok) throw new Error(await res.text());
+  
+      alert("Đã đặt lịch Meet thành công 🎉");
+    } catch (e) {
+      alert("Đặt lịch thất bại ❌");
+      console.error(e);
+    }
+  };
 
   const kickMember = async (firebaseUid) => {
     if (!window.confirm("Bạn chắc chắn muốn kick thành viên này?")) return;
@@ -250,6 +283,37 @@ export default function GroupDetailPage() {
           </li>
         ))}
       </ul>
+
+      <hr />
+
+<h2>⏰ Đặt giờ Meet</h2>
+
+<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+  <input
+    type="datetime-local"
+    value={meetingTime}
+    onChange={(e) => setMeetingTime(e.target.value)}
+    style={{
+      padding: 6,
+      borderRadius: 4,
+      border: "1px solid #ccc",
+    }}
+  />
+
+  <button
+    onClick={scheduleMeet}
+    style={{
+      background: "#1976d2",
+      color: "white",
+      border: "none",
+      borderRadius: 4,
+      padding: "6px 12px",
+      cursor: "pointer",
+    }}
+  >
+    📅 Đặt lịch
+  </button>
+</div>
 
       {/* DELETE */}
       <button

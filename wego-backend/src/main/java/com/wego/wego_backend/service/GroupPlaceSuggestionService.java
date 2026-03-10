@@ -16,8 +16,8 @@ public class GroupPlaceSuggestionService {
 
     private final GroupMemberRepository groupMemberRepository;
     private final FirebaseLocationService firebaseLocationService;
-    private final GoogleDirectionsService directionsService;
-    private final GooglePlacesService placesService;
+    private final GoongDirectionsService directionsService;
+    private final SerpApiPlacesService placesService;
 
     public SuggestedPlaceResponse suggest(UUID groupId, String keyword) {
 
@@ -36,63 +36,80 @@ public class GroupPlaceSuggestionService {
         if (locations.size() < 2)
             throw new RuntimeException("Not enough members with location");
 
-        // 3. Center hình học ban đầu
+        // 3. Tính center hình học
         LatLng center = average(locations.values());
 
-        // 4. Refine theo thời gian di chuyển (2 vòng)
-        for (int i = 0; i < 2; i++) {
-            Map<String, Long> times = new HashMap<>();
+        System.out.println("Center lat: " + center.getLat());
+        System.out.println("Center lng: " + center.getLng());
 
-            for (var e : locations.entrySet()) {
-                long t = directionsService.getTravelTimeSeconds(
-                        e.getValue(),
-                        center
+        // 4. Tìm địa điểm quanh center
+        List<SuggestedPlaceResponse.PlaceDto> places =
+                placesService.searchNearby(center, keyword)
+                        .stream()
+                        .limit(5)   // chỉ lấy 5 place
+                        .toList();
+
+        // 5. Tính travel time user → place
+        List<SuggestedPlaceResponse.PlaceDto> validPlaces = new ArrayList<>();
+
+        for (SuggestedPlaceResponse.PlaceDto place : places) {
+
+            LatLng placeLatLng = new LatLng(place.getLat(), place.getLng());
+
+            long totalTime = 0;
+            int count = 0;
+
+            for (LatLng userLocation : locations.values()) {
+
+                long time = directionsService.getTravelTimeSeconds(
+                        userLocation,
+                        placeLatLng
                 );
-                times.put(e.getKey(), t);
+
+                if (time == Long.MAX_VALUE) continue;
+
+                totalTime += time;
+                count++;
             }
 
-            center = weightedCenter(locations, times);
+            if (count == 0) {
+                place.setTravelTime(9999);
+                validPlaces.add(place);
+                continue;
+            }
+
+            long avgTime = totalTime / count;
+
+            place.setTravelTime(avgTime);
+            validPlaces.add(place);
         }
 
-        // 5. Tìm địa điểm
-        var places = placesService.searchNearby(center, keyword);
+        // 6. Sort theo thời gian di chuyển
+        validPlaces.sort(Comparator.comparingLong(
+                SuggestedPlaceResponse.PlaceDto::getTravelTime
+        ));
+
+        // 7. Lấy top 5
+        List<SuggestedPlaceResponse.PlaceDto> bestPlaces =
+                validPlaces.stream().limit(5).toList();
 
         return new SuggestedPlaceResponse(
                 new SuggestedPlaceResponse.CenterPoint(
                         center.getLat(),
                         center.getLng()
                 ),
-                places
+                bestPlaces
         );
-
     }
 
     private LatLng average(Collection<LatLng> points) {
         double lat = 0, lng = 0;
+
         for (LatLng p : points) {
             lat += p.getLat();
             lng += p.getLng();
         }
+
         return new LatLng(lat / points.size(), lng / points.size());
     }
-
-
-    private LatLng weightedCenter(
-            Map<String, LatLng> locations,
-            Map<String, Long> times
-    ) {
-        double lat = 0, lng = 0, sum = 0;
-
-        for (String uid : locations.keySet()) {
-            double w = times.get(uid);
-            LatLng p = locations.get(uid);
-
-            lat += p.getLat() * w;
-            lng += p.getLng() * w;
-            sum += w;
-        }
-        return new LatLng(lat / sum, lng / sum);
-    }
-
 }
-

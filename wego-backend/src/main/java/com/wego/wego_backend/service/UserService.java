@@ -57,4 +57,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    public void saveFcmToken(String firebaseUid, String token) {
+
+        User user = userRepository.findById(firebaseUid)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFcmToken(token);
+        userRepository.save(user);
+    }
 }

@@ -27,6 +27,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public Group createGroup(CreateGroupRequest request, String hostUid) {
 
@@ -307,6 +308,21 @@ public class GroupService {
 
         member.setStatus(GroupMemberStatus.LEFT);
         groupMemberRepository.save(member);
+    }
+
+    public void scheduleMeet(UUID groupId, LocalDateTime meetingTime) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (meetingTime.isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Meeting time cannot be in the past");
+        }
+
+        group.setMeetingTime(meetingTime);
+        group.setStatus(GroupStatus.ON_GOING);
+
+        groupRepository.save(group);
     }
 
 }

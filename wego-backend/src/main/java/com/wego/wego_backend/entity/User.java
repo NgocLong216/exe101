@@ -21,4 +21,8 @@ public class User {
     private String email;
     private String name;
     private String avatar;
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
 }

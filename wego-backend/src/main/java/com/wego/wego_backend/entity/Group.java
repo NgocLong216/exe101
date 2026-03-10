@@ -35,6 +35,8 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private GroupStatus status;
 
+    private Boolean meetNotificationSent = false;
+
     private LocalDateTime createdAt;
 }
 

@@ -2,6 +2,7 @@ package com.wego.wego_backend.controller;
 
 import com.wego.wego_backend.dto.CreateGroupRequest;
 import com.wego.wego_backend.dto.InviteMemberRequest;
+import com.wego.wego_backend.dto.ScheduleMeetRequest;
 import com.wego.wego_backend.dto.SuggestPlaceRequest;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.service.GroupPlaceSuggestionService;
@@ -137,5 +138,14 @@ public class GroupController {
         String firebaseUid = authentication.getName();
         groupService.leaveGroup(groupId, firebaseUid);
         return ResponseEntity.ok("Left group successfully");
+    }
+
+    @PostMapping("/{groupId}/schedule-meet")
+    public ResponseEntity<?> scheduleMeet(
+            @PathVariable UUID groupId,
+            @RequestBody ScheduleMeetRequest request) {
+
+        groupService.scheduleMeet(groupId, request.getMeetingTime());
+        return ResponseEntity.ok("Meet scheduled successfully");
     }
 }

@@ -1,589 +1,446 @@
 import { useEffect, useState, useRef } from "react";
+import goongjs from "@goongmaps/goong-js";
+import "@goongmaps/goong-js/dist/goong-js.css";
+
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { GoogleMap, LoadScript, Marker, Polyline, Autocomplete } from "@react-google-maps/api";
 import { ref, set, onValue, onDisconnect } from "firebase/database";
 import { db } from "../../firebase";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const USER_NAME = "Long";
-const FALLBACK_CENTER = { lat: 10.762622, lng: 106.660172 }; // HCM
+const FALLBACK_CENTER = [106.660172, 10.762622];
 
 export default function HomePage() {
+  const mapRef = useRef(null);
+  const mapContainer = useRef(null);
+  const GOONG_KEY = import.meta.env.VITE_GOONG_MAP_KEY;
   const [authUser, setAuthUser] = useState(null);
 
-  const [myLocation, setMyLocation] = useState(null);
-  const [friends, setFriends] = useState([]);
-  const [destination, setDestination] = useState(null);
-  const [routes, setRoutes] = useState({});
-  const [nearbyPlaces, setNearbyPlaces] = useState([]);
-  const [autoComplete, setAutoComplete] = useState(null);
-  const [creating, setCreating] = useState(false);
-  const API_URL = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
-  const [currentGroupId, setCurrentGroupId] = useState(null);
   const [allowedUids, setAllowedUids] = useState([]);
+  const [groupMembers, setGroupMembers] = useState([]);
+  const markersRef = useRef({});
 
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [suggestCenter, setSuggestCenter] = useState(null);
-  const [suggestedPlaces, setSuggestedPlaces] = useState([]);
-  const [loadingSuggest, setLoadingSuggest] = useState(false);
-  const onPlaceChanged = () => {
-    if (!autoComplete) return;
+  const [message, setMessage] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
 
-    const place = autoComplete.getPlace();
+  // gửi message đến backend để gợi ý địa điểm
+  const handleSendMessage = async () => {
+    if (!message.trim() || !authUser) return;
 
+    const token = await authUser.getIdToken();
 
-    // 👉 dùng text người dùng nhập làm keyword
-    setSearchKeyword(place.name);
-
-    // 👉 gọi backend suggest
-    suggestPlace(place.name);
-  };
-  const suggestPlace = async (keyword) => {
-    if (!currentGroupId || !keyword) return;
-
-    setLoadingSuggest(true);
-    setRoutes({});
-    setNearbyPlaces([]);
-    setDestination(null);
+    // Hiển thị tin nhắn user trước
+    setChatMessages((prev) => [
+      ...prev,
+      { role: "user", content: message },
+    ]);
 
     try {
-      const token = await getAuth().currentUser.getIdToken();
-
       const res = await fetch(
-        `${API_URL}/api/groups/${currentGroupId}/suggest-place?keyword=${encodeURIComponent(
-          keyword
-        )}`,
+        `${import.meta.env.VITE_API_URL}/api/groups/97e5e779-79ba-4ea4-a75a-001b3b677859/suggest-place`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            keyword: message,
+          }),
         }
       );
 
-      if (!res.ok) throw new Error(await res.text());
-
+      if (!res.ok) {
+        console.error("API error:", res.status);
+        return;
+      }
       const data = await res.json();
 
-      setSuggestCenter(data.centerPoint);
-      setSuggestedPlaces(data.places);
-    } catch (e) {
-      console.error("Suggest place error:", e);
-      alert("Không thể gợi ý địa điểm");
-    } finally {
-      setLoadingSuggest(false);
+      console.log("Suggest result:", data);
+
+      // Hiển thị kết quả trong chat
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Here are some suggested places:",
+          places: data.places,
+        },
+      ]);
+
+      setMessage("");
+
+    } catch (err) {
+      console.error("Suggest error:", err);
     }
   };
-  const selectSuggestedPlace = (p) => {
-    const dest = { lat: p.lat, lng: p.lng };
-    setDestination(dest);
-    setRoutes({});
 
-    fetchRoute("you", myLocation, dest);
-    friends.forEach((f) =>
-      fetchRoute(f.uid, { lat: f.lat, lng: f.lng }, dest)
-    );
-  };
-
-
-
-  const lastRouteTime = useRef({});
-
+  // hiện thị marker trên goongmap
   useEffect(() => {
-    const fetchMyGroups = async () => {
-      const token = await getAuth().currentUser?.getIdToken();
-      if (!token) return;
+    if (!mapRef.current) return;
 
-      const res = await fetch(`${API_URL}/api/groups/my`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const currentUids = groupMembers.map((m) => m.firebaseUid);
 
-      const groups = await res.json();
-      if (groups.length > 0) {
-        setCurrentGroupId(groups[0].id); // TEST: auto chọn group đầu
+    groupMembers.forEach((member) => {
+      if (markersRef.current[member.firebaseUid]) {
+        markersRef.current[member.firebaseUid].setLngLat([
+          member.lng,
+          member.lat,
+        ]);
+      } else {
+        const marker = new goongjs.Marker({ color: "#22c55e" })
+          .setLngLat([member.lng, member.lat])
+          .addTo(mapRef.current);
+
+        markersRef.current[member.firebaseUid] = marker;
       }
+    });
+
+    // remove marker nếu không còn tồn tại
+    Object.keys(markersRef.current).forEach((uid) => {
+      if (!currentUids.includes(uid)) {
+        markersRef.current[uid].remove();
+        delete markersRef.current[uid];
+      }
+    });
+
+  }, [groupMembers]);
+
+  // listen firebase realtime
+  useEffect(() => {
+    if (!allowedUids.length) return;
+
+    const locationsRef = ref(db, "live_locations");
+
+    const unsubscribe = onValue(locationsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const members = Object.values(data)
+        .filter((loc: any) => allowedUids.includes(loc.firebaseUid));
+
+      console.log("Group Members Locations:", members);
+
+      setGroupMembers(members);
+    });
+
+    return () => {
+      unsubscribe(); // 🔥 QUAN TRỌNG
     };
 
-    fetchMyGroups();
-  }, []);
+  }, [allowedUids]);
 
-
+  // lấy member uid
   useEffect(() => {
-    if (!currentGroupId) return;
+    if (!authUser) return;
 
-    const fetchGroupMembers = async () => {
-      const token = await getAuth().currentUser.getIdToken();
+    const fetchMembers = async () => {
+      const token = await authUser.getIdToken();
+
       const res = await fetch(
-        `${API_URL}/api/groups/${currentGroupId}/members/uids`,
+        `${import.meta.env.VITE_API_URL}/api/groups/97e5e779-79ba-4ea4-a75a-001b3b677859/members/uids`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       const data = await res.json();
+
+      console.log("Allowed UIDs:", data);
+
       setAllowedUids(data);
     };
 
-    fetchGroupMembers();
-  }, [currentGroupId]);
+    fetchMembers();
+  }, [authUser]);
 
-
-
-  /* =========================
-      AUTH
-  ========================= */
+  // lắng nghe login
   useEffect(() => {
     const auth = getAuth();
+
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setAuthUser({
-          uid: user.uid,
-          name: user.displayName || "Anonymous",
-          email: user.email,
-          avatar: user.photoURL,
-        });
+        setAuthUser(user);
       } else {
         setAuthUser(null);
       }
     });
+
     return unsub;
   }, []);
 
-
-  /* =========================
-      SEND MY GPS
-  ========================= */
+  // gửi vị trí lên firebase
   useEffect(() => {
     if (!authUser) return;
 
+    const locationRef = ref(db, `live_locations/${authUser.uid}`);
+
     const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
+      (position) => {
         const loc = {
           firebaseUid: authUser.uid,
-          name: authUser.name,
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
+          name: authUser.displayName || "Anonymous",
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
           updatedAt: Date.now(),
         };
 
-        setMyLocation({ lat: loc.lat, lng: loc.lng });
-        set(ref(db, `live_locations/${authUser.uid}`), loc);
+        // gửi lên firebase
+        set(locationRef, loc);
+
+        console.log("📡 Location sent:", loc);
       },
-      console.error,
-      { enableHighAccuracy: true, maximumAge: 3000 }
+      (error) => {
+        console.log("Geolocation error:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 3000,
+      }
     );
 
-    onDisconnect(ref(db, `live_locations/${authUser.uid}`)).remove();
-    return () => navigator.geolocation.clearWatch(watchId);
+    // tự xoá khi user offline
+    onDisconnect(locationRef).remove();
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
   }, [authUser]);
 
-
-  /* =========================
-      LISTEN FRIENDS GPS
-  ========================= */
   useEffect(() => {
-    if (!authUser) return;
+    if (!GOONG_KEY) return;
 
-    const locationsRef = ref(db, "live_locations");
-    return onValue(locationsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
+    goongjs.accessToken = GOONG_KEY;
 
-      const users = Object.entries(data)
-        .filter(([uid]) =>
-          uid !== authUser.uid && allowedUids.includes(uid)
-        )
-        .map(([uid, u]) => ({
-          uid,
-          name: u.name,
-          lat: u.lat,
-          lng: u.lng,
-        }));
-
-      setFriends(users);
+    mapRef.current = new goongjs.Map({
+      container: mapContainer.current,
+      style:
+        "https://tiles.goong.io/assets/goong_map_web.json?api_key=" +
+        GOONG_KEY,
+      center: FALLBACK_CENTER,
+      zoom: 13,
     });
-  }, [authUser, allowedUids]);
 
+    // Lấy vị trí hiện tại
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { longitude, latitude } = position.coords;
 
-
-  /* =========================
-      DIRECTIONS
-  ========================= */
-  const createGroup = async () => {
-    const token = await getAuth().currentUser?.getIdToken();
-    if (!token) {
-      alert("Chưa đăng nhập");
-      return;
-    }
-
-    setCreating(true);
-
-    try {
-      const res = await fetch(`${API_URL}/api/groups`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          mapRef.current.flyTo({
+            center: [longitude, latitude],
+            zoom: 15,
+          });
         },
-        body: JSON.stringify({
-          title: "Đi cafe cuối tuần",
-          description: "Tạo nhanh từ bản đồ",
-          meetingTime: null,
-          lat: null,
-          lng: null,
-          placeId: null,
-          memberIds: [],
-        }),
-      });
-
-      if (!res.ok) throw new Error(await res.text());
-
-      const data = await res.json();
-      alert("Tạo group thành công 🎉");
-
-      //  chuyển sang trang chi tiết group
-      // navigate(`/groups/${data.id}`);
-
-    } catch (err) {
-      console.error(err);
-      alert("Tạo group thất bại");
-    } finally {
-      setCreating(false);
-    }
-  };
-
-
-  const fetchRoute = (id, origin, destination) => {
-    const now = Date.now();
-    if (lastRouteTime.current[id] && now - lastRouteTime.current[id] < 15000)
-      return;
-
-    lastRouteTime.current[id] = now;
-
-    const service = new window.google.maps.DirectionsService();
-    service.route(
-      {
-        origin,
-        destination,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === "OK") {
-          const path = result.routes[0].overview_path.map((p) => ({
-            lat: p.lat(),
-            lng: p.lng(),
-          }));
-          setRoutes((prev) => ({ ...prev, [id]: path }));
+        (error) => {
+          console.log("Geolocation error:", error);
         }
-      }
-    );
-  };
-
-
-
-  useEffect(() => {
-    if (!myLocation || !destination) return;
-
-    fetchRoute("you", myLocation, destination);
-    friends.forEach((f) =>
-  fetchRoute(f.uid, { lat: f.lat, lng: f.lng }, [destination, friends, myLocation])
-);
-
-
-  }, [destination]);
-
-  /* =========================
-      NEARBY SEARCH (FRONTEND TEST)
-  ========================= */
-  const searchNearby = (location, type = "restaurant") => {
-    if (!window.google || !location) return;
-
-    const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
-    );
-
-    service.nearbySearch(
-      {
-        location,
-        radius: 1500,
-        type,
-      },
-      (results, status) => {
-        console.log("Nearby status:", status);
-        console.log("Nearby results:", results);
-
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          setNearbyPlaces(
-            results.map((p) => ({
-              id: p.place_id,
-              name: p.name,
-              lat: p.geometry.location.lat(),
-              lng: p.geometry.location.lng(),
-            }))
-          );
-        }
-      }
-    );
-  };
-
-  /* =========================
-      CLICK MAP
-  ========================= */
-  const handleMapClick = (e) => {
-    const dest = {
-      lat: e.latLng.lat(),
-      lng: e.latLng.lng(),
-    };
-
-    setDestination(dest);
-    setRoutes({});
-    setNearbyPlaces([]);
-    searchNearby(dest, "restaurant");
-  };
-
-  const handleLogout = async () => {
-    try {
-      const auth = getAuth();
-      const token = await auth.currentUser?.getIdToken();
-  
-      // gọi backend revoke nếu có
-      if (token) {
-        await fetch(`${API_URL}/api/auth/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-  
-      // logout firebase
-      await signOut(auth);
-  
-      // xoá token backend nếu bạn có lưu
-      localStorage.removeItem("token");
-  
-      navigate("/");
-  
-    } catch (err) {
-      console.error("Logout error:", err);
-      alert("Logout thất bại");
+      );
     }
-  };
+
+    return () => mapRef.current?.remove();
+  }, [GOONG_KEY]);
 
   return (
-    <LoadScript
-      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_KEY}
-      libraries={["places"]}
-    >
-      {/* TEST BUTTON */}
+    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 overflow-hidden h-screen flex flex-col">
 
-      <button
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          top: 10,
-          left: 10,
-          padding: "8px 12px",
-          background: "#2e7d32",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate("/groups")}
-      >
-        👥 Group của tôi
-      </button>
-
-      <button
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          top: 110,
-          left: 10,
-          padding: "8px 12px",
-          background: "#f57c00",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate("/invitations")}
-      >
-        📩 Lời mời group
-      </button>
-
-
-      <button
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          top: 60,
-          left: 10,
-          padding: "8px 12px",
-          background: "#1976d2",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-        disabled={creating}
-        onClick={createGroup}
-      >
-        {creating ? "Đang tạo..." : "➕ Tạo group"}
-      </button>
-
-      <button
-  style={{
-    position: "absolute",
-    zIndex: 10,
-    top: 210,
-    left: 10,
-    padding: "8px 12px",
-    background: "#6a1b9a",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  }}
-  onClick={() => navigate("/profile")}
->
-  👤 Xem Profile
-</button>
-
-      <button
-  style={{
-    position: "absolute",
-    zIndex: 10,
-    top: 160,
-    left: 10,
-    padding: "8px 12px",
-    background: "#d32f2f",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  }}
-  onClick={handleLogout}
->
-  🚪 Logout
-</button>
-
-      <Autocomplete
-        onLoad={(ac) => setAutoComplete(ac)}
-        onPlaceChanged={onPlaceChanged}
-      >
-        <input
-          type="text"
-          placeholder="Tìm địa điểm..."
-          value={searchKeyword}
-         onChange={(e) => setSearchKeyword(e.target.value)}
-          style={{
-            position: "absolute",
-            top: 10,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "320px",
-            height: "40px",
-            padding: "0 12px",
-            zIndex: 10,
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            outline: "none",
-          }}
-        />
-      </Autocomplete>
-
-      <button
-          style={{
-            position: "absolute",
-            top: 60,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 10,
-            padding: "6px 10px",
-          }}
-          onClick={() => suggestPlace(searchKeyword)}
-        >
-          🔍 Tìm địa điểm
-        </button>
-
-
-      <GoogleMap
-        mapContainerStyle={{ width: "100%", height: "500px" }}
-        center={myLocation || FALLBACK_CENTER}
-        zoom={13}
-        onClick={handleMapClick}
-      >
-        {/* DESTINATION */}
-        {destination && (
-          <Marker
-            position={destination}
-            label="Điểm hẹn"
-            icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-          />
-        )}
-
-        {/* NEARBY PLACES */}
-        {nearbyPlaces.map((p) => (
-          <Marker
-            key={p.id}
-            position={{ lat: p.lat, lng: p.lng }}
-            label={p.name}
-            icon="http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
-          />
-        ))}
-        {suggestCenter && (
-          <Marker
-            position={suggestCenter}
-            label="📍 Điểm hẹn tối ưu"
-            icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-          />
-        )}
-        {suggestedPlaces.map((p) => (
-          <Marker
-            key={p.placeId}
-            position={{ lat: p.lat, lng: p.lng }}
-            label={p.name}
-            icon="http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
-            onClick={() => selectSuggestedPlace(p)}
-          />
-        ))}
-        
-
-
-        {/* YOU */}
-        {myLocation && (
-          <Marker
-            position={myLocation}
-            label="YOU"
-            icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-          />
-        )}
-
-        {/* YOU ROUTE */}
-        {routes.you && (
-          <Polyline
-            path={routes.you}
-            options={{ strokeColor: "#0000FF", strokeWeight: 4 }}
-          />
-        )}
-
-        {/* FRIENDS */}
-        {friends.map((f) => (
-          <div key={f.uid}>
-            <Marker
-              position={{ lat: f.lat, lng: f.lng }}
-              label={f.name}
-              icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-            />
-            {routes[f.uid] && (
-  <Polyline
-    path={routes[f.uid]}
-    options={{ strokeColor: "#00AA00", strokeWeight: 4 }}
-  />
-)}
-
+      {/* HEADER */}
+      <header className="flex h-16 items-center justify-between border-b border-primary/10 bg-white dark:bg-background-dark/50 px-6 shrink-0 z-20">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
+              <span className="material-symbols-outlined text-2xl">
+                explore
+              </span>
+            </div>
+            <h2 className="text-xl font-bold tracking-tight">
+              WeGo
+            </h2>
           </div>
-        ))}
-      </GoogleMap>
-    </LoadScript>
+
+          <nav className="hidden md:flex items-center gap-6">
+            <a className="flex items-center gap-2 text-primary font-semibold border-b-2 border-primary px-1 py-4">
+              <span className="material-symbols-outlined text-[20px]">
+                map
+              </span>
+              Map
+            </a>
+            <a className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4">
+              <span className="material-symbols-outlined text-[20px]">
+                calendar_today
+              </span>
+              Schedule
+            </a>
+            <Link
+              to="/groups"
+              className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                group
+              </span>
+              Groups
+            </Link>
+            <Link
+              to="/invitations"
+              className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                group
+              </span>
+              Invite
+            </Link>
+            <a className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4">
+              <span className="material-symbols-outlined text-[20px]">
+                settings
+              </span>
+              Settings
+            </a>
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="relative group">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+              search
+            </span>
+            <input
+              className="h-10 w-64 rounded-full bg-primary/5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 outline-none"
+              placeholder="Find a destination..."
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN */}
+      <main className="flex flex-1 overflow-hidden h-full">
+
+        {/* MAP SECTION */}
+        <section className="relative flex-1 h-full">
+
+          {/* Goong Map */}
+          <div
+            ref={mapContainer}
+            className="absolute inset-0 h-full"
+          />
+
+          {/* Overlay Buttons */}
+          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-6 z-10">
+            <div className="flex justify-between items-start pointer-events-auto">
+              <div className="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-xl border border-primary/10 flex gap-2">
+                <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">
+                    local_cafe
+                  </span>
+                  Coffee
+                </button>
+
+                <button className="px-4 py-2 hover:bg-primary/10 rounded-lg text-sm flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">
+                    restaurant
+                  </span>
+                  Restaurants
+                </button>
+
+                <button className="px-4 py-2 hover:bg-primary/10 rounded-lg text-sm flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">
+                    hotel
+                  </span>
+                  Hotels
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* AI CHAT SIDEBAR */}
+        <aside className="w-[420px] bg-white dark:bg-background-dark border-l border-primary/10 flex flex-col shrink-0 z-30 shadow-2xl">
+
+          {/* Sidebar Header */}
+          <div className="p-6 border-b border-primary/10 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <span className="material-symbols-outlined text-base">
+                smart_toy
+              </span>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Map Assistant</h3>
+              <p className="text-slate-500 text-sm">
+                Powered by WeGo · Always here to help
+              </p>
+            </div>
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {chatMessages.map((msg, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-2xl text-sm ${msg.role === "user"
+                  ? "bg-primary text-white self-end"
+                  : "bg-primary/5"
+                  }`}
+              >
+                {msg.content}
+
+                {Array.isArray(msg.places) &&
+                  msg.places.map((p) => (
+                    <div
+                      key={p.placeId}
+                      className="bg-white rounded-2xl shadow-md overflow-hidden mt-3 border border-slate-200"
+                    >
+                      {/* Thumbnail */}
+                      <img
+                        src={p.thumbnail}
+                        alt={p.name}
+                        className="w-full h-40 object-cover"
+                      />
+
+                      {/* Content */}
+                      <div className="p-4">
+                        <h4 className="font-semibold text-base">{p.name}</h4>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-1 text-sm text-slate-600 mt-1">
+                          <span className="material-symbols-outlined text-amber-500 text-[18px]">
+                            star
+                          </span>
+                          {p.rating}
+                        </div>
+
+                        {/* Travel time */}
+                        <div className="text-sm text-slate-500 mt-1">
+                          {Math.round(p.travelTime / 60)} min away
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Input */}
+          <div className="p-6 border-t border-primary/10">
+            <div className="flex items-center gap-3 bg-primary/5 p-2 rounded-2xl">
+              <input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSendMessage();
+                }}
+                className="flex-1 bg-transparent outline-none text-sm"
+                placeholder="Ask about places, directions..."
+              />
+
+              <button
+                onClick={handleSendMessage}
+                className="w-10 h-10 bg-primary text-white rounded-xl"
+              >
+                ➤
+              </button>
+            </div>
+          </div>
+
+        </aside>
+      </main>
+    </div>
   );
 }
