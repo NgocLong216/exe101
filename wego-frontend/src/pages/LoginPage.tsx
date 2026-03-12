@@ -1,6 +1,6 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { useState } from "react";
 import { requestFcmToken } from "../firebase-messaging";
 
@@ -8,20 +8,18 @@ export default function LoginPage({ setUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const loginWithGoogle = async () => {
+  const loginWithFacebook = async () => {
     try {
       const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-  
+      const provider = new FacebookAuthProvider();
+
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
-  
-      // 🔥 FIREBASE ID TOKEN
+
       const firebaseIdToken = await firebaseUser.getIdToken();
-  
-      // 🔥 LOGIN BACKEND
+
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/google`,
+        `${import.meta.env.VITE_API_URL}/api/auth/firebase`,
         {
           method: "POST",
           headers: {
@@ -32,22 +30,61 @@ export default function LoginPage({ setUser }) {
           }),
         }
       );
-  
-      if (!res.ok) throw new Error("Backend login failed");
-  
+
       const data = await res.json();
-  
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
+
+      navigate("/home");
+
+    } catch (err) {
+      console.error(err);
+      setError("Đăng nhập Facebook thất bại");
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const auth = getAuth();
+      const provider = new GoogleAuthProvider();
+
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      // 🔥 FIREBASE ID TOKEN
+      const firebaseIdToken = await firebaseUser.getIdToken();
+
+      // 🔥 LOGIN BACKEND
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/firebase`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: firebaseIdToken,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Backend login failed");
+
+      const data = await res.json();
+
       // Lưu JWT
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);
-  
+
       // =========================
       // 🔥 LẤY FCM TOKEN
       // =========================
-  
+
       const fcmToken = await requestFcmToken();
-  
+
       if (fcmToken) {
         await fetch(`${import.meta.env.VITE_API_URL}/api/users/save-fcm-token`, {
           method: "POST",
@@ -60,7 +97,7 @@ export default function LoginPage({ setUser }) {
           }),
         });
       }
-  
+
       navigate("/home");
     } catch (err) {
       console.error(err);
@@ -81,6 +118,13 @@ export default function LoginPage({ setUser }) {
         >
           <FaGoogle className="text-red-500" />
           Đăng nhập bằng Google
+        </button>
+        <button
+          onClick={loginWithFacebook}
+          className="w-full flex items-center justify-center gap-3 h-12 border-2 border-gray-300 rounded-lg text-lg font-medium hover:bg-gray-100 transition mt-4"
+        >
+          <FaFacebook className="text-blue-600" />
+          Đăng nhập bằng Facebook
         </button>
       </div>
     </main>

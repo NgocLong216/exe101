@@ -16,7 +16,7 @@ public class AuthController {
     @Autowired
     private GoogleAuthService googleAuthService;
 
-    @PostMapping("/google")
+    @PostMapping("/firebase")
     public ResponseEntity<?> loginWithGoogle(
             @RequestBody GoogleLoginRequest request
     ) {

@@ -389,9 +389,12 @@ export default function HomePage() {
                     >
                       {/* Thumbnail */}
                       <img
-                        src={p.thumbnail}
+                        src={`${p.thumbnail}=w600-h400`}
                         alt={p.name}
                         className="w-full h-40 object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://placehold.co/600x400?text=No+Image";
+                        }}
                       />
 
                       {/* Content */}

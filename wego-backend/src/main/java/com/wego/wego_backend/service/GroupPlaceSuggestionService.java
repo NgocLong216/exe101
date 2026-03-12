@@ -33,11 +33,18 @@ public class GroupPlaceSuggestionService {
         Map<String, LatLng> locations =
                 firebaseLocationService.getLocations(memberUids);
 
-        if (locations.size() < 2)
-            throw new RuntimeException("Not enough members with location");
+        // Chỉ cần >=1 user
+        if (locations.isEmpty())
+            throw new RuntimeException("No member location found");
 
-        // 3. Tính center hình học
-        LatLng center = average(locations.values());
+        // 3. Tính center
+        LatLng center;
+
+        if (locations.size() == 1) {
+            center = locations.values().iterator().next(); // lấy luôn vị trí user
+        } else {
+            center = average(locations.values());
+        }
 
         System.out.println("Center lat: " + center.getLat());
         System.out.println("Center lng: " + center.getLng());
