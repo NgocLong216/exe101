@@ -22,5 +22,6 @@ public class MyGroupResponse {
     private GroupStatus status;
     private int memberCount;
     private boolean isHost;
+    private String groupPhoto;
 }
 

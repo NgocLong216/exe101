@@ -25,5 +25,6 @@ public class CreateGroupRequest {
     private String placeId;
 
     private List<String> memberFirebaseUids;
+    private String groupPhoto;
 }
 

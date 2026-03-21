@@ -13,6 +13,7 @@ import com.wego.wego_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,27 +28,56 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
     private final NotificationService notificationService;
 
-    public Group createGroup(CreateGroupRequest request, String hostUid) {
+    public Group createGroup(
+            String title,
+            String description,
+            String meetingTime,
+            Double lat,
+            Double lng,
+            String placeId,
+            MultipartFile groupPhoto,
+            List<String> memberFirebaseUids,
+            String hostUid
+    ) {
 
         User host = userRepository.findById(hostUid)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Group group = new Group();
-        group.setTitle(request.getTitle());
-        group.setDescription(request.getDescription());
-        group.setMeetingTime(request.getMeetingTime());
-        group.setLocationLat(request.getLat());
-        group.setLocationLng(request.getLng());
-        group.setPlaceId(request.getPlaceId());
+
+        group.setTitle(title);
+        group.setDescription(description);
+        group.setLocationLat(lat);
+        group.setLocationLng(lng);
+        group.setPlaceId(placeId);
         group.setHostFirebaseUid(hostUid);
         group.setStatus(GroupStatus.WAITING);
         group.setCreatedAt(LocalDateTime.now());
 
+        // parse meetingTime nếu có
+        if (meetingTime != null) {
+            group.setMeetingTime(LocalDateTime.parse(meetingTime));
+        }
+
+        // Upload ảnh lên Cloudinary
+        if (groupPhoto != null && !groupPhoto.isEmpty()) {
+
+            String photoUrl = cloudinaryService.uploadFile(groupPhoto);
+            group.setGroupPhoto(photoUrl);
+
+        } else {
+
+            group.setGroupPhoto(
+                    "https://ui-avatars.com/api/?name=" + title
+            );
+        }
+
         groupRepository.save(group);
 
-        // Add host as member
+        // Host member
         GroupMember hostMember = new GroupMember();
         hostMember.setGroup(group);
         hostMember.setUserFirebaseUid(hostUid);
@@ -58,8 +88,8 @@ public class GroupService {
         groupMemberRepository.save(hostMember);
 
         // Invite members
-        if (request.getMemberFirebaseUids() != null) {
-            for (String firebaseUid : request.getMemberFirebaseUids()) {
+        if (memberFirebaseUids != null) {
+            for (String firebaseUid : memberFirebaseUids) {
 
                 if (firebaseUid.equals(hostUid)) continue;
 
@@ -130,10 +160,41 @@ public class GroupService {
                             g.getMeetingTime(),
                             g.getStatus(),
                             memberCount,
-                            g.getHostFirebaseUid().equals(firebaseUid)
+                            g.getHostFirebaseUid().equals(firebaseUid),
+                            g.getGroupPhoto()
                     );
                 })
                 .toList();
+    }
+
+    @Transactional
+    public void updateGroup(
+            UUID groupId,
+            UpdateGroupRequest request,
+            String currentUid
+    ) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // chỉ host được sửa
+        if (!group.getHostFirebaseUid().equals(currentUid)) {
+            throw new RuntimeException("Only host can update group");
+        }
+
+        if (request.getTitle() != null) {
+            group.setTitle(request.getTitle());
+        }
+
+        if (request.getDescription() != null) {
+            group.setDescription(request.getDescription());
+        }
+
+        if (request.getGroupPhoto() != null) {
+            group.setGroupPhoto(request.getGroupPhoto());
+        }
+
+        groupRepository.save(group);
     }
 
     public void inviteMember(UUID groupId, InviteMemberRequest request, String hostUid) {

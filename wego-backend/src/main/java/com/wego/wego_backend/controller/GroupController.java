@@ -1,18 +1,18 @@
 package com.wego.wego_backend.controller;
 
-import com.wego.wego_backend.dto.CreateGroupRequest;
-import com.wego.wego_backend.dto.InviteMemberRequest;
-import com.wego.wego_backend.dto.ScheduleMeetRequest;
-import com.wego.wego_backend.dto.SuggestPlaceRequest;
+import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.service.GroupPlaceSuggestionService;
 import com.wego.wego_backend.service.GroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,13 +23,37 @@ public class GroupController {
     private final GroupService groupService;
     private final GroupPlaceSuggestionService groupPlaceSuggestionService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createGroup(
-            @RequestBody @Valid CreateGroupRequest request,
+
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String meetingTime,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false) String placeId,
+
+            @RequestParam(required = false) MultipartFile groupPhoto,
+
+            @RequestParam(required = false) List<String> memberFirebaseUids,
+
             Authentication authentication
     ) {
+
         String firebaseUid = authentication.getName();
-        Group group = groupService.createGroup(request, firebaseUid);
+
+        Group group = groupService.createGroup(
+                title,
+                description,
+                meetingTime,
+                lat,
+                lng,
+                placeId,
+                groupPhoto,
+                memberFirebaseUids,
+                firebaseUid
+        );
+
         return ResponseEntity.ok(group);
     }
 
@@ -37,6 +61,23 @@ public class GroupController {
     public ResponseEntity<?> getMyGroups(Authentication authentication) {
         String firebaseUid = authentication.getName();
         return ResponseEntity.ok(groupService.getMyGroups(firebaseUid));
+    }
+
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<?> updateGroup(
+            @PathVariable UUID groupId,
+            @RequestBody UpdateGroupRequest request,
+            Authentication authentication
+    ) {
+        String firebaseUid = authentication.getName();
+
+        groupService.updateGroup(
+                groupId,
+                request,
+                firebaseUid
+        );
+
+        return ResponseEntity.ok("Group updated successfully");
     }
 
     @PostMapping("/{groupId}/invite")

@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import MyGroupsPage from "./pages/MyGroupsPage";
+import CreateGroupPage from "./pages/CreateGroupPage";
 import GroupDetailPage from "./pages/GroupDetailPage";
 import InvitationsPage from "./pages/InvitationsPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -36,6 +37,7 @@ function App() {
         <Route path="/" element={<LoginPage setUser={setUser} />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/groups" element={<MyGroupsPage />} />
+        <Route path="/groups/create" element={<CreateGroupPage />} />
         <Route path="/groups/:groupId" element={<GroupDetailPage />} />
         <Route path="/invitations" element={<InvitationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />

@@ -38,5 +38,7 @@ public class Group {
     private Boolean meetNotificationSent = false;
 
     private LocalDateTime createdAt;
+
+    private String groupPhoto;
 }
 
