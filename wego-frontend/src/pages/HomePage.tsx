@@ -22,6 +22,38 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
 
+  const [selectedPlace, setSelectedPlace] = useState(null);
+
+  const handleOpenPlace = async (placeId) => {
+    try {
+      if (!authUser) return;
+
+      const token = await authUser.getIdToken();
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/groups/places/${placeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        console.error("HTTP error:", res.status);
+        return;
+      }
+
+      const data = await res.json();
+
+      console.log("DETAIL:", data);
+      setSelectedPlace(data);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // gửi message đến backend để gợi ý địa điểm
   const handleSendMessage = async () => {
     if (!message.trim() || !authUser) return;
@@ -288,12 +320,15 @@ export default function HomePage() {
               </span>
               Invite
             </Link>
-            <a className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4">
+            <Link
+              to="/profile"
+              className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors px-1 py-4"
+            >
               <span className="material-symbols-outlined text-[20px]">
                 settings
               </span>
               Settings
-            </a>
+            </Link>
           </nav>
         </div>
 
@@ -389,9 +424,10 @@ export default function HomePage() {
                     >
                       {/* Thumbnail */}
                       <img
-                        src={`${p.thumbnail}=w600-h400`}
+                        src={p.thumbnail}
                         alt={p.name}
-                        className="w-full h-40 object-cover"
+                        onClick={() => handleOpenPlace(p.placeId)}
+                        className="cursor-pointer w-full h-40 object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "https://placehold.co/600x400?text=No+Image";
                         }}
@@ -444,6 +480,146 @@ export default function HomePage() {
 
         </aside>
       </main>
+
+      {selectedPlace && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl w-[600px] max-h-[90vh] overflow-y-auto">
+
+            {/* HEADER */}
+            <h2 className="text-2xl font-bold">
+              {selectedPlace.name}
+            </h2>
+
+            {selectedPlace.thumbnail && (
+              <img
+                src={selectedPlace.thumbnail}
+                className="w-full h-48 object-cover rounded-lg mt-3"
+              />
+            )}
+
+            <p className="text-gray-600">{selectedPlace.address}</p>
+
+            <div className="flex items-center gap-3 mt-2">
+              <span>⭐ {selectedPlace.rating} ({selectedPlace.reviews})</span>
+              <span className="text-green-600 font-semibold">
+                {selectedPlace.open_state}
+              </span>
+            </div>
+
+            {/* CONTACT */}
+            <div className="mt-2">
+              <p>📞 {selectedPlace.phone}</p>
+              {selectedPlace.website && (
+                <a
+                  href={selectedPlace.website}
+                  target="_blank"
+                  className="text-blue-500 underline"
+                >
+                  🌐 Website
+                </a>
+              )}
+            </div>
+
+            {/* TYPES */}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {selectedPlace.types?.map((t, i) => (
+                <span
+                  key={i}
+                  className="bg-gray-100 px-2 py-1 rounded text-sm"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            {/* PHOTOS */}
+            <div className="flex gap-2 mt-4 overflow-x-auto">
+              {selectedPlace.photos?.map((photo, i) => (
+                <img
+                  key={i}
+                  src={photo.thumbnail || photo.image}
+                  className="w-40 h-28 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+
+            {/* HOURS */}
+            <div className="mt-4">
+              <h3 className="font-semibold">🕒 Opening Hours</h3>
+              {selectedPlace.hours?.map((h, i) => (
+                <p key={i} className="text-sm text-gray-600">
+                  {Object.entries(h)[0].join(": ")}
+                </p>
+              ))}
+            </div>
+
+            {/* SERVICES */}
+            <div className="mt-4">
+              <h3 className="font-semibold">⚙️ Services</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedPlace.service_options &&
+                  Object.keys(selectedPlace.service_options)
+                    .filter(key => selectedPlace.service_options[key])
+                    .map((key, i) => (
+                      <span
+                        key={i}
+                        className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm"
+                      >
+                        {key}
+                      </span>
+                    ))}
+              </div>
+            </div>
+
+            {/* DESCRIPTION */}
+            {selectedPlace.description && (
+              <div className="mt-4">
+                <h3 className="font-semibold">📖 Description</h3>
+                <p className="text-gray-700 text-sm">
+                  {selectedPlace.description}
+                </p>
+              </div>
+            )}
+
+            {/* REVIEWS */}
+            <div className="mt-4">
+              <h3 className="font-semibold">💬 Top Reviews</h3>
+
+              {selectedPlace.top_reviews?.map((r, i) => (
+                <div key={i} className="border-b py-2">
+                  <p className="font-semibold">
+                    {r.username} ⭐ {r.rating}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {r.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ACTIONS */}
+            <div className="mt-5 flex justify-between">
+              {selectedPlace.lat && (
+                <a
+                  href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                  target="_blank"
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  📍 Open in Maps
+                </a>
+              )}
+
+              <button
+                onClick={() => setSelectedPlace(null)}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

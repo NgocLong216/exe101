@@ -5,9 +5,11 @@ import com.wego.wego_backend.repository.UserRepository;
 import com.wego.wego_backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -37,15 +39,19 @@ public class UserController {
         );
     }
 
-    @PutMapping("/me")
+    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateMyProfile(
-            @RequestBody @Valid UpdateProfileRequest request,
+
+            @RequestParam String name,
+            @RequestParam(required = false) MultipartFile avatar,
+
             Authentication authentication
     ) {
+
         String firebaseUid = authentication.getName();
 
         return ResponseEntity.ok(
-                userService.updateMyProfile(firebaseUid, request)
+                userService.updateMyProfile(firebaseUid, name, avatar)
         );
     }
 

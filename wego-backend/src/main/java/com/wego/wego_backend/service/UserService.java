@@ -6,6 +6,7 @@ import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
 
     public List<UserProfileResponse> searchUsers(String keyword) {
 
@@ -44,15 +46,21 @@ public class UserService {
         );
     }
 
-    public User updateMyProfile(String firebaseUid, UpdateProfileRequest request) {
+    public User updateMyProfile(
+            String firebaseUid,
+            String name,
+            MultipartFile avatar
+    ) {
 
         User user = userRepository.findById(firebaseUid)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setName(request.getName());
+        user.setName(name);
 
-        if (request.getAvatar() != null) {
-            user.setAvatar(request.getAvatar());
+        if (avatar != null && !avatar.isEmpty()) {
+
+            String avatarUrl = cloudinaryService.uploadFile(avatar);
+            user.setAvatar(avatarUrl);
         }
 
         return userRepository.save(user);

@@ -4,6 +4,7 @@ import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.service.GroupPlaceSuggestionService;
 import com.wego.wego_backend.service.GroupService;
+import com.wego.wego_backend.service.SerpApiPlacesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ public class GroupController {
 
     private final GroupService groupService;
     private final GroupPlaceSuggestionService groupPlaceSuggestionService;
+    private final SerpApiPlacesService serpApiPlacesService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createGroup(
@@ -157,6 +159,15 @@ public class GroupController {
                         groupId,
                         request.getKeyword()
                 )
+        );
+    }
+
+    @GetMapping("/places/{placeId}")
+    public ResponseEntity<?> getPlaceDetail(
+            @PathVariable String placeId
+    ) {
+        return ResponseEntity.ok(
+                serpApiPlacesService.getPlaceDetail(placeId)
         );
     }
 

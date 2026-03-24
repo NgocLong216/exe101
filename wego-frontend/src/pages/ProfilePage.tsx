@@ -7,6 +7,8 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -44,29 +46,48 @@ export default function ProfilePage() {
       const token = await getAuth().currentUser?.getIdToken();
       if (!token) return;
 
+      const formData = new FormData();
+      formData.append("name", name);
+
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+
       const res = await fetch(`${API_URL}/api/users/me`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name,
-          avatar,
-        }),
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Update failed");
 
       const updated = await res.json();
+
       setProfile(updated);
       setEditing(false);
+
+      // reset preview
+      setAvatarFile(null);
+      setPreview(null);
+
       alert("Cập nhật thành công ✅");
 
     } catch (err) {
       console.error(err);
       alert("Cập nhật thất bại ❌");
     }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setAvatarFile(file);
+
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
   };
 
   if (!profile) return <div>Loading...</div>;
@@ -77,7 +98,7 @@ export default function ProfilePage() {
 
       <div style={{ position: "relative", display: "inline-block" }}>
         <img
-          src={editing ? avatar : profile.avatar}
+          src={preview || profile.avatar}
           alt="avatar"
           style={{
             width: "120px",
@@ -90,10 +111,9 @@ export default function ProfilePage() {
 
         {editing && (
           <input
-            type="text"
-            placeholder="Avatar URL"
-            value={avatar}
-            onChange={(e) => setAvatar(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
             style={{ display: "block", margin: "10px auto" }}
           />
         )}
