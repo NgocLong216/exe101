@@ -1,26 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
-  onValue,
-  push,
-  ref,
-  set,
-  off
+    onValue,
+    push,
+    ref,
+    set,
+    off
 } from "firebase/database";
-
+import { useParams } from "react-router-dom";
 
 
 import { db } from "../../firebase";
 
 export default function GroupChatPage() {
 
-    const groupId = "group_123";
+    const { groupId } = useParams();
 
-    // fake current user
+
+    const userData = JSON.parse(
+        localStorage.getItem("user")
+    );
+
     const currentUser = {
-        uid: "user_1",
-        name: "Long",
+        uid: userData.firebaseUid,
+        name: userData.name,
+        avatar: userData.avatar,
     };
+
+
+
 
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState("");
@@ -126,15 +134,15 @@ export default function GroupChatPage() {
                             <div
                                 key={msg.id}
                                 className={`flex ${isMine
-                                        ? "justify-end"
-                                        : "justify-start"
+                                    ? "justify-end"
+                                    : "justify-start"
                                     }`}
                             >
 
                                 <div
                                     className={`max-w-xs px-4 py-2 rounded-2xl shadow ${isMine
-                                            ? "bg-blue-500 text-white"
-                                            : "bg-white"
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-white"
                                         }`}
                                 >
 

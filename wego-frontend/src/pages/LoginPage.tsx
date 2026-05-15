@@ -73,11 +73,13 @@ export default function LoginPage({ setUser }) {
       if (!res.ok) throw new Error("Backend login failed");
 
       const data = await res.json();
+      console.log("Backend response:", data);
+
 
       // Lưu JWT
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
 
       // =========================
       // 🔥 LẤY FCM TOKEN
