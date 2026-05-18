@@ -1,5 +1,6 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.SuggestPlaceRequest;
 import com.wego.wego_backend.dto.UpdateProfileRequest;
 import com.wego.wego_backend.repository.UserRepository;
 import com.wego.wego_backend.service.UserService;
@@ -67,5 +68,21 @@ public class UserController {
         userService.saveFcmToken(firebaseUid, token);
 
         return ResponseEntity.ok("Token saved");
+    }
+
+    @PostMapping("/suggest-place")
+    public ResponseEntity<?> suggestPlace(
+            @RequestBody SuggestPlaceRequest request,
+            Authentication authentication
+    ) {
+
+        String firebaseUid = authentication.getName();
+
+        return ResponseEntity.ok(
+                userService.suggest(
+                        firebaseUid,
+                        request.getKeyword()
+                )
+        );
     }
 }

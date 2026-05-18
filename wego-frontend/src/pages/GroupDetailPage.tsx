@@ -345,6 +345,21 @@ export default function GroupDetailPage() {
       >
         Chat
       </button>
+
+      <button
+        style={{
+          background: "green",
+          color: "white",
+          padding: "8px 12px",
+          border: "none",
+          borderRadius: 6,
+          marginTop: 24,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate(`/groups/${groupId}/ai-chat`)}
+      >
+        AI Chat
+      </button>
     </div>
 
   );

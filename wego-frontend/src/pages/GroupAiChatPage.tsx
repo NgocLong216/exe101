@@ -69,7 +69,7 @@ export default function HomePage() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/users/suggest-place`,
+        `${import.meta.env.VITE_API_URL}/api/groups/${groupId}/suggest-place`,
         {
           method: "POST",
           headers: {
@@ -165,9 +165,25 @@ export default function HomePage() {
   // lấy member uid
   useEffect(() => {
     if (!authUser) return;
-  
-    setAllowedUids([authUser.uid]);
-  
+
+    const fetchMembers = async () => {
+      const token = await authUser.getIdToken();
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/groups/${groupId}/members/uids`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json();
+
+      console.log("Allowed UIDs:", data);
+
+      setAllowedUids(data);
+    };
+
+    fetchMembers();
   }, [authUser]);
 
   // lắng nghe login

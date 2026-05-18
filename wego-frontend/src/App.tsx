@@ -11,6 +11,7 @@ import GroupDetailPage from "./pages/GroupDetailPage";
 import InvitationsPage from "./pages/InvitationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import GroupChatPage from "./pages/GroupChatPage";
+import GroupAIChatPage from "./pages/GroupAIChatPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -43,6 +44,7 @@ function App() {
         <Route path="/invitations" element={<InvitationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/groups/:groupId/chat" element={<GroupChatPage />} />
+        <Route path="/groups/:groupId/ai-chat" element={<GroupAIChatPage />} />
       </Routes>
     </>
   );
