@@ -55,6 +55,7 @@ export default function LoginPage({ setUser }) {
 
       // 🔥 FIREBASE ID TOKEN
       const firebaseIdToken = await firebaseUser.getIdToken();
+      console.log("Firebase ID Token:", firebaseIdToken);
 
       // 🔥 LOGIN BACKEND
       const res = await fetch(
@@ -74,7 +75,6 @@ export default function LoginPage({ setUser }) {
 
       const data = await res.json();
       console.log("Backend response:", data);
-
 
       // Lưu JWT
       localStorage.setItem("token", data.token);
