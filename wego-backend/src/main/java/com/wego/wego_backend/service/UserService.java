@@ -110,7 +110,7 @@ public class UserService {
 
         // 4. Tìm địa điểm quanh center
         List<SuggestedPlaceResponse.PlaceDto> places =
-                placesService.searchNearby(center, keyword)
+                placesService.searchNearby(keyword)
                         .stream()
                         .limit(5)
                         .toList();
@@ -141,35 +141,18 @@ public class UserService {
                 count++;
             }
 
-            if (count == 0) {
-                place.setTravelTime(9999);
-                validPlaces.add(place);
-                continue;
-            }
-
-            long avgTime = totalTime / count;
-
-            place.setTravelTime(avgTime);
 
             validPlaces.add(place);
         }
 
         // 6. Sort theo travel time
-        validPlaces.sort(
-                Comparator.comparingLong(
-                        SuggestedPlaceResponse.PlaceDto::getTravelTime
-                )
-        );
+
 
         // 7. Top 5
         List<SuggestedPlaceResponse.PlaceDto> bestPlaces =
                 validPlaces.stream().limit(5).toList();
 
         return new SuggestedPlaceResponse(
-                new SuggestedPlaceResponse.CenterPoint(
-                        center.getLat(),
-                        center.getLng()
-                ),
                 bestPlaces
         );
     }

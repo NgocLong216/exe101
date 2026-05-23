@@ -22,25 +22,18 @@ public class SerpApiPlacesService {
 
     @SuppressWarnings("unchecked")
     public List<SuggestedPlaceResponse.PlaceDto> searchNearby(
-            LatLng center,
             String keyword
     ) {
 
         try {
 
-            String ll = String.format(Locale.US, "@%f,%f,14z",
-                    center.getLat(),
-                    center.getLng()
-            );
 
             String url = String.format(
                     "https://serpapi.com/search.json" +
                             "?engine=google_maps" +
                             "&q=%s" +
-                            "&ll=%s" +
                             "&api_key=%s",
                     URLEncoder.encode(keyword, StandardCharsets.UTF_8),
-                    ll,
                     apiKey
             );
 
@@ -147,7 +140,6 @@ public class SerpApiPlacesService {
                                 operatingHours,
                                 atmosphere,
                                 amenities,
-                                0,
                                 thumbnail
                         )
                 );

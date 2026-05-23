@@ -11,15 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SuggestedPlaceResponse {
 
-    private CenterPoint center;
     private List<PlaceDto> places;
-
-    @Getter
-    @AllArgsConstructor
-    public static class CenterPoint {
-        private double lat;
-        private double lng;
-    }
 
     @Getter
     @Setter
@@ -33,21 +25,19 @@ public class SuggestedPlaceResponse {
 
         private String address;
 
-        private double lat;
+        private Double lat;
 
-        private double lng;
+        private Double lng;
 
         private double rating;
 
         private int reviews;
 
-        private String operatingHours;
+        private String hours;
 
         private List<String> atmosphere;
 
         private List<String> amenities;
-
-        private long travelTime;
 
         private String thumbnail;
     }

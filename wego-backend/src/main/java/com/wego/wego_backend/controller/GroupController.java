@@ -2,6 +2,7 @@ package com.wego.wego_backend.controller;
 
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
+import com.wego.wego_backend.service.AiPlaceService;
 import com.wego.wego_backend.service.GroupPlaceSuggestionService;
 import com.wego.wego_backend.service.GroupService;
 import com.wego.wego_backend.service.SerpApiPlacesService;
@@ -24,6 +25,7 @@ public class GroupController {
     private final GroupService groupService;
     private final GroupPlaceSuggestionService groupPlaceSuggestionService;
     private final SerpApiPlacesService serpApiPlacesService;
+    private final AiPlaceService aiPlaceService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createGroup(
@@ -159,6 +161,18 @@ public class GroupController {
                         groupId,
                         request.getKeyword()
                 )
+        );
+    }
+
+    @PostMapping("/{groupId}/chat")
+    public AiChatResponse chat(
+            @PathVariable UUID groupId,
+            @RequestBody AiChatRequest req
+    ) {
+
+        return aiPlaceService.chat(
+                groupId.toString(),
+                req.getMessage()
         );
     }
 

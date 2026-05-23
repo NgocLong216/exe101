@@ -9,6 +9,12 @@ import { Link, useParams } from "react-router-dom";
 
 const FALLBACK_CENTER = [106.660172, 10.762622];
 
+interface AiChatResponse {
+  status: "NEED_MORE_INFO" | "COMPLETED";
+  message: string;
+  places: Place[];
+}
+
 export default function HomePage() {
   const mapRef = useRef(null);
   const mapContainer = useRef(null);
@@ -24,6 +30,7 @@ export default function HomePage() {
 
   const [selectedPlace, setSelectedPlace] = useState(null);
   const { groupId } = useParams();
+  
 
   const handleOpenPlace = async (placeId) => {
     try {
@@ -58,50 +65,57 @@ export default function HomePage() {
   // gửi message đến backend để gợi ý địa điểm
   const handleSendMessage = async () => {
     if (!message.trim() || !authUser) return;
-
+  
     const token = await authUser.getIdToken();
-
-    // Hiển thị tin nhắn user trước
+  
+    // user message
     setChatMessages((prev) => [
       ...prev,
-      { role: "user", content: message },
+      {
+        role: "user",
+        content: message,
+      },
     ]);
-
+  
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/groups/${groupId}/suggest-place`,
+        `${import.meta.env.VITE_API_URL}/api/groups/${groupId}/chat`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+  
           body: JSON.stringify({
-            keyword: message,
+            sessionId: groupId,
+            message: message,
           }),
         }
       );
-
+  
       if (!res.ok) {
         console.error("API error:", res.status);
         return;
       }
-      const data = await res.json();
-
+  
+      const data: AiChatResponse =
+        await res.json();
+  
       console.log("Suggest result:", data);
-
-      // Hiển thị kết quả trong chat
+  
+      // assistant message
       setChatMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Here are some suggested places:",
-          places: data.places,
+          content: data.message,
+          places: data.places || [],
         },
       ]);
-
+  
       setMessage("");
-
+  
     } catch (err) {
       console.error("Suggest error:", err);
     }
@@ -446,10 +460,6 @@ export default function HomePage() {
                           {p.rating}
                         </div>
 
-                        {/* Travel time */}
-                        <div className="text-sm text-slate-500 mt-1">
-                          {Math.round(p.travelTime / 60)} min away
-                        </div>
                       </div>
                     </div>
                   ))}
@@ -547,11 +557,9 @@ export default function HomePage() {
             {/* HOURS */}
             <div className="mt-4">
               <h3 className="font-semibold">🕒 Opening Hours</h3>
-              {selectedPlace.hours?.map((h, i) => (
                 <p key={i} className="text-sm text-gray-600">
-                  {Object.entries(h)[0].join(": ")}
+                  {selectedPlace.hours?.[i]}
                 </p>
-              ))}
             </div>
 
             {/* SERVICES */}
