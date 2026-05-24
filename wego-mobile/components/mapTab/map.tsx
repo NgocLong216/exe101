@@ -25,7 +25,6 @@ const user2 = {
 }
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
-const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
 
 export default function GoongMap(origin: LocationResult) {
     const {user} = useAuth();

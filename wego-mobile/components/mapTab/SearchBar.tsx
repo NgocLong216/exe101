@@ -10,9 +10,10 @@ import {
 } from "react-native";
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY;
+const GOONG_API_LINK = process.env.EXPO_PUBLIC_GOONG_API_LINK as string;
 // hoặc: import { GOONG_API_KEY } from "../config";
 
-export default function SearchBar({ onSelectLocation }) {
+export default function SearchBar({ onSelectLocation } : {onSelectLocation : any}) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [lastSelect, setLastSelect] = useState("");
@@ -30,7 +31,7 @@ export default function SearchBar({ onSelectLocation }) {
         return () => clearTimeout(timeout);
     }, [query]);
 
-    const fetchAutocomplete = async (text) => {
+    const fetchAutocomplete = async (text: string) => {
         try {
             const url =
                 `https://rsapi.goong.io/Place/AutoComplete` +
@@ -48,13 +49,13 @@ export default function SearchBar({ onSelectLocation }) {
         setQuery("");
     }
 
-    const handleSelect = async (place) => {
+    const handleSelect = async (place : any) => {
         setQuery(place.description);
         setResults([]);
 
         // 👉 Lấy chi tiết toạ độ
         const url =
-            `https://rsapi.goong.io/Place/Detail` +
+            `${GOONG_API_LINK}/Place/Detail` +
             `?place_id=${place.place_id}&api_key=${GOONG_API_KEY}`;
 
         const res = await fetch(url);
@@ -93,7 +94,7 @@ export default function SearchBar({ onSelectLocation }) {
             {(lastSelect !== query) && results.length > 0 && (
                 <FlatList
                     data={results}
-                    keyExtractor={(item) => item.place_id}
+                    keyExtractor={(item : any) => item.place_id}
                     style={styles.list}
                     renderItem={({ item }) => (
                         <TouchableOpacity
