@@ -32,6 +32,7 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
     }, [query]);
 
     const fetchAutocomplete = async (text: string) => {
+        console.log(text)
         try {
             const url =
                 `https://rsapi.goong.io/Place/AutoComplete` +

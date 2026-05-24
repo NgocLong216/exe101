@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Bot, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
+import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
 import React from 'react';
 import {
   Alert,
@@ -167,7 +167,7 @@ export default function GroupMembersScreen({
         {/* Meeting Point Banner */}
         <View style={styles.meetingBannerGreen}>
           <View style={styles.meetingIconWrap}>
-            <MapPin size={20} color="#22c55e" strokeWidth={2.2} />
+            <MapPin size={20} color="#9dffc1" strokeWidth={2.2} />
           </View>
           <View style={styles.meetingTextWrap}>
             <Text style={styles.meetingLabel}>MEETING POINT</Text>
@@ -176,15 +176,23 @@ export default function GroupMembersScreen({
         </View>
 
         {/* Chatbot Banner */}
-        <View style={styles.meetingBannerBlue}>
+        <TouchableOpacity
+          style={styles.meetingBannerBlue}
+          onPress={() => router.push({
+            pathname: '/GroupChat',
+          })}
+        >
           <View style={styles.meetingIconWrapBlue}>
-            <Bot size={20} color="#3b82f6" strokeWidth={2.2} />
+            <Bot size={20} color="#c7dbfb" strokeWidth={2.2} />
           </View>
           <View style={styles.meetingTextWrap}>
-            <Text style={styles.meetingLabelBlue}>MEETING POINT</Text>
-            <Text style={styles.meetingValueBlue}>Find more with our chat bot</Text>
+            <View>
+              <Text style={styles.meetingLabelBlue}>PLAN WITH AI ASSISTANT</Text>
+              <Text style={styles.meetingValueBlue}>Find more with our chat bot</Text>
+            </View>
           </View>
-        </View>
+          <ChevronRight />
+        </TouchableOpacity>
 
         {/* Members List */}
         <View style={styles.membersList}>

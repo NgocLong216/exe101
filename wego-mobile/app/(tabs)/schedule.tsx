@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH - 32;
@@ -124,6 +125,7 @@ function MapPlaceholder({ seed }: { seed: string }) {
 // ─── Event Card ───────────────────────────────────────────────────────────────
 
 function EventCard({ event }: { event: Event }) {
+  const router = useRouter()
   return (
     <View style={styles.card}>
       {/* Map */}
@@ -168,7 +170,13 @@ function EventCard({ event }: { event: Event }) {
               </View>
             )}
           </View>
-          <TouchableOpacity style={styles.detailsBtn} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.detailsBtn}
+            activeOpacity={0.8}
+            onPress={() => router.push({
+              pathname: '/PlaceDetail'
+            })}
+          >
             <Text style={styles.detailsBtnText}>Details</Text>
           </TouchableOpacity>
         </View>

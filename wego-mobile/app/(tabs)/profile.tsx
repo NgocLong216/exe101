@@ -85,7 +85,7 @@ export default function SettingsScreen() {
         </TouchableOpacity> */}
 
         {/* App Settings */}
-        <SectionLabel title="APP SETTINGS" />
+        {/* <SectionLabel title="APP SETTINGS" />
         <View style={styles.card}>
           <RowItem
             icon="notifications-outline"
@@ -112,10 +112,10 @@ export default function SettingsScreen() {
               />
             }
           />
-        </View>
+        </View> */}
 
         {/* Preferences */}
-        <SectionLabel title="PREFERENCES" />
+        {/* <SectionLabel title="PREFERENCES" />
         <View style={styles.card}>
           <RowItem
             icon="map-outline"
@@ -132,7 +132,7 @@ export default function SettingsScreen() {
             rightElement={<Ionicons name="chevron-forward" size={18} color="#d1d5db" />}
             onPress={() => {}}
           />
-        </View>
+        </View> */}
 
         {/* Account & Privacy */}
         <SectionLabel title="ACCOUNT & PRIVACY" />
