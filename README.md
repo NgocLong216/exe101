@@ -125,6 +125,17 @@ npm run dev
 
 ---
 
+### AI
+
+```bash
+cd chatbot
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+```
+
+---
+
 ## Database
 
 ### PostgreSQL

@@ -557,9 +557,11 @@ export default function HomePage() {
             {/* HOURS */}
             <div className="mt-4">
               <h3 className="font-semibold">🕒 Opening Hours</h3>
+              {selectedPlace.hours?.map((h, i) => (
                 <p key={i} className="text-sm text-gray-600">
-                  {selectedPlace.hours?.[i]}
+                  {Object.entries(h)[0].join(": ")}
                 </p>
+              ))}
             </div>
 
             {/* SERVICES */}
