@@ -14,9 +14,11 @@ export default function LoginPage({ setUser }) {
       const provider = new FacebookAuthProvider();
 
       const result = await signInWithPopup(auth, provider);
+      console.log('result: ', result)
       const firebaseUser = result.user;
 
       const firebaseIdToken = await firebaseUser.getIdToken();
+      console.log('firebaseIdToken: ', firebaseIdToken)
 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/firebase`,
@@ -53,8 +55,8 @@ export default function LoginPage({ setUser }) {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      // 🔥 FIREBASE ID TOKEN
       const firebaseIdToken = await firebaseUser.getIdToken();
+      console.log('firebaseIdToken: ', firebaseIdToken)
 
       // 🔥 LOGIN BACKEND
       const res = await fetch(
