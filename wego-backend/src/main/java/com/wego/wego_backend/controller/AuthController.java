@@ -3,10 +3,13 @@ package com.wego.wego_backend.controller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.wego.wego_backend.dto.GoogleLoginRequest;
+import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.GoogleAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +35,17 @@ public class AuthController {
         return ResponseEntity.ok(
                 googleAuthService.loginWithFirebaseToken(decoded)
         );
+    }
+
+    @PostMapping("/auth0")
+    public ResponseEntity<User> login(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+
+        System.out.println("AUTH0 LOGIN HIT");
+        User user = googleAuthService.loginWithAuth0(jwt);
+
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/logout")

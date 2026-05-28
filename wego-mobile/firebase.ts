@@ -1,0 +1,25 @@
+import { initializeApp } from 'firebase/app';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {
+  initializeAuth,
+  getReactNativePersistence,
+} from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyCY95z91jd_OLCc9K-2wdRr2mHxqlunxZ8',
+  authDomain: 'crested-drive-483712-e5.firebaseapp.com',
+  projectId: 'crested-drive-483712-e5',
+  storageBucket: 'crested-drive-483712-e5.firebasestorage.app',
+  messagingSenderId: '604419916756',
+  appId: '1:604419916756:web:e2fa42c0743e206da70c41',
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(
+    AsyncStorage
+  ),
+});

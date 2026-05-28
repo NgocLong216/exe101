@@ -56,7 +56,7 @@ export default function LoginPage({ setUser }) {
       const firebaseUser = result.user;
 
       const firebaseIdToken = await firebaseUser.getIdToken();
-      console.log('firebaseIdToken: ', firebaseIdToken)
+      console.log("Firebase ID Token:", firebaseIdToken);
 
       // 🔥 LOGIN BACKEND
       const res = await fetch(
@@ -75,11 +75,12 @@ export default function LoginPage({ setUser }) {
       if (!res.ok) throw new Error("Backend login failed");
 
       const data = await res.json();
+      console.log("Backend response:", data);
 
       // Lưu JWT
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
 
       // =========================
       // 🔥 LẤY FCM TOKEN

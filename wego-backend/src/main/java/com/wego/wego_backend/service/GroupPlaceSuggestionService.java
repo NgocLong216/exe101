@@ -6,107 +6,276 @@ import com.wego.wego_backend.dto.SuggestedPlaceResponse;
 import com.wego.wego_backend.entity.GroupMember;
 import com.wego.wego_backend.repository.GroupMemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GroupPlaceSuggestionService {
 
     private final GroupMemberRepository groupMemberRepository;
     private final FirebaseLocationService firebaseLocationService;
     private final GoongDirectionsService directionsService;
     private final SerpApiPlacesService placesService;
+    private final AiPlaceService aiPlaceService;
 
-    public SuggestedPlaceResponse suggest(UUID groupId, String keyword) {
+    public SuggestedPlaceResponse suggest(
+            UUID groupId,
+            String keyword
+    ) {
 
-        // 1. Lấy member UID
+        // =========================================
+        // 1. LẤY MEMBER TRONG GROUP
+        // =========================================
+
         List<String> memberUids =
                 groupMemberRepository
-                        .findByGroupIdAndStatus(groupId, GroupMemberStatus.ACCEPTED)
+                        .findByGroupIdAndStatus(
+                                groupId,
+                                GroupMemberStatus.ACCEPTED
+                        )
                         .stream()
                         .map(GroupMember::getUserFirebaseUid)
                         .toList();
 
-        // 2. Lấy vị trí realtime
+        if (memberUids.isEmpty()) {
+            throw new RuntimeException(
+                    "No accepted members in group"
+            );
+        }
+
+        // =========================================
+        // 2. LẤY REALTIME LOCATION
+        // =========================================
+
         Map<String, LatLng> locations =
                 firebaseLocationService.getLocations(memberUids);
 
-        // Chỉ cần >=1 user
-        if (locations.isEmpty())
-            throw new RuntimeException("No member location found");
-
-        // 3. Tính center
-        LatLng center;
-
-        if (locations.size() == 1) {
-            center = locations.values().iterator().next(); // lấy luôn vị trí user
-        } else {
-            center = average(locations.values());
+        if (locations.isEmpty()) {
+            throw new RuntimeException(
+                    "No member location found"
+            );
         }
 
-        System.out.println("Center lat: " + center.getLat());
-        System.out.println("Center lng: " + center.getLng());
+        log.info("GROUP MEMBERS: {}", memberUids.size());
 
-        // 4. Tìm địa điểm quanh center
+        // =========================================
+        // 3. CALL AI SERVICE
+        // =========================================
+
+        Map<String, Object> aiResponse =
+                aiPlaceService.search(keyword);
+
+        if (aiResponse == null) {
+            throw new RuntimeException(
+                    "AI service returned null"
+            );
+        }
+
+        log.info("AI RESPONSE RECEIVED");
+
+        // =========================================
+        // 4. EXTRACT PLACES
+        // =========================================
+
+        List<Map<String, Object>> rawPlaces =
+                (List<Map<String, Object>>) aiResponse.get("places");
+
+        if (rawPlaces == null || rawPlaces.isEmpty()) {
+
+            return new SuggestedPlaceResponse(
+                    Collections.emptyList()
+            );
+        }
+
         List<SuggestedPlaceResponse.PlaceDto> places =
-                placesService.searchNearby(center, keyword)
-                        .stream()
-                        .limit(5)   // chỉ lấy 5 place
-                        .toList();
+                new ArrayList<>();
 
-        // 5. Tính travel time user → place
-        List<SuggestedPlaceResponse.PlaceDto> validPlaces = new ArrayList<>();
+        for (Map<String, Object> p : rawPlaces) {
+
+            try {
+
+                Double lat = getDouble(p.get("latitude"));
+                Double lng = getDouble(p.get("longitude"));
+
+                if (lat == null || lng == null)
+                    continue;
+
+                SuggestedPlaceResponse.PlaceDto place =
+                        new SuggestedPlaceResponse.PlaceDto(
+                                (String) p.getOrDefault(
+                                        "place_id",
+                                        UUID.randomUUID().toString()
+                                ),
+
+                                (String) p.getOrDefault(
+                                        "title",
+                                        "Unknown"
+                                ),
+
+                                (String) p.getOrDefault(
+                                        "address",
+                                        ""
+                                ),
+
+                                lat,
+                                lng,
+
+                                getDoubleOrZero(
+                                        p.get("rating")
+                                ),
+
+                                getIntOrZero(
+                                        p.get("reviews")
+                                ),
+
+                                (String) p.getOrDefault(
+                                        "hours",
+                                        ""
+                                ),
+
+                                castStringList(
+                                        p.get("atmosphere")
+                                ),
+
+                                castStringList(
+                                        p.get("amenities")
+                                ),
+
+
+                                (String) p.getOrDefault(
+                                        "thumbnail",
+                                        ""
+                                )
+                        );
+
+                places.add(place);
+
+            } catch (Exception e) {
+
+                log.error(
+                        "PLACE PARSE ERROR: {}",
+                        e.getMessage()
+                );
+            }
+        }
+
+        // =========================================
+        // 5. TÍNH TRAVEL TIME
+        // =========================================
+
+        List<SuggestedPlaceResponse.PlaceDto> validPlaces =
+                new ArrayList<>();
 
         for (SuggestedPlaceResponse.PlaceDto place : places) {
 
-            LatLng placeLatLng = new LatLng(place.getLat(), place.getLng());
+            LatLng destination =
+                    new LatLng(
+                            place.getLat(),
+                            place.getLng()
+                    );
 
             long totalTime = 0;
-            int count = 0;
+
+            int validUserCount = 0;
 
             for (LatLng userLocation : locations.values()) {
 
-                long time = directionsService.getTravelTimeSeconds(
-                        userLocation,
-                        placeLatLng
-                );
+                try {
 
-                if (time == Long.MAX_VALUE) continue;
+                    long time =
+                            directionsService
+                                    .getTravelTimeSeconds(
+                                            userLocation,
+                                            destination
+                                    );
 
-                totalTime += time;
-                count++;
+                    if (time == Long.MAX_VALUE)
+                        continue;
+
+                    totalTime += time;
+
+                    validUserCount++;
+
+                } catch (Exception e) {
+
+                    log.error(
+                            "DIRECTION ERROR: {}",
+                            e.getMessage()
+                    );
+                }
             }
 
-            if (count == 0) {
-                place.setTravelTime(9999);
-                validPlaces.add(place);
-                continue;
-            }
 
-            long avgTime = totalTime / count;
 
-            place.setTravelTime(avgTime);
             validPlaces.add(place);
         }
 
-        // 6. Sort theo thời gian di chuyển
-        validPlaces.sort(Comparator.comparingLong(
-                SuggestedPlaceResponse.PlaceDto::getTravelTime
-        ));
 
-        // 7. Lấy top 5
+
+        // =========================================
+        // 7. TOP 5
+        // =========================================
+
         List<SuggestedPlaceResponse.PlaceDto> bestPlaces =
-                validPlaces.stream().limit(5).toList();
+                validPlaces
+                        .stream()
+                        .limit(5)
+                        .toList();
 
-        return new SuggestedPlaceResponse(
-                new SuggestedPlaceResponse.CenterPoint(
-                        center.getLat(),
-                        center.getLng()
-                ),
-                bestPlaces
+        log.info(
+                "FINAL PLACES: {}",
+                bestPlaces.size()
         );
+
+        return new SuggestedPlaceResponse(bestPlaces);
+    }
+
+    // =========================================
+    // HELPERS
+    // =========================================
+
+    private Double getDouble(Object value) {
+
+        if (value == null)
+            return null;
+
+        if (value instanceof Number number) {
+            return number.doubleValue();
+        }
+
+        return null;
+    }
+
+    private double getDoubleOrZero(Object value) {
+
+        Double d = getDouble(value);
+
+        return d != null ? d : 0.0;
+    }
+
+    private int getIntOrZero(Object value) {
+
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+
+        return 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> castStringList(Object value) {
+
+        if (!(value instanceof List<?> list)) {
+            return new ArrayList<>();
+        }
+
+        return list.stream()
+                .map(Object::toString)
+                .toList();
     }
 
     private LatLng average(Collection<LatLng> points) {

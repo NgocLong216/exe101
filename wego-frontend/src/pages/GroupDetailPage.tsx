@@ -26,9 +26,9 @@ export default function GroupDetailPage() {
       alert("Vui lòng chọn thời gian");
       return;
     }
-  
+
     const token = await getAuth().currentUser.getIdToken();
-  
+
     try {
       const res = await fetch(
         `${API_URL}/api/groups/${groupId}/schedule-meet`,
@@ -43,9 +43,9 @@ export default function GroupDetailPage() {
           }),
         }
       );
-  
+
       if (!res.ok) throw new Error(await res.text());
-  
+
       alert("Đã đặt lịch Meet thành công 🎉");
     } catch (e) {
       alert("Đặt lịch thất bại ❌");
@@ -178,30 +178,30 @@ export default function GroupDetailPage() {
   }, [groupId]);
 
   const leaveGroup = async () => {
-  if (!window.confirm("Bạn chắc chắn muốn rời nhóm?")) return;
+    if (!window.confirm("Bạn chắc chắn muốn rời nhóm?")) return;
 
-  const token = await getAuth().currentUser.getIdToken();
+    const token = await getAuth().currentUser.getIdToken();
 
-  try {
-    const res = await fetch(
-      `${API_URL}/api/groups/${groupId}/leave`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const res = await fetch(
+        `${API_URL}/api/groups/${groupId}/leave`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) throw new Error(await res.text());
 
-    alert("Đã rời nhóm");
-    navigate("/groups");
-  } catch (e) {
-    alert("Rời nhóm thất bại");
-    console.error(e);
-  }
-};
+      alert("Đã rời nhóm");
+      navigate("/groups");
+    } catch (e) {
+      alert("Rời nhóm thất bại");
+      console.error(e);
+    }
+  };
 
 
   return (
@@ -211,49 +211,49 @@ export default function GroupDetailPage() {
       {/* MEMBERS */}
       <h2>👥 Thành viên trong group</h2>
       <ul>
-  {members.map((m) => (
-    <li key={m.firebaseUid} style={{ marginBottom: 8 }}>
-      {m.name}
-      <span style={{ marginLeft: 8, color: "green" }}>✔</span>
-      {m.host && <span style={{ marginLeft: 6 }}>👑</span>}
+        {members.map((m) => (
+          <li key={m.firebaseUid} style={{ marginBottom: 8 }}>
+            {m.name}
+            <span style={{ marginLeft: 8, color: "green" }}>✔</span>
+            {m.host && <span style={{ marginLeft: 6 }}>👑</span>}
 
-      {/* Không hiển thị nếu là host hoặc là chính mình */}
-      {!m.host && m.firebaseUid !== currentUid && (
-        <button
-          style={{
-            marginLeft: 12,
-            background: "#ff5252",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            padding: "4px 8px",
-            cursor: "pointer",
-          }}
-          onClick={() => kickMember(m.firebaseUid)}
-        >
-          Kick
-        </button>
-      )}
+            {/* Không hiển thị nếu là host hoặc là chính mình */}
+            {!m.host && m.firebaseUid !== currentUid && (
+              <button
+                style={{
+                  marginLeft: 12,
+                  background: "#ff5252",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 4,
+                  padding: "4px 8px",
+                  cursor: "pointer",
+                }}
+                onClick={() => kickMember(m.firebaseUid)}
+              >
+                Kick
+              </button>
+            )}
 
-{!m.host && m.firebaseUid === currentUid && (
-  <button
-    style={{
-      marginLeft: 12,
-      background: "#757575",
-      color: "white",
-      border: "none",
-      borderRadius: 4,
-      padding: "4px 8px",
-      cursor: "pointer",
-    }}
-    onClick={leaveGroup}
-  >
-    Leave
-  </button>
-)}
-    </li>
-  ))}
-</ul>
+            {!m.host && m.firebaseUid === currentUid && (
+              <button
+                style={{
+                  marginLeft: 12,
+                  background: "#757575",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 4,
+                  padding: "4px 8px",
+                  cursor: "pointer",
+                }}
+                onClick={leaveGroup}
+              >
+                Leave
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
 
 
       <hr />
@@ -286,34 +286,34 @@ export default function GroupDetailPage() {
 
       <hr />
 
-<h2>⏰ Đặt giờ Meet</h2>
+      <h2>⏰ Đặt giờ Meet</h2>
 
-<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-  <input
-    type="datetime-local"
-    value={meetingTime}
-    onChange={(e) => setMeetingTime(e.target.value)}
-    style={{
-      padding: 6,
-      borderRadius: 4,
-      border: "1px solid #ccc",
-    }}
-  />
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <input
+          type="datetime-local"
+          value={meetingTime}
+          onChange={(e) => setMeetingTime(e.target.value)}
+          style={{
+            padding: 6,
+            borderRadius: 4,
+            border: "1px solid #ccc",
+          }}
+        />
 
-  <button
-    onClick={scheduleMeet}
-    style={{
-      background: "#1976d2",
-      color: "white",
-      border: "none",
-      borderRadius: 4,
-      padding: "6px 12px",
-      cursor: "pointer",
-    }}
-  >
-    📅 Đặt lịch
-  </button>
-</div>
+        <button
+          onClick={scheduleMeet}
+          style={{
+            background: "#1976d2",
+            color: "white",
+            border: "none",
+            borderRadius: 4,
+            padding: "6px 12px",
+            cursor: "pointer",
+          }}
+        >
+          📅 Đặt lịch
+        </button>
+      </div>
 
       {/* DELETE */}
       <button
@@ -329,6 +329,36 @@ export default function GroupDetailPage() {
         onClick={deleteGroup}
       >
         🗑️ Xoá group
+      </button>
+
+      <button
+        style={{
+          background: "blue",
+          color: "white",
+          padding: "8px 12px",
+          border: "none",
+          borderRadius: 6,
+          marginTop: 24,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate(`/groups/${groupId}/chat`)}
+      >
+        Chat
+      </button>
+
+      <button
+        style={{
+          background: "green",
+          color: "white",
+          padding: "8px 12px",
+          border: "none",
+          borderRadius: 6,
+          marginTop: 24,
+          cursor: "pointer",
+        }}
+        onClick={() => navigate(`/groups/${groupId}/ai-chat`)}
+      >
+        AI Chat
       </button>
     </div>
 

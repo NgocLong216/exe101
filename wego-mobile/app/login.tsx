@@ -1,17 +1,76 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useAuth } from '../auth0/AuthContext';
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect } from 'react';
+
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+
+import { auth } from '../firebase';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+
+  // INIT GOOGLE SIGNIN
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        `${process.env.EXPO_PUBLIC_WEB_CLIENT_ID}`,
+        offlineAccess: true,
+    });
+  }, []);
+
+  // LOGIN FUNCTION
+  const onGoogleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+
+      const userInfo = await GoogleSignin.signIn();
+
+      console.log('USER INFO:', userInfo);
+
+       const idToken = userInfo.data?.idToken;
+
+
+      if (!idToken) {
+        console.log('No ID Token returned');
+        return;
+      }
+
+      // Firebase login
+      const credential = GoogleAuthProvider.credential(idToken);
+
+      const result = await signInWithCredential(auth, credential);
+
+      const firebaseUser = result.user;
+
+      // Firebase token
+      const firebaseIdToken = await firebaseUser.getIdToken();
+
+      console.log('Firebase Token:', firebaseIdToken);
+
+      // SEND TO BACKEND
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/auth/firebase`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: firebaseIdToken,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      console.log('Backend response:', data);
+
+      router.replace('/(tabs)');
+    } catch (error) {
+      console.log('Google Sign-In Error:', error);
+    }
+  };
 
   return (
     <LinearGradient
@@ -23,50 +82,33 @@ export default function LoginScreen() {
     >
       <SafeAreaView style={styles.safe}>
         <View style={styles.centered}>
-          {/* Frosted Glass Card */}
           <BlurView intensity={60} tint="light" style={styles.card}>
-            {/* Logo Banner */}
+
             <Image
               source={require('@/assets/images/WEGO_banner.png')}
               style={styles.logoBanner}
               resizeMode="cover"
             />
 
-            {/* Google Button */}
-            <View
-              style={styles.space}
-            >
+            <View style={styles.space}>
+
+              {/* GOOGLE LOGIN BUTTON */}
               <TouchableOpacity
                 style={styles.googleBtn}
-                onPress={() => login('google-oauth2')}
+                onPress={onGoogleLogin}
                 activeOpacity={0.85}
               >
                 <View style={styles.googleIcon}>
                   <Text style={styles.googleG}>G</Text>
                 </View>
-                <Text style={styles.googleText}>Continue with Google</Text>
+
+                <Text style={styles.googleText}>
+                  Continue with Google
+                </Text>
               </TouchableOpacity>
 
-              {/* Facebook Button */}
-              <TouchableOpacity
-                style={styles.facebookBtn}
-                onPress={() => login('facebook')}
-                activeOpacity={0.85}
-              >
-                <View style={styles.fbIconWrap}>
-                  <Text style={styles.fbF}>f</Text>
-                </View>
-                <Text style={styles.facebookText}>Continue with Facebook</Text>
-              </TouchableOpacity>
             </View>
 
-            {/* Terms */}
-            <Text style={styles.terms}>
-              By signing in, you agree to our{'\n'}
-              <Text style={styles.termsLink}>Terms of Service</Text>
-              <Text style={styles.termsGray}> and </Text>
-              <Text style={styles.termsLink}>Privacy Policy</Text>
-            </Text>
           </BlurView>
         </View>
       </SafeAreaView>
@@ -88,18 +130,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
 
-  // Frosted glass card
   card: {
     width: '100%',
     borderRadius: 28,
     padding: 20,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderColor: 'rgba(255,255,255,0.6)',
     alignItems: 'center',
   },
 
-  // Logo Banner
   logoBanner: {
     width: '100%',
     height: 110,
@@ -110,9 +150,9 @@ const styles = StyleSheet.create({
   space: {
     paddingTop: 18,
     paddingBottom: 18,
+    width: '100%',
   },
 
-  // Google Button
   googleBtn: {
     width: '100%',
     height: 52,
@@ -122,9 +162,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 12,
     backgroundColor: '#ffffff',
   },
+
   googleIcon: {
     width: 28,
     height: 28,
@@ -136,11 +176,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },
+
   googleG: {
     fontSize: 15,
     fontWeight: '700',
     color: '#DB4437',
   },
+
   googleText: {
     flex: 1,
     textAlign: 'center',
@@ -148,55 +190,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
     marginRight: 28,
-  },
-
-  // Facebook Button
-  facebookBtn: {
-    width: '100%',
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: '#1877F2',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 20,
-  },
-  fbIconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  fbF: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#1877F2',
-    lineHeight: 20,
-  },
-  facebookText: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginRight: 28,
-  },
-
-  // Terms
-  terms: {
-    fontSize: 12,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  termsGray: {
-    color: '#6b7280',
-  },
-  termsLink: {
-    color: '#16a34a',
-    fontWeight: '600',
   },
 });

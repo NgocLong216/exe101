@@ -2,6 +2,7 @@ package com.wego.wego_backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -10,26 +11,34 @@ import java.util.List;
 @AllArgsConstructor
 public class SuggestedPlaceResponse {
 
-    private CenterPoint center;
     private List<PlaceDto> places;
 
     @Getter
-    @AllArgsConstructor
-    public static class CenterPoint {
-        private double lat;
-        private double lng;
-    }
-
-    @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class PlaceDto {
+
         private String placeId;
+
         private String name;
-        private double lat;
-        private double lng;
+
+        private String address;
+
+        private Double lat;
+
+        private Double lng;
+
         private double rating;
-        private long travelTime;
+
+        private int reviews;
+
+        private String hours;
+
+        private List<String> atmosphere;
+
+        private List<String> amenities;
+
         private String thumbnail;
     }
 }

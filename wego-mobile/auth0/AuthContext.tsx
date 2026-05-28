@@ -1,80 +1,54 @@
-import * as SecureStore from 'expo-secure-store';
-import { jwtDecode } from 'jwt-decode';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { loginWith } from './authService';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase';
 
 type AuthContextType = {
-  user: any | null;
+  user: any;
   loading: boolean;
-  login: (provider: 'google-oauth2' | 'facebook') => Promise<void>;
-  logout: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+});
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any | null>(null);
+export function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const initialized = useRef(false);
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log('AUTH USER:', firebaseUser);
 
-    (async () => {
-      try {
-        const idToken = await SecureStore.getItemAsync('idToken');
-
-        if (!idToken) {
-          setUser(null);
-          return;
-        }
-
-        const decoded: any = jwtDecode(idToken);
-
-        // ⏰ check expiration
-        if (decoded.exp * 1000 < Date.now()) {
-          await SecureStore.deleteItemAsync('idToken');
-          setUser(null);
-          return;
-        }
-
-        setUser(decoded);
-      } catch (e) {
-        await SecureStore.deleteItemAsync('idToken');
+      if (firebaseUser) {
+        setUser({
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName,
+          email: firebaseUser.email,
+          picture: firebaseUser.photoURL,
+        });
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
       }
-    })();
+
+      setLoading(false);
+    });
+
+    return unsub;
   }, []);
 
-  const login = async (provider: 'google-oauth2' | 'facebook') => {
-    setLoading(true);
-
-    try {
-      const auth = await loginWith(provider);
-      //console.log('AUTH RESULT:', auth);
-      if (!auth?.idToken) return;
-
-      await SecureStore.setItemAsync('idToken', auth.idToken);
-      await SecureStore.setItemAsync('accessToken', auth.accessToken);
-
-      const decoded: any = jwtDecode(auth.idToken);
-      setUser(decoded);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    await SecureStore.deleteItemAsync('idToken');
-    await SecureStore.deleteItemAsync('accessToken');
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );
