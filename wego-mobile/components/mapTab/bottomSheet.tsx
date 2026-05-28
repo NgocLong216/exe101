@@ -54,21 +54,21 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
             handleIndicatorStyle={styles.handleIndicator} 
             backgroundStyle={styles.sheetBackground}
         >
-            <BottomSheetView style={styles.content}>
-                {place ? (
+            {place !== null && (
+                <BottomSheetView style={styles.content}>
                     <>
                         {/* Phần thông tin phía trên (Group Name + Subtitle + Avatar Stack) */}
                         <View style={styles.topInfoRow}>
                             <View style={styles.textContainer}>
                                 <TouchableOpacity style={styles.titleRow} activeOpacity={0.7}>
                                     <Text style={styles.groupName} numberOfLines={1}>
-                                        {"Beach Day Crew"}
+                                        {place?.name || "Beach Day Crew"}
                                     </Text>
                                     <ChevronDown size={20} color="#1E293B" style={styles.chevronIcon} />
                                 </TouchableOpacity>
                                 
                                 <Text style={styles.subTitle} numberOfLines={1}>
-                                    {place.formatted_address || "Heading to Santa Monica Pier"}
+                                    {place?.formatted_address || "Heading to Santa Monica Pier"}
                                 </Text>
                             </View>
 
@@ -94,12 +94,8 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
                             <Text style={styles.actionButtonText}>Set Meeting Point</Text>
                         </TouchableOpacity>
                     </>
-                ) : (
-                    <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyText}>Không có dữ liệu nhóm</Text>
-                    </View>
-                )}
-            </BottomSheetView>
+                </BottomSheetView>
+            )}
         </BottomSheet>
     );
 });

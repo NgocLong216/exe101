@@ -23,6 +23,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
+          <AuthGate />
           <Stack
             screenOptions={{ headerShown: false }}
           >
