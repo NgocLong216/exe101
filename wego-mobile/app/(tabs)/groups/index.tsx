@@ -1,6 +1,7 @@
+import { getUserGroups, GroupResponse } from '@/apis/groups';
 import { useRouter } from 'expo-router';
 import { Bell, ChevronRight, Plus, Search } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FlatList,
     Image,
@@ -12,6 +13,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import LoadingIcon from '../../../components/loadingScreen/loadingIcon';
 
 const GREEN = process.env.EXPO_PUBLIC_GREEN_MAIN
 
@@ -24,81 +26,38 @@ type Group = {
     statusDot?: 'active' | 'online' | 'meeting' | 'session' | 'event';
 };
 
-const GROUPS: Group[] = [
-    {
-        id: '1',
-        name: 'Beach Day Crew',
-        members: 12,
-        status: 'Active now',
-        avatar: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100&h=100&fit=crop',
-        statusDot: 'active',
-    },
-    {
-        id: '2',
-        name: 'Hiking Enthusiasts',
-        members: 48,
-        status: '3 online',
-        avatar: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100&h=100&fit=crop',
-        statusDot: 'online',
-    },
-    {
-        id: '3',
-        name: 'Study Group',
-        members: 8,
-        status: 'Meeting tomorrow',
-        avatar: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=100&h=100&fit=crop',
-        statusDot: 'meeting',
-    },
-    {
-        id: '4',
-        name: 'Music Lovers',
-        members: 156,
-        status: 'Join session',
-        avatar: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&h=100&fit=crop',
-        statusDot: 'session',
-    },
-    {
-        id: '5',
-        name: 'Downtown Foodies',
-        members: 32,
-        status: 'Weekend brunch',
-        avatar: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=100&h=100&fit=crop',
-        statusDot: 'event',
-    },
-];
-
 const STATUS_COLORS: Record<string, string> = {
     active: '#22c55e',
     online: '#3b82f6',
-    meeting: '#f59e0b',
+    WAITING: '#f59e0b',
     session: '#a855f7',
     event: '#f97316',
 };
 
-function GroupItem({ item, onPress }: { item: Group; onPress: () => void }) {
+function GroupItem({ item, onPress }: { item: GroupResponse; onPress: () => void }) {
     return (
         <TouchableOpacity style={styles.groupItem} activeOpacity={0.7} onPress={onPress}>
             <View style={styles.avatarWrapper}>
-                <Image source={{ uri: item.avatar }} style={styles.avatar} />
-                {item.statusDot && (
+                <Image source={{ uri: item.groupPhoto }} style={styles.avatar} />
+                {item.status && (
                     <View
                         style={[
                             styles.statusDot,
-                            { backgroundColor: STATUS_COLORS[item.statusDot] },
+                            { backgroundColor: STATUS_COLORS[item.status] },
                         ]}
                     />
                 )}
             </View>
 
             <View style={styles.groupInfo}>
-                <Text style={styles.groupName}>{item.name}</Text>
+                <Text style={styles.groupName}>{item.title}</Text>
                 <View style={styles.metaRow}>
-                    <Text style={styles.memberCount}>{item.members} members</Text>
+                    <Text style={styles.memberCount}>{item.memberCount} members</Text>
                     <Text style={styles.dot}> • </Text>
                     <Text
                         style={[
                             styles.statusText,
-                            item.statusDot ? { color: STATUS_COLORS[item.statusDot] } : {},
+                            item.status ? { color: STATUS_COLORS[item.status] } : {},
                         ]}
                     >
                         {item.status}
@@ -111,22 +70,29 @@ function GroupItem({ item, onPress }: { item: Group; onPress: () => void }) {
     );
 }
 
-type RootStackParamList = {
-    Groups: undefined;
-    GroupMembers: {
-        groupId: string;
-        groupName: string;
-        memberCount: number;
-        activeCount: number;
-    };
-};
-
 export default function GroupsScreen() {
     const [query, setQuery] = useState('');
+    const [groups, setGroups] = useState<GroupResponse[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [schedule, setSchedule] = useState([]);
     const router = useRouter();
 
-    const filtered = GROUPS.filter((g) =>
-        g.name.toLowerCase().includes(query.toLowerCase())
+    useEffect(() => {
+        const fetchGroups = async () => {
+            setLoading(true);
+            try {
+                const groupData = await getUserGroups();
+                setGroups(groupData ?? []);
+                console.log('Group Data: ', groupData);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchGroups();
+    }, []);
+
+    const filtered = groups.filter((g) =>
+        g.title.toLowerCase().includes(query.toLowerCase())
     );
 
     return (
@@ -172,30 +138,33 @@ export default function GroupsScreen() {
                 </View>
             </View>
 
-            {/* List */}
-            <FlatList
-                data={filtered}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <GroupItem
-                        item={item}
-                        onPress={() =>
-                            router.push({
-                                pathname: '/(tabs)/groups/GroupMembers',
-                                params: {
-                                    groupId: item.id,
-                                    groupName: item.name,
-                                    memberCount: item.members,
-                                    activeCount: item.members,
-                                },
-                            })
-                        }
-                    />
-                )}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
+            {/* Loading / List */}
+            {loading ? (
+                <LoadingIcon />
+            ) : (
+                <FlatList
+                    data={filtered}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <GroupItem
+                            item={item}
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/(tabs)/groups/GroupMembers',
+                                    params: {
+                                        groupId: item.id,
+                                        groupName: item.title,
+                                        memberCount: item.memberCount,
+                                    },
+                                })
+                            }
+                        />
+                    )}
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                />
+            )}
         </SafeAreaView>
     );
 }

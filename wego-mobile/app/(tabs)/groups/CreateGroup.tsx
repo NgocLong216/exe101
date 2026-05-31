@@ -10,15 +10,70 @@ import {
     StatusBar,
     KeyboardAvoidingView,
     ScrollView,
-    Image
+    Image,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { createGroup } from '@/apis/groups'; 
 
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
-    const router = useRouter()
+    const [photoUri, setPhotoUri] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    // 📸 Pick image from library
+    const handlePickPhoto = async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            Alert.alert("Permission required", "Please allow access to your photo library.");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            setPhotoUri(result.assets[0].uri);
+        }
+    };
+
+    // 🚀 Create group
+    const handleCreateGroup = async () => {
+        if (!groupName.trim()) return;
+
+        try {
+            setLoading(true);
+
+            let photoBlob: Blob | undefined;
+
+            if (photoUri) {
+                const response = await fetch(photoUri);
+                photoBlob = await response.blob();
+            }
+
+            const data = await createGroup(groupName.trim(), groupDescription.trim(), photoBlob);
+
+            router.push({
+                pathname: '/(tabs)/groups',
+                params: { id: data.id },
+            });
+
+        } catch (err) {
+            console.error(err);
+            Alert.alert("Error", "Không tạo được group");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -30,14 +85,12 @@ export default function CreateGroupScreen() {
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
-                        onPress={() => router.push({
-                            pathname: '/(tabs)/groups',
-                        })}
+                        onPress={() => router.push({ pathname: '/(tabs)/groups' })}
                     >
                         <ArrowLeft size={24} color="#1E293B" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Create New Group</Text>
-                    <View style={{ width: 32 }} /> {/* View đệm để giữ chữ Title ở giữa */}
+                    <View style={{ width: 32 }} />
                 </View>
 
                 {/* Content */}
@@ -47,29 +100,39 @@ export default function CreateGroupScreen() {
                 >
                     {/* Avatar Upload Section */}
                     <View style={styles.avatarSection}>
-                        <TouchableOpacity style={styles.avatarContainer} activeOpacity={0.8}>
-                            {/* Vòng tròn màu be sữa chứa icon nhóm mặc định */}
+                        <TouchableOpacity
+                            style={styles.avatarContainer}
+                            activeOpacity={0.8}
+                            onPress={handlePickPhoto} // 👈 tap circle to pick
+                        >
                             <View style={styles.avatarPlaceholder}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/illustrations/meaning/100/null/conference-call.png' }}
-                                    style={styles.groupDefaultIcon}
-                                    resizeMode="contain"
-                                />
+                                {photoUri ? (
+                                    // 👇 show picked image
+                                    <Image
+                                        source={{ uri: photoUri }}
+                                        style={{ width: 130, height: 130, borderRadius: 65 }}
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <Image
+                                        source={{ uri: 'https://img.icons8.com/illustrations/meaning/100/null/conference-call.png' }}
+                                        style={styles.groupDefaultIcon}
+                                        resizeMode="contain"
+                                    />
+                                )}
                             </View>
-                            {/* Nút Pencil màu xanh lá nhỏ ở góc */}
-                            {/* <View style={styles.editBadge}>
-                <Pencil size={14} color="#FFFFFF" strokeWidth={3} />
-              </View> */}
+                            <View style={styles.editBadge}>
+                                <Pencil size={14} color="#FFFFFF" strokeWidth={3} />
+                            </View>
                         </TouchableOpacity>
 
-                        {/* <TouchableOpacity>
-              <Text style={styles.uploadText}>Upload Group Photo</Text>
-            </TouchableOpacity> */}
+                        <TouchableOpacity onPress={handlePickPhoto}>
+                            <Text style={styles.uploadText}>Upload Group Photo</Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Form Inputs */}
                     <View style={styles.form}>
-                        {/* Input: Group Name */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Group Name</Text>
                             <TextInput
@@ -81,7 +144,6 @@ export default function CreateGroupScreen() {
                             />
                         </View>
 
-                        {/* Input: Group Description */}
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Group Description</Text>
                             <TextInput
@@ -90,7 +152,7 @@ export default function CreateGroupScreen() {
                                 placeholderTextColor="#94A3B8"
                                 multiline={true}
                                 numberOfLines={5}
-                                textAlignVertical="top" // Căn chữ lên đầu dòng cho Android
+                                textAlignVertical="top"
                                 value={groupDescription}
                                 onChangeText={setGroupDescription}
                             />
@@ -100,8 +162,20 @@ export default function CreateGroupScreen() {
 
                 {/* Bottom Button */}
                 <View style={styles.bottomContainer}>
-                    <TouchableOpacity style={styles.createButton} activeOpacity={0.9}>
-                        <Text style={styles.createButtonText}>Create Group</Text>
+                    <TouchableOpacity
+                        style={[
+                            styles.createButton,
+                            (loading || !groupName.trim()) && { opacity: 0.6 } // 👈 dim when disabled
+                        ]}
+                        activeOpacity={0.9}
+                        onPress={handleCreateGroup}
+                        disabled={loading || !groupName.trim()}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text style={styles.createButtonText}>Create Group</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

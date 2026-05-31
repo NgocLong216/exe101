@@ -1,6 +1,7 @@
-import { useRouter } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -10,60 +11,22 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator,
 } from 'react-native';
+import {
+  getGroupMembers,
+  kickMember,
+  deleteGroup,
+  leaveGroup,
+  type GroupMember,
+} from '@/apis/groups'; // adjust path to wherever your api file lives
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Member = {
-  id: string;
-  name: string;
-  distance: string;
-  avatar: string;
-  statusDot: 'green' | 'orange' | 'gray';
+type Props = {
+  onBack?: () => void;
 };
-
-type GroupMembersRouteParams = {
-  GroupMembers: {
-    groupId: string;
-    groupName: string;
-    memberCount: number;
-    activeCount: number;
-  };
-};
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MEMBERS: Member[] = [
-  {
-    id: '1',
-    name: 'Alex Johnson',
-    distance: '0.4 miles away',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'green',
-  },
-  {
-    id: '2',
-    name: 'Sarah Chen',
-    distance: '1.2 miles away',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'green',
-  },
-  {
-    id: '3',
-    name: 'David Miller',
-    distance: '2.8 miles away',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'orange',
-  },
-  {
-    id: '4',
-    name: 'Emma Wilson',
-    distance: '5.5 miles away',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'gray',
-  },
-];
 
 const STATUS_DOT_COLORS = {
   green: '#22c55e',
@@ -73,53 +36,142 @@ const STATUS_DOT_COLORS = {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function MemberRow({ item }: { item: Member }) {
+function MemberRow({
+  item,
+  currentUid,
+  onKick,
+  onLeave,
+}: {
+  item: GroupMember;
+  currentUid: string | null;
+  onKick: (uid: string, name: string) => void;
+  onLeave: () => void;
+}) {
+  const isMe = item.firebaseUid === currentUid;
+
   return (
     <View style={styles.memberRow}>
       <View style={styles.avatarWrapper}>
-        <Image source={{ uri: item.avatar }} style={styles.memberAvatar} />
+        <View style={[styles.memberAvatar, styles.avatarFallback]}>
+          <Text style={styles.avatarInitial}>
+            {item.name?.charAt(0).toUpperCase() ?? '?'}
+          </Text>
+        </View>
         <View
           style={[
             styles.statusDot,
-            { backgroundColor: STATUS_DOT_COLORS[item.statusDot] },
+            { backgroundColor: STATUS_DOT_COLORS.green },
           ]}
         />
       </View>
+
       <View style={styles.memberInfo}>
-        <Text style={styles.memberName}>{item.name}</Text>
-        <View style={styles.distanceRow}>
-          <Navigation size={12} color="#94a3b8" strokeWidth={2} style={{ marginRight: 3 }} />
-          <Text style={styles.distanceText}>{item.distance}</Text>
-        </View>
+        <Text style={styles.memberName}>
+          {item.name}
+          {item.host ? ' 👑' : ''}
+          {isMe ? ' (You)' : ''}
+        </Text>
       </View>
+
+      {/* Kick — only non-host, non-me members */}
+      {!item.host && !isMe && (
+        <TouchableOpacity
+          style={styles.kickBtn}
+          activeOpacity={0.7}
+          onPress={() => onKick(item.firebaseUid, item.name)}
+        >
+          <Text style={styles.kickText}>Kick</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Leave — only myself, non-host */}
+      {!item.host && isMe && (
+        <TouchableOpacity
+          style={styles.leaveBtn}
+          activeOpacity={0.7}
+          onPress={onLeave}
+        >
+          <Text style={styles.leaveText}>Leave</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
-type Props = {
-  groupName?: string;
-  memberCount?: number;
-  activeCount?: number;
-  onBack?: () => void;
-};
-
 export default function GroupMembersScreen({
-  groupName = 'Weekend Hike',
-  memberCount = 6,
-  activeCount = 6,
   onBack,
 }: Props) {
-  const router = useRouter()
+  const router = useRouter();
+  const [members, setMembers] = useState<GroupMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUid, setCurrentUid] = useState<string | null>(null);
 
-  const handleBack = () => {
-    if (onBack) onBack();
-    // navigation.goBack();
+  const { groupId, groupName, memberCount } = useLocalSearchParams<{
+    groupId: string;
+    groupName: string;
+    memberCount: string;
+  }>();
+
+  // ── Load current user ──
+  useEffect(() => {
+    const user = getAuth().currentUser;
+    if (user) setCurrentUid(user.uid);
+  }, []);
+
+  // ── Load members ──
+  useEffect(() => {
+    if (!groupId) return;
+    setLoading(true);
+    getGroupMembers(groupId)
+      .then(setMembers)
+      .finally(() => setLoading(false));
+  }, [groupId]);
+
+  // ── Actions ──
+  const handleKick = (firebaseUid: string, name: string) => {
+    Alert.alert(
+      'Kick Member',
+      `Remove ${name} from the group?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Kick',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await kickMember(groupId, firebaseUid);
+              setMembers(prev => prev.filter(m => m.firebaseUid !== firebaseUid));
+            } catch {
+              Alert.alert('Error', 'Failed to kick member.');
+            }
+          },
+        },
+      ]
+    );
   };
 
-  const handleCopyLink = () => {
-    Alert.alert('Link Copied', 'Invite link has been copied to clipboard.');
+  const handleLeave = () => {
+    Alert.alert(
+      'Leave Group',
+      'Are you sure you want to leave this group?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await leaveGroup(groupId);
+              router.replace('/(tabs)/groups');
+            } catch {
+              Alert.alert('Error', 'Failed to leave group.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleDeleteGroup = () => {
@@ -128,10 +180,27 @@ export default function GroupMembersScreen({
       'Are you sure you want to delete this group? This action cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => { } },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteGroup(groupId);
+              router.replace('/(tabs)/groups');
+            } catch {
+              Alert.alert('Error', 'Failed to delete group.');
+            }
+          },
+        },
       ]
     );
   };
+
+  const handleCopyLink = () => {
+    Alert.alert('Link Copied', 'Invite link has been copied to clipboard.');
+  };
+
+  const displayMemberCount = memberCount ?? members.length;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -140,11 +209,7 @@ export default function GroupMembersScreen({
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: '/(tabs)/groups'
-            })
-          }
+          onPress={() => router.push({ pathname: '/(tabs)/groups' })}
           style={styles.backBtn}
           activeOpacity={0.7}
         >
@@ -152,7 +217,7 @@ export default function GroupMembersScreen({
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>{groupName}</Text>
-          <Text style={styles.headerSub}>{memberCount} Members Active</Text>
+          <Text style={styles.headerSub}>{displayMemberCount} Members Active</Text>
         </View>
         <TouchableOpacity style={styles.searchBtn} activeOpacity={0.7}>
           <Search size={20} color="#22c55e" strokeWidth={2.2} />
@@ -178,32 +243,43 @@ export default function GroupMembersScreen({
         {/* Chatbot Banner */}
         <TouchableOpacity
           style={styles.meetingBannerBlue}
-          onPress={() => router.push({
-            pathname: '/GroupChat',
-          })}
+          onPress={() => router.push({ pathname: '/GroupChat' })}
         >
           <View style={styles.meetingIconWrapBlue}>
             <Bot size={20} color="#c7dbfb" strokeWidth={2.2} />
           </View>
           <View style={styles.meetingTextWrap}>
-            <View>
-              <Text style={styles.meetingLabelBlue}>PLAN WITH AI ASSISTANT</Text>
-              <Text style={styles.meetingValueBlue}>Find more with our chat bot</Text>
-            </View>
+            <Text style={styles.meetingLabelBlue}>PLAN WITH AI ASSISTANT</Text>
+            <Text style={styles.meetingValueBlue}>Find more with our chat bot</Text>
           </View>
           <ChevronRight />
         </TouchableOpacity>
 
         {/* Members List */}
         <View style={styles.membersList}>
-          {MEMBERS.map((member, index) => (
-            <View key={member.id}>
-              <MemberRow item={member} />
-              {index < MEMBERS.length - 1 && (
-                <View style={styles.memberSeparator} />
-              )}
-            </View>
-          ))}
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color="#22c55e"
+              style={{ paddingVertical: 24 }}
+            />
+          ) : members.length === 0 ? (
+            <Text style={styles.emptyText}>No members found.</Text>
+          ) : (
+            members.map((member, index) => (
+              <View key={member.firebaseUid}>
+                <MemberRow
+                  item={member}
+                  currentUid={currentUid}
+                  onKick={handleKick}
+                  onLeave={handleLeave}
+                />
+                {index < members.length - 1 && (
+                  <View style={styles.memberSeparator} />
+                )}
+              </View>
+            ))
+          )}
         </View>
 
         {/* Invite Card */}
@@ -245,8 +321,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8fafc',
   },
-
-  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -288,16 +362,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f0fdf4',
   },
-
-  // Scroll
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 120,
-  },
-
-  // Meeting Banners
+  scroll: { flex: 1 },
+  scrollContent: { paddingBottom: 120 },
   meetingBannerGreen: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -321,54 +387,30 @@ const styles = StyleSheet.create({
     borderColor: '#bfdbfe',
   },
   meetingIconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+    width: 42, height: 42, borderRadius: 12,
     backgroundColor: '#22c55e',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+    alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
   meetingIconWrapBlue: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+    width: 42, height: 42, borderRadius: 12,
     backgroundColor: '#3b82f6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+    alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
-  meetingTextWrap: {
-    flex: 1,
-  },
+  meetingTextWrap: { flex: 1 },
   meetingLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#16a34a',
-    letterSpacing: 0.8,
-    marginBottom: 3,
+    fontSize: 10, fontWeight: '700', color: '#16a34a',
+    letterSpacing: 0.8, marginBottom: 3,
   },
   meetingValue: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#0f172a',
-    letterSpacing: -0.2,
+    fontSize: 15, fontWeight: '700', color: '#0f172a', letterSpacing: -0.2,
   },
   meetingLabelBlue: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#2563eb',
-    letterSpacing: 0.8,
-    marginBottom: 3,
+    fontSize: 10, fontWeight: '700', color: '#2563eb',
+    letterSpacing: 0.8, marginBottom: 3,
   },
   meetingValueBlue: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#0f172a',
-    letterSpacing: -0.2,
+    fontSize: 15, fontWeight: '700', color: '#0f172a', letterSpacing: -0.2,
   },
-
-  // Members
   membersList: {
     backgroundColor: '#fff',
     marginHorizontal: 16,
@@ -387,47 +429,60 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   memberAvatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 54, height: 54, borderRadius: 27,
+  },
+  avatarFallback: {
     backgroundColor: '#e2e8f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitial: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#64748b',
   },
   statusDot: {
     position: 'absolute',
-    bottom: 1,
-    right: 1,
-    width: 13,
-    height: 13,
+    bottom: 1, right: 1,
+    width: 13, height: 13,
     borderRadius: 7,
     borderWidth: 2,
     borderColor: '#fff',
   },
-  memberInfo: {
-    flex: 1,
-  },
+  memberInfo: { flex: 1 },
   memberName: {
-    fontSize: 15.5,
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: 3,
-    letterSpacing: -0.2,
+    fontSize: 15.5, fontWeight: '600', color: '#0f172a',
+    marginBottom: 3, letterSpacing: -0.2,
   },
-  distanceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  distanceText: {
-    fontSize: 13,
-    color: '#64748b',
-    fontWeight: '400',
-  },
+  distanceRow: { flexDirection: 'row', alignItems: 'center' },
+  distanceText: { fontSize: 13, color: '#64748b', fontWeight: '400' },
   memberSeparator: {
-    height: 1,
-    backgroundColor: '#f1f5f9',
-    marginLeft: 68,
+    height: 1, backgroundColor: '#f1f5f9', marginLeft: 68,
   },
-
-  // Invite Card
+  kickBtn: {
+    backgroundColor: '#fee2e2',
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  kickText: {
+    fontSize: 13, fontWeight: '600', color: '#ef4444',
+  },
+  leaveBtn: {
+    backgroundColor: '#f1f5f9',
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  leaveText: {
+    fontSize: 13, fontWeight: '600', color: '#64748b',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#94a3b8',
+    paddingVertical: 24,
+    fontSize: 14,
+  },
   inviteCard: {
     backgroundColor: '#f8fafc',
     marginHorizontal: 16,
@@ -440,28 +495,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inviteIconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 56, height: 56, borderRadius: 28,
     backgroundColor: '#f1f5f9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 12,
   },
   inviteTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 6,
-    letterSpacing: -0.2,
+    fontSize: 16, fontWeight: '700', color: '#0f172a',
+    marginBottom: 6, letterSpacing: -0.2,
   },
   inviteSubtitle: {
-    fontSize: 13.5,
-    color: '#64748b',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 18,
-    paddingHorizontal: 8,
+    fontSize: 13.5, color: '#64748b', textAlign: 'center',
+    lineHeight: 20, marginBottom: 18, paddingHorizontal: 8,
   },
   copyLinkBtn: {
     backgroundColor: '#dcfce7',
@@ -472,13 +516,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   copyLinkText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#16a34a',
-    letterSpacing: -0.1,
+    fontSize: 15, fontWeight: '600', color: '#16a34a', letterSpacing: -0.1,
   },
-
-  // Delete
   deleteBtn: {
     backgroundColor: '#fff1f2',
     marginHorizontal: 16,
@@ -488,9 +527,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#ef4444',
-    letterSpacing: -0.1,
+    fontSize: 15, fontWeight: '600', color: '#ef4444', letterSpacing: -0.1,
   },
 });
