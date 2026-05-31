@@ -297,6 +297,7 @@ public class GroupService {
                     return new GroupMemberResponse(
                             m.getUserFirebaseUid(),
                             user != null ? user.getName() : "Unknown",
+                            user != null ? user.getAvatar() : null,
                             m.getRole() == GroupRole.HOST
                     );
                 })

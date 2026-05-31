@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Bell, ChevronRight, Plus, Search } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getAuth } from "firebase/auth";
 import {
     FlatList,
     Image,
@@ -24,48 +25,15 @@ type Group = {
     statusDot?: 'active' | 'online' | 'meeting' | 'session' | 'event';
 };
 
-const GROUPS: Group[] = [
-    {
-        id: '1',
-        name: 'Beach Day Crew',
-        members: 12,
-        status: 'Active now',
-        avatar: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100&h=100&fit=crop',
-        statusDot: 'active',
-    },
-    {
-        id: '2',
-        name: 'Hiking Enthusiasts',
-        members: 48,
-        status: '3 online',
-        avatar: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100&h=100&fit=crop',
-        statusDot: 'online',
-    },
-    {
-        id: '3',
-        name: 'Study Group',
-        members: 8,
-        status: 'Meeting tomorrow',
-        avatar: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=100&h=100&fit=crop',
-        statusDot: 'meeting',
-    },
-    {
-        id: '4',
-        name: 'Music Lovers',
-        members: 156,
-        status: 'Join session',
-        avatar: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&h=100&fit=crop',
-        statusDot: 'session',
-    },
-    {
-        id: '5',
-        name: 'Downtown Foodies',
-        members: 32,
-        status: 'Weekend brunch',
-        avatar: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=100&h=100&fit=crop',
-        statusDot: 'event',
-    },
-];
+type MyGroupResponse = {
+    id: string;
+    title: string;
+    description: string;
+    memberCount: number;
+    host: boolean;
+    groupPhoto: string;
+    status: string;
+};
 
 const STATUS_COLORS: Record<string, string> = {
     active: '#22c55e',
@@ -123,9 +91,65 @@ type RootStackParamList = {
 
 export default function GroupsScreen() {
     const [query, setQuery] = useState('');
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const filtered = GROUPS.filter((g) =>
+    useEffect(() => {
+        fetchMyGroups();
+    }, []);
+
+    const fetchMyGroups = async () => {
+        try {
+            setLoading(true);
+
+            const user = getAuth().currentUser;
+
+            if (!user) {
+                console.log("No user logged in");
+                return;
+            }
+
+            const token = await user.getIdToken();
+
+            const response = await fetch(
+                `${process.env.EXPO_PUBLIC_API_URL}/api/groups/my`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Fetch groups failed");
+            }
+
+            const data: MyGroupResponse[] = await response.json();
+
+            const mapped: Group[] = data.map((g) => ({
+                id: g.id,
+                name: g.title,
+                members: g.memberCount,
+                status: g.host ? 'You are host' : 'Member',
+                avatar: g.groupPhoto,
+                statusDot: g.host ? 'active' : 'online',
+            }));
+
+            setGroups(mapped);
+
+            console.log("GROUP DATA:", mapped);
+
+        } catch (error) {
+            console.log("FETCH GROUP ERROR:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filtered = groups.filter((g) =>
         g.name.toLowerCase().includes(query.toLowerCase())
     );
 

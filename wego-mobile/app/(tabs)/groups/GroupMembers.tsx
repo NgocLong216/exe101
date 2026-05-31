@@ -1,6 +1,8 @@
-import { useRouter } from 'expo-router';
+import { useRouter,useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
 import React from 'react';
+import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -15,12 +17,11 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Member = {
-  id: string;
+type GroupMember = {
+  firebaseUid: string;
   name: string;
-  distance: string;
   avatar: string;
-  statusDot: 'green' | 'orange' | 'gray';
+  host: boolean;
 };
 
 type GroupMembersRouteParams = {
@@ -32,39 +33,6 @@ type GroupMembersRouteParams = {
   };
 };
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MEMBERS: Member[] = [
-  {
-    id: '1',
-    name: 'Alex Johnson',
-    distance: '0.4 miles away',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'green',
-  },
-  {
-    id: '2',
-    name: 'Sarah Chen',
-    distance: '1.2 miles away',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'green',
-  },
-  {
-    id: '3',
-    name: 'David Miller',
-    distance: '2.8 miles away',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'orange',
-  },
-  {
-    id: '4',
-    name: 'Emma Wilson',
-    distance: '5.5 miles away',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-    statusDot: 'gray',
-  },
-];
-
 const STATUS_DOT_COLORS = {
   green: '#22c55e',
   orange: '#f97316',
@@ -73,7 +41,7 @@ const STATUS_DOT_COLORS = {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function MemberRow({ item }: { item: Member }) {
+function MemberRow({ item }: { item: GroupMember }) {
   return (
     <View style={styles.memberRow}>
       <View style={styles.avatarWrapper}>
@@ -113,6 +81,13 @@ export default function GroupMembersScreen({
 }: Props) {
   const router = useRouter()
 
+  const [memberUids, setMemberUids] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [members, setMembers] = useState<GroupMember[]>([]);
+  const { groupId } = useLocalSearchParams<{
+    groupId: string;
+  }>();
+
   const handleBack = () => {
     if (onBack) onBack();
     // navigation.goBack();
@@ -125,12 +100,102 @@ export default function GroupMembersScreen({
   const handleDeleteGroup = () => {
     Alert.alert(
       'Delete Group',
-      'Are you sure you want to delete this group? This action cannot be undone.',
+      'Are you sure you want to delete this group?',
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => { } },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: deleteGroup,
+        },
       ]
     );
+  };
+
+  const deleteGroup = async () => {
+    try {
+  
+      const user = getAuth().currentUser;
+  
+      if (!user) {
+        Alert.alert('Error', 'User not logged in');
+        return;
+      }
+  
+      const token = await user.getIdToken();
+  
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (!response.ok) {
+  
+        const errorText = await response.text();
+  
+        throw new Error(errorText);
+      }
+  
+      Alert.alert(
+        'Success',
+        'Group deleted successfully',
+        [
+          {
+            text: 'OK',
+            onPress: () =>
+              router.replace('/(tabs)/groups'),
+          },
+        ]
+      );
+  
+    } catch (error: any) {
+  
+      console.log('DELETE GROUP ERROR:', error);
+  
+      Alert.alert(
+        'Delete Failed',
+        error?.message || 'Cannot delete group'
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+  
+  const fetchMembers = async () => {
+    try {
+      const user = getAuth().currentUser;
+      if (!user) return;
+  
+      const token = await user.getIdToken();
+  
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const data = await response.json();
+  
+      console.log("MEMBERS:", data);
+  
+      setMembers(data);
+  
+    } catch (error) {
+      console.log("FETCH MEMBERS ERROR:", error);
+    }
   };
 
   return (
@@ -180,6 +245,9 @@ export default function GroupMembersScreen({
           style={styles.meetingBannerBlue}
           onPress={() => router.push({
             pathname: '/GroupChat',
+            params: {
+              groupId: groupId,
+            },
           })}
         >
           <View style={styles.meetingIconWrapBlue}>
@@ -196,10 +264,10 @@ export default function GroupMembersScreen({
 
         {/* Members List */}
         <View style={styles.membersList}>
-          {MEMBERS.map((member, index) => (
+          {members.map((member, index) => (
             <View key={member.id}>
               <MemberRow item={member} />
-              {index < MEMBERS.length - 1 && (
+              {index < members.length - 1 && (
                 <View style={styles.memberSeparator} />
               )}
             </View>
