@@ -42,6 +42,9 @@ const user2 = {
 const GOONG_API_KEY =
   process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
 
+const GOONG_API_KEY_2 =
+  process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
+
 export default function GoongWebMap(
   origin: LocationResult
 ) {
@@ -166,7 +169,7 @@ export default function GoongWebMap(
         const url =
           `https://rsapi.goong.io/Direction?origin=${user.latitude},${user.longitude}` +
           `&destination=${destination.latitude},${destination.longitude}` +
-          `&vehicle=bike&api_key=${GOONG_API_KEY}`;
+          `&vehicle=bike&api_key=${GOONG_API_KEY_2}`;
 
         const res = await fetch(url);
 
@@ -189,11 +192,11 @@ export default function GoongWebMap(
 
           const routeCoords =
           ${JSON.stringify(
-            coords.map((c) => [
-              c.longitude,
-              c.latitude,
-            ])
-          )};
+          coords.map((c) => [
+            c.longitude,
+            c.latitude,
+          ])
+        )};
 
           const routeId =
             "route_${Math.random()}";
@@ -254,12 +257,12 @@ export default function GoongWebMap(
   const handleSelectPlace = async (
     place: LatLng
   ) => {
+    console.log('Tapped: ', place.latitude, place.longitude)
 
     try {
 
       const url =
-        `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}` +
-        `&api_key=${GOONG_API_KEY}`;
+        `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
 
       const res = await fetch(url);
 
@@ -268,31 +271,28 @@ export default function GoongWebMap(
       const placeResult =
         data.results?.[0];
 
+      console.log('placeResult: ', placeResult)
+
       if (!placeResult) return;
 
-      const placeDetail = {
-        place_id:
-          placeResult.place_id,
-
-        name:
-          placeResult
-            .address_components?.[0]
-            ?.long_name,
-
-        formatted_address:
-          placeResult.formatted_address,
-
-        geometry: {
-          location: {
-            lat:
-              placeResult.geometry
-                .location.lat,
-
-            lng:
-              placeResult.geometry
-                .location.lng,
-          },
-        },
+      const placeDetail: PlaceDetail = {
+        place_id: placeResult.place_id,
+        name: placeResult.name,
+        formatted_address: placeResult.formatted_address,
+        address: placeResult.address,
+        address_components: placeResult.address_components,
+        compound: placeResult.compound,
+        plus_code: placeResult.plus_code,
+        types: placeResult.types,
+        geometry: placeResult.geometry
+          ? {
+            location: {
+              lat: placeResult.geometry.location.lat,
+              lng: placeResult.geometry.location.lng,
+            },
+            boundary: placeResult.geometry.boundary ?? null,
+          }
+          : undefined,
       };
 
       bottomSheetRef.current?.open(

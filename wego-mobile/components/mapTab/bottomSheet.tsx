@@ -8,17 +8,40 @@ import React, {
 } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { ChevronDown, MapPinPlus } from "lucide-react-native"; // Hoặc dùng Pencil/MapPin tùy ý bạn
+import { useRouter } from "expo-router";
 
 export type PlaceDetail = {
-    place_id: string;
-    name?: string;          // Dùng làm Tên nhóm (e.g., Beach Day Crew)
-    formatted_address?: string; // Dùng làm Địa điểm hướng đến (e.g., Heading to Santa Monica Pier)
-    geometry?: {
-        location: {
-            lat: number;
-            lng: number;
-        };
+  place_id: string;
+  reference?: string;
+  name?: string;
+  address?: string;
+  formatted_address?: string;
+
+  address_components?: {
+    long_name: string;
+    short_name: string;
+  }[];
+
+  compound?: {
+    commune?: string;
+    district?: string;
+    province?: string;
+  };
+
+  geometry?: {
+    location: {
+      lat: number;
+      lng: number;
     };
+    boundary: null | unknown;
+  };
+
+  plus_code?: {
+    compound_code: string;
+    global_code: string;
+  };
+
+  types?: string[];
 };
 
 export type PlaceBottomSheetRef = {
@@ -28,11 +51,26 @@ export type PlaceBottomSheetRef = {
 
 const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
-    
+
     // Thu gọn snapPoints xuống khoảng 22% - 25% vì UI này khá gọn, vừa đủ hiển thị dữ liệu
     const snapPoints = useMemo(() => ["30%"], []);
 
     const [place, setPlace] = useState<PlaceDetail | null>(null);
+    const router = useRouter()
+
+    const handleSetMeetingPoint = () => {
+        if (!place) return;
+        router.push({
+            pathname: '/PlaceDetail',
+            params: {
+                placeId: place.place_id,
+                placeName: place.address_components?.[0].long_name,
+                lat: place.geometry?.location.lat,
+                lng: place.geometry?.location.lng,
+                prevRoute: '/(tabs)'
+            },
+        })
+    }
 
     useImperativeHandle(ref, () => ({
         open: (placeDetail: PlaceDetail) => {
@@ -51,7 +89,7 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
             snapPoints={snapPoints}
             enablePanDownToClose
             // Custom thanh gạch ngang (handle) phía trên cho mỏng và tinh tế giống ảnh
-            handleIndicatorStyle={styles.handleIndicator} 
+            handleIndicatorStyle={styles.handleIndicator}
             backgroundStyle={styles.sheetBackground}
         >
             {place !== null && (
@@ -66,7 +104,7 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
                                     </Text>
                                     <ChevronDown size={20} color="#1E293B" style={styles.chevronIcon} />
                                 </TouchableOpacity>
-                                
+
                                 <Text style={styles.subTitle} numberOfLines={1}>
                                     {place?.formatted_address || "Heading to Santa Monica Pier"}
                                 </Text>
@@ -74,13 +112,13 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
 
                             {/* Cụm Avatar chồng lên nhau (Avatar Stack) */}
                             <View style={styles.avatarStack}>
-                                <Image 
-                                    source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80' }} 
-                                    style={[styles.avatar, { zIndex: 3 }]} 
+                                <Image
+                                    source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80' }}
+                                    style={[styles.avatar, { zIndex: 3 }]}
                                 />
-                                <Image 
-                                    source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=80' }} 
-                                    style={[styles.avatar, { zIndex: 2, marginLeft: -14 }]} 
+                                <Image
+                                    source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=80' }}
+                                    style={[styles.avatar, { zIndex: 2, marginLeft: -14 }]}
                                 />
                                 <View style={[styles.avatarCountBadge, { zIndex: 1, marginLeft: -14 }]}>
                                     <Text style={styles.badgeText}>+2</Text>
@@ -89,7 +127,11 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
                         </View>
 
                         {/* Nút bấm Set Meeting Point màu xanh neon */}
-                        <TouchableOpacity style={styles.actionButton} activeOpacity={0.9}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            activeOpacity={0.9}
+                            onPress={handleSetMeetingPoint}
+                        >
                             <MapPinPlus size={20} color="#FFFFFF" strokeWidth={2.5} style={styles.buttonIcon} />
                             <Text style={styles.actionButtonText}>Set Meeting Point</Text>
                         </TouchableOpacity>

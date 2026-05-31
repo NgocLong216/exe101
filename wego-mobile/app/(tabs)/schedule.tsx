@@ -174,7 +174,10 @@ function EventCard({ event }: { event: Event }) {
             style={styles.detailsBtn}
             activeOpacity={0.8}
             onPress={() => router.push({
-              pathname: '/PlaceDetail'
+              pathname: '/PlaceDetail',
+              params: {
+                prevRoute: '/(tabs)/schedule'
+            },
             })}
           >
             <Text style={styles.detailsBtnText}>Details</Text>

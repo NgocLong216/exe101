@@ -2,7 +2,7 @@ import { Locate } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import MapView from "react-native-maps";
-import type { LatLng } from "./map";
+import type { LatLng } from "./GoongWebMap";
 
 type Props = {
     route: LatLng[];
