@@ -63,8 +63,6 @@ export default function HomeScreen() {
 
           setUserLocation(loc.coords);
 
-          console.log("LOCATION:", latitude, longitude);
-
           // FIREBASE
           try {
             const auth = getAuth();
@@ -89,8 +87,6 @@ export default function HomeScreen() {
             };
 
             await set(locationRef, locationData);
-
-            console.log("📡 Sent to Firebase:", locationData);
 
             onDisconnect(locationRef).remove();
 
@@ -123,8 +119,6 @@ export default function HomeScreen() {
         }
 
         const arr = Object.values(data) as Member[];
-
-        console.log("👥 MEMBERS:", arr);
 
         setMembers(arr);
       }

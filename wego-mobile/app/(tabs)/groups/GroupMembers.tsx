@@ -189,8 +189,6 @@ export default function GroupMembersScreen({
   
       const data = await response.json();
   
-      console.log("MEMBERS:", data);
-  
       setMembers(data);
   
     } catch (error) {

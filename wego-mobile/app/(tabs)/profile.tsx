@@ -20,7 +20,7 @@ const BORDER = '#f0f0f0';
 export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [locationSharing, setLocationSharing] = useState(true);
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
   //console.log('user: ', user)
 
   const SectionLabel = ({ title }: { title: string }) => (
@@ -153,7 +153,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* Log Out */}
-        <TouchableOpacity style={styles.logoutBtn} activeOpacity={0.85} onPress={logout}>
+        <TouchableOpacity style={styles.logoutBtn} activeOpacity={0.85} onPress={logout} disabled={loading}>
           <Ionicons name="log-out-outline" size={18} color="#ef4444" />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>

@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     backgroundColor: '#FFFFFF',
-    paddingBottom: 0,
+    paddingBottom: 40,
   },
   circleActionButton: {
     width: 38,
