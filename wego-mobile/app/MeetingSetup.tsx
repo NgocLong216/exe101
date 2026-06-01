@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,11 @@ import {
   Image,
   Platform,
   StatusBar,
+  Modal,
 } from "react-native";
 import { ChevronLeft, ChevronDown, MapPin, Clock } from "lucide-react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { getUserGroups, GroupResponse } from "@/apis/groupAPI";
 
 const COLORS = {
   primary: "#22C55E",
@@ -25,23 +28,27 @@ const COLORS = {
 
 const DAYS_OF_WEEK = ["S", "M", "T", "W", "T", "F", "S"];
 
-const OCTOBER_2023 = {
-  month: "October 2023",
-  startDay: 0, // Sunday
-  totalDays: 31,
-  prevMonthDays: [28, 29, 30],
-};
-
-function buildCalendarGrid() {
-  const grid: (number | null)[] = [
-    ...OCTOBER_2023.prevMonthDays.map(() => null),
+function getMonthData(date: Date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDay = firstDay.getDay();
+  const totalDays = lastDay.getDate();
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
   ];
-  for (let d = 1; d <= OCTOBER_2023.totalDays; d++) grid.push(d);
+  return { year, month, totalDays, startDay, monthName: monthNames[month] };
+}
+
+function buildCalendarGrid(date: Date) {
+  const { totalDays, startDay } = getMonthData(date);
+  const grid: (number | null)[] = Array(startDay).fill(null);
+  for (let d = 1; d <= totalDays; d++) grid.push(d);
   while (grid.length % 7 !== 0) grid.push(null);
   return grid;
 }
-
-const PREV_DAYS = [28, 29, 30];
 
 interface TimeScrollProps {
   value: string;
@@ -50,24 +57,96 @@ interface TimeScrollProps {
 }
 
 function TimeScroll({ value, onChange, options }: TimeScrollProps) {
+  const scrollRef = React.useRef<ScrollView>(null);
   const currentIndex = options.indexOf(value);
-  const prev = options[(currentIndex - 1 + options.length) % options.length];
-  const next = options[(currentIndex + 1) % options.length];
+  const [scrollOffset, setScrollOffset] = useState(0);
+
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setScrollOffset(offsetY);
+    
+    const itemHeight = 36;
+    const selectedIndex = Math.round(offsetY / itemHeight);
+    const clampedIndex = Math.max(0, Math.min(selectedIndex, options.length - 1));
+    
+    if (options[clampedIndex] && options[clampedIndex] !== value) {
+      onChange(options[clampedIndex]);
+    }
+  };
+
+  const handleMomentumScrollEnd = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const itemHeight = 36;
+    const selectedIndex = Math.round(offsetY / itemHeight);
+    const clampedIndex = Math.max(0, Math.min(selectedIndex, options.length - 1));
+    
+    const targetOffset = clampedIndex * itemHeight;
+    scrollRef.current?.scrollTo({
+      y: targetOffset,
+      animated: true,
+    });
+  };
+
+  useEffect(() => {
+    const targetOffset = currentIndex * 36;
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({
+        y: targetOffset,
+        animated: false,
+      });
+    }, 100);
+  }, []);
 
   return (
-    <View style={styles.timeColumn}>
-      <Text style={styles.timeAdjacentText}>{prev}</Text>
-      <Text style={styles.timeActiveText}>{value}</Text>
-      <Text style={styles.timeAdjacentText}>{next}</Text>
+    <View style={styles.timeColumnContainer}>
+      <ScrollView
+        ref={scrollRef}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        decelerationRate="fast"
+        snapToInterval={36}
+      >
+        <View style={{ height: 36 }} />
+        {options.map((item, index) => (
+          <View key={item} style={styles.timeItem}>
+            <Text
+              style={[
+                styles.timeItemText,
+                index === currentIndex && styles.timeItemTextActive,
+              ]}
+            >
+              {item}
+            </Text>
+          </View>
+        ))}
+        <View style={{ height: 36 }} />
+      </ScrollView>
     </View>
   );
 }
 
 export default function MeetingSetup() {
-  const [selectedDay, setSelectedDay] = useState(5);
-  const [selectedGroup, setSelectedGroup] = useState("Beach Day Crew");
+  const today = new Date();
+  const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [groups, setGroups] = useState<GroupResponse[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
+  const [showGroupDropdown, setShowGroupDropdown] = useState(false);
+
+  const router = useRouter()
+  const { placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
+    placeId: string;
+    placeName: string;
+    lat: string;
+    lng: string;
+    prevRoute: string
+  }>();
 
   const hours = Array.from({ length: 24 }, (_, i) =>
     String(i).padStart(2, "0")
@@ -76,7 +155,46 @@ export default function MeetingSetup() {
     String(i).padStart(2, "0")
   );
 
-  const calendarGrid = buildCalendarGrid();
+  const calendarGrid = buildCalendarGrid(currentDate);
+  const monthData = getMonthData(currentDate);
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+
+  const isDateInPast = (day: number) => {
+    const selectedDay = new Date(monthData.year, monthData.month, day);
+    selectedDay.setHours(0, 0, 0, 0);
+    const todayNormalized = new Date(today);
+    todayNormalized.setHours(0, 0, 0, 0);
+    return selectedDay < todayNormalized;
+  };
+
+  const handleSelectDay = (day: number) => {
+    const selected = new Date(monthData.year, monthData.month, day);
+    setSelectedDate(selected);
+  };
+
+  const handleConfirm = () => {
+    router.push({
+      pathname: '/(tabs)/schedule',
+    })
+  }
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      const groupData = await getUserGroups()
+      setGroups(groupData)
+      if (groupData.length > 0) {
+        setSelectedGroup(groupData[0].title)
+      }
+    }
+    fetchGroups()
+  },[])
 
   return (
     <View style={styles.container}>
@@ -99,10 +217,10 @@ export default function MeetingSetup() {
           <Text style={styles.sectionLabel}>MEETING POINT</Text>
           <View style={styles.meetingPointRow}>
             <View style={styles.meetingPointInfo}>
-              <Text style={styles.meetingPointName}>Santa Monica Pier</Text>
-              <Text style={styles.meetingPointAddress}>
+              <Text style={styles.meetingPointName}>{placeName}</Text>
+              {/* <Text style={styles.meetingPointAddress}>
                 Ocean Ave, Santa Monica, CA{"\n"}90401
-              </Text>
+              </Text> */}
             </View>
             <View style={styles.mapThumbnail}>
               {/* Map placeholder with grid lines */}
@@ -118,16 +236,48 @@ export default function MeetingSetup() {
         {/* Select Group */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Group</Text>
-          <TouchableOpacity style={styles.dropdownButton}>
+          <TouchableOpacity 
+            style={styles.dropdownButton}
+            onPress={() => setShowGroupDropdown(!showGroupDropdown)}
+          >
             <View style={styles.dropdownLeft}>
               {/* Wave icon */}
               <View style={styles.waveIconContainer}>
                 <Text style={styles.waveIcon}>〰</Text>
               </View>
-              <Text style={styles.dropdownText}>{selectedGroup}</Text>
+              <Text style={styles.dropdownText}>{selectedGroup || "Select a group"}</Text>
             </View>
-            <ChevronDown size={18} color={COLORS.textMuted} strokeWidth={2} />
+            <ChevronDown 
+              size={18} 
+              color={COLORS.textMuted} 
+              strokeWidth={2}
+              style={{ transform: [{ rotate: showGroupDropdown ? '180deg' : '0deg' }] }}
+            />
           </TouchableOpacity>
+
+          {showGroupDropdown && (
+            <View style={styles.dropdownList}>
+              {groups.map((group) => (
+                <TouchableOpacity
+                  key={group.id}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setSelectedGroup(group.title);
+                    setShowGroupDropdown(false);
+                  }}
+                >
+                  <Text 
+                    style={[
+                      styles.dropdownItemText,
+                      selectedGroup === group.title && styles.dropdownItemTextSelected
+                    ]}
+                  >
+                    {group.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
 
         <View style={styles.divider} />
@@ -136,7 +286,25 @@ export default function MeetingSetup() {
         <View style={styles.section}>
           <View style={styles.calendarHeader}>
             <Text style={styles.sectionTitle}>Select Date</Text>
-            <Text style={styles.monthLabel}>{OCTOBER_2023.month}</Text>
+          </View>
+
+          {/* Month Navigation */}
+          <View style={styles.monthNavigation}>
+            <TouchableOpacity 
+              style={styles.navButton}
+              onPress={handlePrevMonth}
+            >
+              <ChevronLeft size={20} color={COLORS.primary} strokeWidth={2.5} />
+            </TouchableOpacity>
+            <Text style={styles.monthLabel}>
+              {monthData.monthName} {monthData.year}
+            </Text>
+            <TouchableOpacity 
+              style={styles.navButton}
+              onPress={handleNextMonth}
+            >
+              <ChevronLeft size={20} color={COLORS.primary} strokeWidth={2.5} style={{ transform: [{ rotate: '180deg' }] }} />
+            </TouchableOpacity>
           </View>
 
           {/* Day headers */}
@@ -152,37 +320,38 @@ export default function MeetingSetup() {
           {Array.from({ length: calendarGrid.length / 7 }, (_, row) => (
             <View key={row} style={styles.calendarRow}>
               {calendarGrid.slice(row * 7, row * 7 + 7).map((day, col) => {
-                const isPrev = row === 0 && col < PREV_DAYS.length;
-                const isSelected = day === selectedDay && !isPrev;
-                const isNull = day === null && !isPrev;
-                const displayNum = isPrev
-                  ? PREV_DAYS[col]
-                  : day;
+                const isNull = day === null;
+                const isPast = day ? isDateInPast(day) : false;
+                const isSelected = selectedDate && 
+                  day === selectedDate.getDate() && 
+                  selectedDate.getMonth() === monthData.month && 
+                  selectedDate.getFullYear() === monthData.year;
 
                 return (
                   <TouchableOpacity
                     key={col}
                     style={styles.calendarCell}
                     onPress={() => {
-                      if (day && !isPrev) setSelectedDay(day);
+                      if (day && !isPast) handleSelectDay(day);
                     }}
-                    disabled={!day || isPrev}
+                    disabled={isNull || isPast}
                   >
                     <View
                       style={[
                         styles.dayCircle,
                         isSelected && styles.dayCircleSelected,
+                        isPast && styles.dayCircleDisabled,
                       ]}
                     >
                       <Text
                         style={[
                           styles.dayText,
-                          isPrev && styles.dayTextMuted,
                           isNull && styles.dayTextMuted,
+                          isPast && styles.dayTextMuted,
                           isSelected && styles.dayTextSelected,
                         ]}
                       >
-                        {displayNum ?? ""}
+                        {day ?? ""}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -196,18 +365,15 @@ export default function MeetingSetup() {
 
         {/* Time Picker */}
         <View style={styles.timePicker}>
+          <Text style={styles.sectionTitle}>Select Time</Text>
           <View style={styles.timePickerInner}>
             {/* Highlight bar */}
-            <View style={styles.timeHighlight} />
+            {/* <View style={styles.timeHighlight} /> */}
 
             <View style={styles.timeRow}>
               <TimeScroll value={hour} onChange={setHour} options={hours} />
               <Text style={styles.timeSeparator}>:</Text>
-              <TimeScroll
-                value={minute}
-                onChange={setMinute}
-                options={minutes}
-              />
+              <TimeScroll value={minute} onChange={setMinute} options={minutes} />
             </View>
           </View>
 
@@ -221,7 +387,10 @@ export default function MeetingSetup() {
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.confirmButton}>
+          <TouchableOpacity 
+          style={styles.confirmButton}
+          onPress={handleConfirm}
+          >
             <Text style={styles.confirmText}>Confirm Meeting</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelButton}>
@@ -242,7 +411,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: Platform.OS === "android" ? 16 : 52,
+    paddingTop: Platform.OS === "android" ? 32 : 52,
     paddingBottom: 12,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
@@ -394,6 +563,30 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
+  dropdownList: {
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    marginTop: 8,
+    overflow: "hidden",
+  },
+  dropdownItem: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  dropdownItemText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: COLORS.text,
+  },
+  dropdownItemTextSelected: {
+    fontWeight: "600",
+    color: COLORS.primary,
+  },
+
   divider: {
     height: 1,
     backgroundColor: COLORS.border,
@@ -414,6 +607,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: COLORS.primary,
+  },
+  monthNavigation: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  navButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: COLORS.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
   },
   calendarRow: {
     flexDirection: "row",
@@ -438,6 +648,9 @@ const styles = StyleSheet.create({
   },
   dayCircleSelected: {
     backgroundColor: COLORS.primary,
+  },
+  dayCircleDisabled: {
+    backgroundColor: COLORS.background,
   },
   dayText: {
     fontSize: 13,
@@ -469,26 +682,52 @@ const styles = StyleSheet.create({
   },
   timePickerInner: {
     width: 160,
+    height: 180,
     position: "relative",
+    overflow: "hidden",
   },
   timeHighlight: {
     position: "absolute",
     left: 0,
     right: 0,
     top: "50%",
-    marginTop: -20,
-    height: 40,
+    marginTop: -18,
+    height: 36,
     backgroundColor: COLORS.background,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    zIndex: 10,
   },
   timeRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
+  timeColumnContainer: {
+    width: 60,
+    height: 180,
+    overflow: "hidden",
+    borderRadius: 8,
+  },
   timeColumn: {
     width: 60,
     alignItems: "center",
+  },
+  timeItem: {
+    height: 36,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  timeItemText: {
+    fontSize: 24,
+    fontWeight: "300",
+    color: COLORS.textMuted,
+  },
+  timeItemTextActive: {
+    fontSize: 32,
+    fontWeight: "300",
+    color: COLORS.primary,
   },
   timeActiveText: {
     fontSize: 32,
@@ -511,7 +750,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: COLORS.textMuted,
     marginHorizontal: 4,
-    marginTop: -8,
+    marginTop: -70,
   },
   timezoneRow: {
     flexDirection: "row",

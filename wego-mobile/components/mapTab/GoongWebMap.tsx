@@ -44,6 +44,7 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
   const [loading, setLoading] = useState(false);
   const [destination, setDestination] = useState<LocationResult | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
+  const [routeIds, setRouteIds] = useState<string[]>([]);
 
   // Build points for MarkersOverlay from Firebase members + self
   const pointsData = [
@@ -83,7 +84,22 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
     if (!destination) return;
     try {
       setLoading(true);
+      
+      // Clear old routes from map
+      routeIds.forEach((id) => {
+        webRef.current?.injectJavaScript(`
+          if (map.getLayer("${id}")) {
+            map.removeLayer("${id}");
+          }
+          if (map.getSource("${id}")) {
+            map.removeSource("${id}");
+          }
+          true;
+        `);
+      });
+      
       const routesResult: LatLng[][] = [];
+      const newRouteIds: string[] = [];
 
       const origins = [
         { latitude, longitude },
@@ -105,6 +121,7 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
         routesResult.push(coords);
 
         const routeId = `route_${Math.random()}`;
+        newRouteIds.push(routeId);
         webRef.current?.injectJavaScript(`
           map.addSource("${routeId}", {
             type: "geojson",
@@ -128,6 +145,7 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
       }
 
       setRoute(routesResult);
+      setRouteIds(newRouteIds);
     } catch (err) {
       console.log("Route error:", err);
     } finally {

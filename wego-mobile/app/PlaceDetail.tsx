@@ -21,7 +21,7 @@ interface PlaceData {
 
 export default function PlaceDetailScreen() {
     const router = useRouter();
-    const { placeName, lat, lng, prevRoute } = useLocalSearchParams<{
+    const {placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
         placeId: string;
         placeName: string;
         lat: string;
@@ -198,10 +198,13 @@ export default function PlaceDetailScreen() {
                     style={styles.directionsButton}
                     activeOpacity={0.9}
                     onPress={() => router.push({
-                        pathname: '/(tabs)',
+                        pathname: '/MeetingSetup',
                         params: {
+                            placeId: placeId,
+                            placeName: placeName,
                             lat: lat,
-                            lng: lng
+                            lng: lng,
+                            prevRoute: '/PlaceDetail'
                         }
                     })}
                 >

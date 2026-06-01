@@ -23,6 +23,8 @@ type GroupMember = {
   name: string;
   avatar: string;
   host: boolean;
+  statusDot: 'green' | 'orange' | 'gray';
+  distance: string;
 };
 
 type GroupMembersRouteParams = {
@@ -428,7 +430,7 @@ export default function GroupMembersScreen({
         {/* Members List */}
         <View style={styles.membersList}>
           {members.map((member, index) => (
-            <View key={member.id}>
+            <View key={member.firebaseUid}>
               <MemberRow item={member} />
               {index < members.length - 1 && (
                 <View style={styles.memberSeparator} />
