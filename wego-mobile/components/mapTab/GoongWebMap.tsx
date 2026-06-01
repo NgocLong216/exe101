@@ -1,27 +1,13 @@
 import { useAuth } from "@/auth0/AuthContext";
 import { LocationResult } from "@/types/location";
-
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-} from "react-native";
-
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-
 import SearchBar from "./SearchBar";
-
 import PlaceBottomSheet, {
   PlaceBottomSheetRef,
   PlaceDetail,
 } from "./bottomSheet";
-
 import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 
 export type LatLng = {
@@ -29,250 +15,133 @@ export type LatLng = {
   longitude: number;
 };
 
-const user1 = {
-  latitude: 10.841183,
-  longitude: 106.839336,
+// Member type passed in from HomeScreen via Firebase
+export type Member = {
+  firebaseUid: string;
+  name: string;
+  lat: number;
+  lng: number;
+  updatedAt: number;
+  picture?: string;
 };
 
-const user2 = {
-  latitude: 10.952678,
-  longitude: 106.845175,
+const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
+const GOONG_API_KEY_2 = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
+
+type Props = {
+  latitude: number;
+  longitude: number;
+  members: Member[]; // 👈 receive from HomeScreen
 };
 
-const GOONG_API_KEY =
-  process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
-
-const GOONG_API_KEY_2 =
-  process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
-
-export default function GoongWebMap(
-  origin: LocationResult
-) {
-
+export default function GoongWebMap({ latitude, longitude, members }: Props) {
   const { user } = useAuth();
-
   const isInteracting = useRef(false);
-
   const webRef = useRef<WebView>(null);
+  const bottomSheetRef = useRef<PlaceBottomSheetRef>(null);
 
-  const bottomSheetRef =
-    useRef<PlaceBottomSheetRef>(null);
+  const [route, setRoute] = useState<LatLng[][]>([]);
+  const [loading, setLoading] = useState(false);
+  const [destination, setDestination] = useState<LocationResult | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
 
-  const [route, setRoute] = useState<
-    LatLng[][]
-  >([]);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [destination, setDestination] =
-    useState<LocationResult | null>(null);
-
-  const [selectedPlace, setSelectedPlace] =
-    useState<PlaceDetail | null>(null);
-
-  // USER TEAM
-  const userTeam1 = [
-    origin,
-    user1,
-    user2,
-  ];
-
-  // OVERLAY
+  // Build points for MarkersOverlay from Firebase members + self
   const pointsData = [
     {
-      id: "user",
-      x: origin.latitude,
-      y: origin.longitude,
-
-      user: {
-        picture:
-          user?.picture || "",
-      },
+      id: "me",
+      x: latitude,
+      y: longitude,
+      user: { picture: user?.picture || "" },
     },
-
-    {
-      id: "1",
-      x: 10.841183,
-      y: 106.839336,
-
-      user: {
-        picture:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScN9DwfF0MYAvM-5Ur6pruhmYkjrPx2l34ug&s",
-      },
-    },
-
-    {
-      id: "2",
-      x: 10.952678,
-      y: 106.845175,
-
-      user: {
-        picture:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPcVVAM2_HjuMafXvPevwU8jkYeJUQu89F6A&s",
-      },
-    },
+    ...members.map((m) => ({
+      id: m.firebaseUid,
+      x: m.lat,
+      y: m.lng,
+      user: { picture: m.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" },
+    })),
   ];
 
   // SEARCH
-  const handleSearch = (
-    location: LocationResult
-  ) => {
-
+  const handleSearch = (location: LocationResult) => {
     setDestination(location);
-
     webRef.current?.injectJavaScript(`
-
-      map.flyTo({
-        center:[
-          ${location.longitude},
-          ${location.latitude}
-        ],
-        zoom:15
-      });
-
-      new goongjs.Marker({
-        color:"red"
-      })
-      .setLngLat([
-        ${location.longitude},
-        ${location.latitude}
-      ])
-      .addTo(map);
-
+      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
+      new goongjs.Marker({ color: "red" })
+        .setLngLat([${location.longitude}, ${location.latitude}])
+        .addTo(map);
       true;
     `);
   };
 
-  // ROUTE
+  // ROUTE — re-fetch whenever destination changes
   useEffect(() => {
-
     setRoute([]);
-
     fetchRoute();
-
   }, [destination]);
 
   const fetchRoute = async () => {
-
     if (!destination) return;
-
     try {
-
       setLoading(true);
+      const routesResult: LatLng[][] = [];
 
-      const routesResult: LatLng[][] =
-        [];
+      const origins = [
+        { latitude, longitude },
+        ...members.map((m) => ({ latitude: m.lat, longitude: m.lng })),
+      ];
 
-      for (const user of userTeam1) {
-
+      for (const origin of origins) {
         const url =
-          `https://rsapi.goong.io/Direction?origin=${user.latitude},${user.longitude}` +
+          `https://rsapi.goong.io/Direction?origin=${origin.latitude},${origin.longitude}` +
           `&destination=${destination.latitude},${destination.longitude}` +
           `&vehicle=bike&api_key=${GOONG_API_KEY_2}`;
 
         const res = await fetch(url);
-
         const data = await res.json();
+        if (!data.routes?.length) continue;
 
-        if (!data.routes?.length)
-          continue;
-
-        const points =
-          data.routes[0]
-            .overview_polyline.points;
-
-        const coords =
-          decodePolyline(points);
-
+        const points = data.routes[0].overview_polyline.points;
+        const coords = decodePolyline(points);
         routesResult.push(coords);
 
-        // DRAW ROUTE
+        const routeId = `route_${Math.random()}`;
         webRef.current?.injectJavaScript(`
-
-          const routeCoords =
-          ${JSON.stringify(
-          coords.map((c) => [
-            c.longitude,
-            c.latitude,
-          ])
-        )};
-
-          const routeId =
-            "route_${Math.random()}";
-
-          map.addSource(routeId,{
-            type:"geojson",
-
-            data:{
-              type:"Feature",
-
-              geometry:{
-                type:"LineString",
-
-                coordinates:
-                  routeCoords
+          map.addSource("${routeId}", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: ${JSON.stringify(coords.map((c) => [c.longitude, c.latitude]))}
               }
             }
           });
-
           map.addLayer({
-            id:routeId,
-
-            type:"line",
-
-            source:routeId,
-
-            layout:{
-              "line-join":"round",
-              "line-cap":"round"
-            },
-
-            paint:{
-              "line-color":"red",
-              "line-width":4
-            }
+            id: "${routeId}",
+            type: "line",
+            source: "${routeId}",
+            layout: { "line-join": "round", "line-cap": "round" },
+            paint: { "line-color": "red", "line-width": 4 }
           });
-
           true;
         `);
       }
 
       setRoute(routesResult);
-
     } catch (err) {
-
-      console.log(
-        "Route error:",
-        err
-      );
-
+      console.log("Route error:", err);
     } finally {
-
       setLoading(false);
     }
   };
 
-  // SELECT PLACE
-  const handleSelectPlace = async (
-    place: LatLng
-  ) => {
-    console.log('Tapped: ', place.latitude, place.longitude)
-
+  // MAP TAP → reverse geocode → open bottom sheet
+  const handleSelectPlace = async (place: LatLng) => {
     try {
-
-      const url =
-        `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
-
+      const url = `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
       const res = await fetch(url);
-
       const data = await res.json();
-
-      const placeResult =
-        data.results?.[0];
-
-      console.log('placeResult: ', placeResult)
-
+      const placeResult = data.results?.[0];
       if (!placeResult) return;
 
       const placeDetail: PlaceDetail = {
@@ -286,128 +155,69 @@ export default function GoongWebMap(
         types: placeResult.types,
         geometry: placeResult.geometry
           ? {
-            location: {
-              lat: placeResult.geometry.location.lat,
-              lng: placeResult.geometry.location.lng,
-            },
-            boundary: placeResult.geometry.boundary ?? null,
-          }
+              location: {
+                lat: placeResult.geometry.location.lat,
+                lng: placeResult.geometry.location.lng,
+              },
+              boundary: placeResult.geometry.boundary ?? null,
+            }
           : undefined,
       };
 
-      bottomSheetRef.current?.open(
-        placeDetail
-      );
-
+      bottomSheetRef.current?.open(placeDetail);
       setSelectedPlace(placeDetail);
 
+      // Set as destination to draw polylines
+      setDestination({
+        latitude: place.latitude,
+        longitude: place.longitude,
+      } as LocationResult);
     } catch (err) {
-
-      console.log(
-        "Select place error:",
-        err
-      );
+      console.log("Select place error:", err);
     }
   };
 
-  // WEBVIEW HTML
   const html = `
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
-
-<link
-href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.css"
-rel="stylesheet"
-/>
-
-<style>
-
-html,
-body {
-  margin:0;
-  padding:0;
-  overflow:hidden;
-}
-
-#map {
-  width:100vw;
-  height:100vh;
-}
-
-</style>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.css" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; }
+    #map { width: 100vw; height: 100vh; }
+  </style>
 </head>
-
 <body>
+  <div id="map"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.js"></script>
+  <script>
+    goongjs.accessToken = "${GOONG_API_KEY}";
+    window.map = new goongjs.Map({
+      container: "map",
+      style: "https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY}",
+      center: [${longitude}, ${latitude}],
+      zoom: 15
+    });
 
-<div id="map"></div>
+    new goongjs.Marker({ color: "#2563EB" })
+      .setLngLat([${longitude}, ${latitude}])
+      .addTo(map);
 
-<script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.js"></script>
-
-<script>
-
-goongjs.accessToken =
-"${GOONG_API_KEY}";
-
-window.map =
-new goongjs.Map({
-
-  container:"map",
-
-  style:
-  "https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY}",
-
-  center:[
-    ${origin.longitude},
-    ${origin.latitude}
-  ],
-
-  zoom:15
-});
-
-// USER MARKER
-new goongjs.Marker({
-  color:"#2563EB"
-})
-.setLngLat([
-  ${origin.longitude},
-  ${origin.latitude}
-])
-.addTo(map);
-
-// CLICK MAP
-map.on("click",(e)=>{
-
-  window.ReactNativeWebView.postMessage(
-    JSON.stringify({
-
-      type:"MAP_CLICK",
-
-      latitude:e.lngLat.lat,
-
-      longitude:e.lngLat.lng
-    })
-  );
-});
-
-</script>
-
+    map.on("click", (e) => {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: "MAP_CLICK",
+        latitude: e.lngLat.lat,
+        longitude: e.lngLat.lng
+      }));
+    });
+  </script>
 </body>
-
 </html>
 `;
 
   return (
     <View style={styles.container}>
-
       {/* MAP */}
       <WebView
         ref={webRef}
@@ -416,71 +226,44 @@ map.on("click",(e)=>{
         javaScriptEnabled
         domStorageEnabled
         style={StyleSheet.absoluteFill}
-
         onMessage={(event) => {
-
           try {
+            const data = JSON.parse(event.nativeEvent.data);
 
-            const data =
-              JSON.parse(
-                event.nativeEvent.data
-              );
-
-            if (
-              data.type ===
-              "MAP_CLICK"
-            ) {
-
-              handleSelectPlace({
-                latitude:
-                  data.latitude,
-
-                longitude:
-                  data.longitude,
-              });
+            if (data.type === "MAP_CLICK") {
+              handleSelectPlace({ latitude: data.latitude, longitude: data.longitude });
             }
 
+            // Forward to MarkersOverlay
+            (MarkersOverlay as any)._onMessage?.(data);
           } catch (err) {
-
             console.log(err);
           }
         }}
       />
 
-      {/* OVERLAY */}
+      {/* OVERLAY MARKERS */}
       <MarkersOverlay
         points={pointsData}
         mapRef={webRef}
-        isInteracting={
-          isInteracting
-        }
-        origin={origin}
+        isInteracting={isInteracting}
+        origin={{ latitude, longitude }}
       />
 
-      {/* LOADING */}
       {loading && (
         <View style={styles.loading}>
-          <ActivityIndicator
-            size="large"
-          />
+          <ActivityIndicator size="large" />
         </View>
       )}
 
-      {/* SEARCH */}
-      <SearchBar
-        onSelectLocation={
-          handleSearch
-        }
-      />
+      <SearchBar onSelectLocation={handleSearch} />
 
-      {/* BOTTOM SHEET */}
-      <PlaceBottomSheet
-        ref={bottomSheetRef}
-      />
-
+      <PlaceBottomSheet ref={bottomSheetRef} />
     </View>
   );
 }
+
+// ... keep your existing decodePolyline and styles
 
 /* ===================== */
 /* POLYLINE DECODE */

@@ -1,4 +1,3 @@
-import GoongMap from "@/components/mapTab/map";
 import GoongWebMap from "@/components/mapTab/GoongWebMap";
 
 import { LocationResult } from "@/types/location";
@@ -126,7 +125,7 @@ export default function HomeScreen() {
 
         console.log("👥 MEMBERS:", arr);
 
-        setMembers(arr);
+        setMembers([]);
       }
     );
 
@@ -134,13 +133,14 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <>
-      {userLocation && (
-        <GoongWebMap
-          latitude={userLocation.latitude}
-          longitude={userLocation.longitude}
-        />
-      )}
-    </>
-  );
+  <>
+    {userLocation && (
+      <GoongWebMap
+        latitude={userLocation.latitude}
+        longitude={userLocation.longitude}
+        members={members} // 👈 add this
+      />
+    )}
+  </>
+);
 }

@@ -194,14 +194,24 @@ export default function PlaceDetailScreen() {
 
             {/* Bottom Action Bar */}
             <View style={styles.bottomActionBar}>
-                <TouchableOpacity style={styles.directionsButton} activeOpacity={0.9}>
+                <TouchableOpacity
+                    style={styles.directionsButton}
+                    activeOpacity={0.9}
+                    onPress={() => router.push({
+                        pathname: '/(tabs)',
+                        params: {
+                            lat: lat,
+                            lng: lng
+                        }
+                    })}
+                >
                     <Navigation size={20} color="#FFFFFF" fill="#FFFFFF"
                         style={{ marginRight: 8, transform: [{ rotate: '45deg' }] }} />
                     <Text style={styles.directionsButtonText}>DIRECTIONS</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.squareActionButton}>
+                {/* <TouchableOpacity style={styles.squareActionButton}>
                     <Copy size={22} color="#2563EB" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </View>
     );
@@ -217,57 +227,87 @@ const styles = StyleSheet.create({
         backgroundColor: '#E2E8F0',
         justifyContent: 'center', alignItems: 'center'
     },
-    headerButtonsOverlay: { position: 'absolute', top: 0, left: 0, right: 0,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-    headerRow: { flexDirection: 'row', justifyContent: 'space-between',
-        alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 },
-    circleHeaderBtn: { width: 42, height: 42, borderRadius: 21,
-        backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'center', alignItems: 'center' },
+    headerButtonsOverlay: {
+        position: 'absolute', top: 0, left: 0, right: 0,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
+    },
+    headerRow: {
+        flexDirection: 'row', justifyContent: 'space-between',
+        alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12
+    },
+    circleHeaderBtn: {
+        width: 42, height: 42, borderRadius: 21,
+        backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'center', alignItems: 'center'
+    },
     rightHeaderActions: { flexDirection: 'row', gap: 12 },
-    detailCardContainer: { backgroundColor: '#F8FAFC', borderTopLeftRadius: 28,
+    detailCardContainer: {
+        backgroundColor: '#F8FAFC', borderTopLeftRadius: 28,
         borderTopRightRadius: 28, marginTop: -30,
-        paddingHorizontal: 20, paddingTop: 32, paddingBottom: 120 },
+        paddingHorizontal: 20, paddingTop: 32, paddingBottom: 120
+    },
     loadingContainer: { alignItems: 'center', paddingVertical: 40, gap: 12 },
     loadingText: { color: '#64748B', fontSize: 15 },
     errorContainer: { alignItems: 'center', paddingVertical: 40 },
     errorText: { color: '#EF4444', fontSize: 15 },
-    titleRow: { flexDirection: 'row', justifyContent: 'space-between',
-        alignItems: 'flex-start', marginBottom: 12 },
+    titleRow: {
+        flexDirection: 'row', justifyContent: 'space-between',
+        alignItems: 'flex-start', marginBottom: 12
+    },
     placeName: { fontSize: 28, fontWeight: '800', color: '#0F172A', flex: 1, marginRight: 12 },
-    ratingBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#E6FDF0',
-        paddingHorizontal: 10, paddingVertical: 6, borderRadius: 14, gap: 4 },
+    ratingBadge: {
+        flexDirection: 'row', alignItems: 'center', backgroundColor: '#E6FDF0',
+        paddingHorizontal: 10, paddingVertical: 6, borderRadius: 14, gap: 4
+    },
     ratingText: { fontSize: 14, fontWeight: '700', color: '#00E676' },
     statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 24 },
-    openStatusTag: { backgroundColor: '#DCFCE7', paddingHorizontal: 10,
-        paddingVertical: 6, borderRadius: 8 },
+    openStatusTag: {
+        backgroundColor: '#DCFCE7', paddingHorizontal: 10,
+        paddingVertical: 6, borderRadius: 8
+    },
     closedStatusTag: { backgroundColor: '#FEE2E2' },
     openStatusText: { fontSize: 12, fontWeight: '700', color: '#15803D' },
     closedStatusText: { color: '#DC2626' },
     dotSeparator: { marginHorizontal: 10, color: '#94A3B8', fontWeight: 'bold' },
     addressText: { fontSize: 13, fontWeight: '600', color: '#64748B', flex: 1 },
-    featuresGrid: { flexDirection: 'row', justifyContent: 'space-between',
-        gap: 16, marginBottom: 24 },
-    featureCard: { flex: 1, backgroundColor: '#FFFFFF', borderWidth: 1,
-        borderColor: '#E2E8F0', borderRadius: 20, padding: 16 },
+    featuresGrid: {
+        flexDirection: 'row', justifyContent: 'space-between',
+        gap: 16, marginBottom: 24
+    },
+    featureCard: {
+        flex: 1, backgroundColor: '#FFFFFF', borderWidth: 1,
+        borderColor: '#E2E8F0', borderRadius: 20, padding: 16
+    },
     featureIconWrapper: { marginBottom: 12 },
-    featureLabel: { fontSize: 11, fontWeight: '800', color: '#94A3B8',
-        letterSpacing: 0.5, marginBottom: 4 },
+    featureLabel: {
+        fontSize: 11, fontWeight: '800', color: '#94A3B8',
+        letterSpacing: 0.5, marginBottom: 4
+    },
     featureValue: { fontSize: 15, fontWeight: '700', color: '#1E293B' },
-    mapPreviewContainer: { width: '100%', height: 140, borderRadius: 20,
-        overflow: 'hidden', backgroundColor: '#E2E8F0', marginTop: 8 },
+    mapPreviewContainer: {
+        width: '100%', height: 140, borderRadius: 20,
+        overflow: 'hidden', backgroundColor: '#E2E8F0', marginTop: 8
+    },
     mapMiniImage: { width: '100%', height: '100%', opacity: 0.7 },
-    bottomActionBar: { position: 'absolute', bottom: 0, left: 0, right: 0,
+    bottomActionBar: {
+        position: 'absolute', bottom: 0, left: 0, right: 0,
         backgroundColor: '#FFFFFF', paddingHorizontal: 20, paddingTop: 12,
         paddingBottom: Platform.OS === 'ios' ? 32 : 28,
         flexDirection: 'row', alignItems: 'center', gap: 12,
-        borderTopWidth: 1, borderTopColor: '#F1F5F9' },
-    directionsButton: { flex: 1, height: 54, backgroundColor: '#00E676',
+        borderTopWidth: 1, borderTopColor: '#F1F5F9'
+    },
+    directionsButton: {
+        flex: 1, height: 54, backgroundColor: '#00E676',
         borderRadius: 14, flexDirection: 'row', justifyContent: 'center',
         alignItems: 'center', shadowColor: '#00E676',
         shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3,
-        shadowRadius: 6, elevation: 3 },
-    directionsButtonText: { color: '#FFFFFF', fontSize: 15,
-        fontWeight: '800', letterSpacing: 0.3 },
-    squareActionButton: { width: 54, height: 54, backgroundColor: '#EEF2FF',
-        borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+        shadowRadius: 6, elevation: 3
+    },
+    directionsButtonText: {
+        color: '#FFFFFF', fontSize: 15,
+        fontWeight: '800', letterSpacing: 0.3
+    },
+    squareActionButton: {
+        width: 54, height: 54, backgroundColor: '#EEF2FF',
+        borderRadius: 14, justifyContent: 'center', alignItems: 'center'
+    },
 });

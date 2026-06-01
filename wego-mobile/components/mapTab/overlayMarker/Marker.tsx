@@ -10,11 +10,15 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import { WebView } from "react-native-webview";
 
 type Props = {
     locationPoint: MarkerPoint;
-    mapRef: React.RefObject<any>;
+    // mapRef now points to a WebView, so we receive pixel coords directly
+    pixelX: number | null;
+    pixelY: number | null;
     isInteracting: React.RefObject<boolean>;
+    onPress: () => void;
 };
 
 const PIN_HEIGHT = 10;
@@ -28,24 +32,25 @@ const clamp = (v: number, min: number, max: number) =>
 
 export function MarkerUsers({
     locationPoint,
-    mapRef,
+    pixelX,
+    pixelY,
     isInteracting,
+    onPress,
 }: Props) {
     const { user } = useAuth();
     if (!user) return null;
 
     const animatedPoint = useRef(
-        new Animated.ValueXY({
-            x: locationPoint.x,
-            y: locationPoint.y,
-        })
+        new Animated.ValueXY({ x: 0, y: 0 })
     ).current;
 
     const overlayFix = useRef({ width: 0, height: 0 });
 
     const ready =
         overlayFix.current.width > 0 &&
-        overlayFix.current.height > 0;
+        overlayFix.current.height > 0 &&
+        pixelX !== null &&
+        pixelY !== null;
 
     const animateTo = (x: number, y: number) => {
         animatedPoint.stopAnimation();
@@ -57,54 +62,23 @@ export function MarkerUsers({
         }).start();
     };
 
-    const focusToUser = () => {
-        if (!mapRef.current) return;
-
-        mapRef.current.animateCamera(
-            {
-                center: {
-                    latitude: locationPoint.x,
-                    longitude: locationPoint.y,
-                },
-                zoom: 17,
-                pitch: 0,
-                heading: 0,
-            },
-            { duration: 600 }
-        );
-    };
-
+    // Animate to new pixel position whenever parent sends updated coords
     useEffect(() => {
-        let rafId: number;
+        if (pixelX === null || pixelY === null || !ready) return;
 
-        const loop = async () => {
-            if (isInteracting.current && mapRef.current && ready) {
-                const p = await mapRef.current.pointForCoordinate({
-                    latitude: locationPoint.x,
-                    longitude: locationPoint.y,
-                });
+        const halfW = overlayFix.current.width / 2;
+        const halfH = overlayFix.current.height / 2;
 
-                const halfW = overlayFix.current.width / 2;
-                const halfH = overlayFix.current.height / 2;
+        const minX = EDGE_PADDING + halfW;
+        const maxX = SCREEN_WIDTH - EDGE_PADDING - halfW;
+        const minY = EDGE_PADDING + halfH;
+        const maxY = SCREEN_HEIGHT - EDGE_PADDING - halfH;
 
-                const minX = EDGE_PADDING + halfW;
-                const maxX = SCREEN_WIDTH - EDGE_PADDING - halfW;
-
-                const minY = EDGE_PADDING + halfH;
-                const maxY = SCREEN_HEIGHT - EDGE_PADDING - halfH;
-
-                animateTo(
-                    clamp(p.x, minX, maxX),
-                    clamp(p.y, minY, maxY)
-                );
-            }
-
-            rafId = requestAnimationFrame(loop);
-        };
-
-        rafId = requestAnimationFrame(loop);
-        return () => cancelAnimationFrame(rafId);
-    }, [ready]);
+        animateTo(
+            clamp(pixelX, minX, maxX),
+            clamp(pixelY, minY, maxY)
+        );
+    }, [pixelX, pixelY]);
 
     return (
         <Animated.View
@@ -124,12 +98,12 @@ export function MarkerUsers({
             <View
                 style={{
                     transform: [
-                        { translateX: -overlayFix.current.width / 2 },
-                        { translateY: -overlayFix.current.height + PIN_HEIGHT / 2 },
+                        { translateX: -(overlayFix.current.width / 2) },
+                        { translateY: -(overlayFix.current.height - PIN_HEIGHT / 2) },
                     ],
                 }}
             >
-                <Pressable onPress={focusToUser}>
+                <Pressable onPress={onPress}>
                     <View style={styles.pinWrapper}>
                         <View style={styles.pinBody}>
                             <Image
@@ -137,7 +111,6 @@ export function MarkerUsers({
                                 style={styles.avatar}
                             />
                         </View>
-
                         <View style={styles.pinTip} />
                     </View>
                 </Pressable>
@@ -156,16 +129,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 
-    // Phần giọt nước
     pinBody: {
         width: 54,
         height: 54,
         borderRadius: 27,
         backgroundColor: "#fff",
         padding: 3,
-
-        elevation: 5, // Android
-        shadowColor: "#000", // iOS
+        elevation: 5,
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
@@ -177,14 +148,12 @@ const styles = StyleSheet.create({
         borderRadius: 999,
     },
 
-    // Mũi nhọn
     pinTip: {
         width: 14,
         height: 14,
         backgroundColor: "#fff",
         transform: [{ rotate: "45deg" }],
         marginTop: -6,
-
         elevation: 5,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -192,4 +161,3 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
 });
-
