@@ -8,7 +8,7 @@ export default function AuthGate() {
 
   if (loading) return <LoadingScreen />;
 
-  if (!user && pathname !== '/login') {
+  if ((!user || user === null) && pathname !== '/login') {
     return <Redirect href="/login" />;
   }
 

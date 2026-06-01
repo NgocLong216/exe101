@@ -1,4 +1,4 @@
-import { useRouter,useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
 import React from 'react';
 import { getAuth } from 'firebase/auth';
@@ -12,7 +12,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  TextInput,
 } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -88,6 +89,92 @@ export default function GroupMembersScreen({
     groupId: string;
   }>();
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
+
+  const searchUsers = async (keyword: string) => {
+    try {
+      if (!keyword.trim()) {
+        setSearchResults([]);
+        return;
+      }
+
+      setSearchLoading(true);
+
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/users/search?keyword=${encodeURIComponent(keyword)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      setSearchResults(data);
+
+    } catch (error) {
+      console.log("SEARCH USER ERROR:", error);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const inviteMember = async (firebaseUid: string) => {
+    try {
+
+      const user = getAuth().currentUser;
+
+      if (!user) return;
+
+      const token = await user.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/invite`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            firebaseUid,
+          }),
+        }
+      );
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(text);
+      }
+
+      setInvitedUsers(prev => [
+        ...prev,
+        firebaseUid,
+      ]);
+
+      Alert.alert("Success", "Invitation sent");
+
+    } catch (error: any) {
+
+      Alert.alert(
+        "Invite Failed",
+        error?.message || "Cannot invite user"
+      );
+
+      console.log(error);
+    }
+  };
+
   const handleBack = () => {
     if (onBack) onBack();
     // navigation.goBack();
@@ -117,16 +204,16 @@ export default function GroupMembersScreen({
 
   const deleteGroup = async () => {
     try {
-  
+
       const user = getAuth().currentUser;
-  
+
       if (!user) {
         Alert.alert('Error', 'User not logged in');
         return;
       }
-  
+
       const token = await user.getIdToken();
-  
+
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}`,
         {
@@ -136,14 +223,14 @@ export default function GroupMembersScreen({
           },
         }
       );
-  
+
       if (!response.ok) {
-  
+
         const errorText = await response.text();
-  
+
         throw new Error(errorText);
       }
-  
+
       Alert.alert(
         'Success',
         'Group deleted successfully',
@@ -155,11 +242,11 @@ export default function GroupMembersScreen({
           },
         ]
       );
-  
+
     } catch (error: any) {
-  
+
       console.log('DELETE GROUP ERROR:', error);
-  
+
       Alert.alert(
         'Delete Failed',
         error?.message || 'Cannot delete group'
@@ -170,14 +257,14 @@ export default function GroupMembersScreen({
   useEffect(() => {
     fetchMembers();
   }, []);
-  
+
   const fetchMembers = async () => {
     try {
       const user = getAuth().currentUser;
       if (!user) return;
-  
+
       const token = await user.getIdToken();
-  
+
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members`,
         {
@@ -186,11 +273,11 @@ export default function GroupMembersScreen({
           },
         }
       );
-  
+
       const data = await response.json();
-  
+
       setMembers(data);
-  
+
     } catch (error) {
       console.log("FETCH MEMBERS ERROR:", error);
     }
@@ -217,10 +304,88 @@ export default function GroupMembersScreen({
           <Text style={styles.headerTitle}>{groupName}</Text>
           <Text style={styles.headerSub}>{memberCount} Members Active</Text>
         </View>
-        <TouchableOpacity style={styles.searchBtn} activeOpacity={0.7}>
-          <Search size={20} color="#22c55e" strokeWidth={2.2} />
-        </TouchableOpacity>
+        <View style={styles.searchContainer}>
+          <Search
+            size={18}
+            color="#94a3b8"
+            style={{ marginHorizontal: 8 }}
+          />
+
+          <TextInput
+            placeholder="Search users..."
+            value={searchKeyword}
+            onChangeText={(text) => {
+              setSearchKeyword(text);
+              searchUsers(text);
+            }}
+            style={styles.searchInput}
+          />
+        </View>
       </View>
+
+      {searchKeyword.length > 0 && (
+        <View style={styles.searchResultContainer}>
+
+          {searchLoading && (
+            <Text style={{ padding: 12 }}>
+              Searching...
+            </Text>
+          )}
+
+          {searchResults.map((user) => (
+            <View
+              key={user.firebaseUid}
+              style={styles.searchUserRow}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  flex: 1,
+                }}
+              >
+                <Image
+                  source={{ uri: user.avatar }}
+                  style={styles.searchAvatar}
+                />
+
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.searchName}>
+                    {user.name}
+                  </Text>
+
+                  <Text style={styles.searchEmail}>
+                    {user.email}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.searchResultActions}>
+                {invitedUsers.includes(user.firebaseUid) ? (
+                  <View style={styles.invitedButton}>
+                    <Text style={styles.invitedText}>
+                      Invited
+                    </Text>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.inviteButton}
+                    onPress={() =>
+                      inviteMember(user.firebaseUid)
+                    }
+                  >
+                    <UserPlus
+                      size={18}
+                      color="#fff"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          ))}
+
+        </View>
+      )}
 
       <ScrollView
         style={styles.scroll}
@@ -558,5 +723,82 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ef4444',
     letterSpacing: -0.1,
+  },
+
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+    borderRadius: 20,
+    flex: 1,
+    marginLeft: 12,
+    height: 40,
+  },
+
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+  },
+
+  searchResultContainer: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+
+  searchUserRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+
+  searchAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+
+  searchName: {
+    fontWeight: '600',
+    fontSize: 15,
+    color: '#0f172a',
+  },
+
+  searchEmail: {
+    fontSize: 13,
+    color: '#64748b',
+  },
+
+  inviteButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#22c55e',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  searchResultActions: {
+    justifyContent: 'center',
+  },
+  
+  invitedButton: {
+    paddingHorizontal: 12,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#dcfce7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  invitedText: {
+    color: '#16a34a',
+    fontWeight: '600',
+    fontSize: 13,
   },
 });
