@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  Platform, 
-  StatusBar, 
-  ScrollView, 
-  Image, 
-  KeyboardAvoidingView 
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  ScrollView,
+  Image,
+  KeyboardAvoidingView
 } from 'react-native';
 import { ArrowLeft, Video, Phone, Plus, Smile, Send } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { getAuth } from "firebase/auth";
+import { useLocalSearchParams } from "expo-router";
 
 // Định nghĩa kiểu dữ liệu tin nhắn đa dạng (text, map, image)
 type Message = {
@@ -21,81 +23,170 @@ type Message = {
   senderName?: string;
   senderAvatar?: string;
   isMe: boolean;
-  type: 'text' | 'map' | 'image';
+  imageUri?: string;
+
+  type:
+  | 'text'
+  | 'map'
+  | 'image'
+  | 'ai-text';
+
   text?: string;
-  time: string;
+
   mapData?: {
     title: string;
     description: string;
     imageUri: string;
+    lat?: number;
+    lng?: number;
   };
-  imageUri?: string;
+
+  time: string;
 };
 
 export default function GroupChatScreen() {
   const [inputText, setInputText] = useState('');
   const router = useRouter()
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+  const [keyword, setKeyword] = useState("");
+  const [loadingSuggest, setLoadingSuggest] = useState(false);
+  const [suggestedPlaces, setSuggestedPlaces] = useState<any[]>([]);
+  const { groupId } = useLocalSearchParams();
+  console.log("groupId in GroupChatScreen:", groupId);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const handleSend = async () => {
+    if (!inputText.trim()) return;
+
+    const userText = inputText;
+
+    setInputText("");
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      isMe: true,
+      type: "text",
+      text: userText,
+      time: new Date().toLocaleTimeString(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    setLoadingSuggest(true);
+
+    try {
+      await askAiSuggestPlace(userText);
+    } finally {
+      setLoadingSuggest(false);
+    }
+  };
+
+  const askAiSuggestPlace = async (keyword: string) => {
+    try {
+
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const response = await fetch(
+        `${API_URL}/api/groups/${groupId}/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            message: keyword,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      const aiTextMessage: Message = {
+        id: Date.now().toString(),
+        senderName: "WEGO AI",
+        senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
+        isMe: false,
+        type: "ai-text",
+        text: data.message,
+        time: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(prev => [
+        ...prev,
+        aiTextMessage,
+      ]);
+
+      const placeMessages: Message[] =
+        (data.places || []).map((place: any) => ({
+          id: Date.now().toString() + Math.random(),
+
+          senderName: "WEGO AI",
+
+          senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
+
+          isMe: false,
+
+          type: "map",
+
+          time: new Date().toLocaleTimeString(),
+
+          mapData: {
+            title: place.title,
+            description: place.address,
+            imageUri: place.thumbnail,
+            lat: place.latitude,
+            lng: place.longitude,
+          },
+        }));
+
+      setMessages(prev => [
+        ...prev,
+        ...placeMessages,
+      ]);
+
+    } catch (e) {
+
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        senderName: "WEGO AI",
+        senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
+        isMe: false,
+        type: "ai-text",
+        text: "Sorry, I couldn't find any suitable places.",
+        time: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(prev => [
+        ...prev,
+        errorMessage,
+      ]);
+    }
+  };
 
   // Dữ liệu mock-up chuẩn theo nội dung tin nhắn trong ảnh mẫu
-  const messages: Message[] = [
-    {
-      id: '1',
-      senderName: 'ALEX',
-      senderAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop',
-      isMe: false,
-      type: 'text',
-      text: 'Hey everyone! Are we still on for the beach tomorrow morning? I checked the weather and it looks perfect ☀️',
-      time: '09:15 AM',
-    },
-    {
-      id: '2',
-      isMe: true, // Tin nhắn của chính mình (màu xanh bên phải)
-      type: 'text',
-      text: 'Yes! I just packed the cooler and grabbed some extra towels.',
-      time: '09:18 AM',
-    },
-    {
-      id: '3',
-      senderName: 'JORDAN',
-      senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
-      isMe: false,
-      type: 'map',
-      time: '09:22 AM',
-      mapData: {
-        title: 'Zuma Beach - Point Dume',
-        description: 'Meeting point near the lifeguard station',
-        imageUri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400&auto=format&fit=crop', // Ảnh minh họa bãi biển/bản đồ
-      }
-    },
-    {
-      id: '4',
-      senderName: 'SARAH',
-      senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop',
-      isMe: false,
-      type: 'image',
-      time: '09:25 AM',
-      imageUri: 'https://images.unsplash.com/photo-1501426026826-31c667bdf23d?q=80&w=400&auto=format&fit=crop', // Ảnh chiếc ô che nắng bãi biển giống hình mẫu
-    }
-  ];
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.push({
-            pathname: '/(tabs)/groups/GroupMembers',
-          })}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.push({
+              pathname: '/(tabs)/groups/GroupMembers',
+            })}
           >
             <ArrowLeft size={24} color="#1E293B" />
           </TouchableOpacity>
-          
+
           <View style={styles.avatarWrapper}>
-            <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop' }} 
-              style={styles.groupAvatar} 
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop' }}
+              style={styles.groupAvatar}
             />
             <View style={styles.onlineBadge} />
           </View>
@@ -108,9 +199,10 @@ export default function GroupChatScreen() {
       </View>
 
       {/* Chat Content Body */}
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={20}
       >
         <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingVertical: 16 }}>
           {/* Tag phân tách thời gian ngày hôm nay */}
@@ -121,9 +213,26 @@ export default function GroupChatScreen() {
           </View>
 
           {/* Duyệt mảng để hiển thị danh sách tin nhắn */}
+          {loadingSuggest && (
+            <View
+              style={{
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#64748B",
+                  fontStyle: "italic",
+                }}
+              >
+                WeGo AI is thinking...
+              </Text>
+            </View>
+          )}
           {messages.map((msg) => (
             <View key={msg.id} style={[styles.messageRow, msg.isMe ? styles.myRow : styles.otherRow]}>
-              
+
               {/* Hiển thị Avatar nếu là người khác gửi */}
               {!msg.isMe && (
                 <Image source={{ uri: msg.senderAvatar }} style={styles.senderAvatar} />
@@ -136,9 +245,21 @@ export default function GroupChatScreen() {
                 )}
 
                 {/* Khối nội dung tin nhắn dựa vào Type */}
-                {msg.type === 'text' && (
-                  <View style={[styles.bubble, msg.isMe ? styles.myBubble : styles.otherBubble]}>
-                    <Text style={[styles.bubbleText, msg.isMe ? styles.myBubbleText : styles.otherBubbleText]}>
+                {(msg.type === 'text' || msg.type === 'ai-text') && (
+                  <View
+                    style={[
+                      styles.bubble,
+                      msg.isMe ? styles.myBubble : styles.otherBubble
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.bubbleText,
+                        msg.isMe
+                          ? styles.myBubbleText
+                          : styles.otherBubbleText
+                      ]}
+                    >
                       {msg.text}
                     </Text>
                   </View>
@@ -172,9 +293,9 @@ export default function GroupChatScreen() {
           <TouchableOpacity style={styles.circleActionButton}>
             <Plus size={22} color="#475569" />
           </TouchableOpacity>
-          
+
           <View style={styles.inputWrapper}>
-            <TextInput 
+            <TextInput
               style={styles.input}
               placeholder="Type a message..."
               placeholderTextColor="#94A3B8"
@@ -186,7 +307,10 @@ export default function GroupChatScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.sendButton}>
+          <TouchableOpacity
+            style={styles.sendButton}
+            onPress={handleSend}
+          >
             <Send size={20} color="#FFFFFF" style={{ marginLeft: 2 }} />
           </TouchableOpacity>
         </View>
@@ -393,7 +517,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     backgroundColor: '#FFFFFF',
-    paddingBottom: 24,
+    paddingBottom: 40,
   },
   circleActionButton: {
     width: 38,

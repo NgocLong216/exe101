@@ -28,6 +28,9 @@ public class AiPlaceService {
         request.setSessionId(sessionId);
         request.setMessage(message);
 
+        System.out.print(sessionId);
+        System.out.print(message);
+
         return restTemplate.postForObject(
                 url,
                 request,

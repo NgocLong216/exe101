@@ -7,6 +7,7 @@ import React, {
 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 type AuthContextType = {
   user: any;
@@ -30,7 +31,6 @@ export function AuthProvider({
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      console.log('AUTH USER:', firebaseUser);
 
       if (firebaseUser) {
         setUser({
@@ -40,6 +40,7 @@ export function AuthProvider({
           picture: firebaseUser.photoURL,
         });
       } else {
+        console.log("USER LOGGED OUT");
         setUser(null);
       }
 
@@ -71,6 +72,7 @@ export function AuthProvider({
       }
 
       await signOut(auth);
+      await GoogleSignin.signOut();
       setUser(null);
     } catch (err) {
       console.error('Error signing out:', err);

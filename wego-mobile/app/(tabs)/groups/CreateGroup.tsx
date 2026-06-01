@@ -14,11 +14,78 @@ import {
 } from 'react-native';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { getAuth } from 'firebase/auth';
 
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
     const router = useRouter()
+    const [loading, setLoading] = useState(false);
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+    const handleCreateGroup = async () => {
+        try {
+
+            if (!groupName.trim()) {
+                alert("Please enter group name");
+                return;
+            }
+
+            setLoading(true);
+
+            const user = getAuth().currentUser;
+
+            if (!user) {
+                alert("User not logged in");
+                return;
+            }
+
+            const token = await user.getIdToken();
+
+            const formData = new FormData();
+
+            formData.append("title", groupName);
+            formData.append("description", groupDescription);
+
+            // optional fields
+            // formData.append("meetingTime", "2026-05-27T20:00:00");
+            // formData.append("lat", "10.123");
+            // formData.append("lng", "106.123");
+            // formData.append("placeId", "abcxyz");
+
+            console.log("API_URL =", API_URL);
+            console.log("REQUEST =", `${API_URL}/api/groups`);
+            const response = await fetch(
+                `${API_URL}/api/groups`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                }
+            );
+
+            const data = await response.json();
+
+            console.log("CREATE GROUP SUCCESS:", data);
+
+            alert("Create group success");
+
+            router.push({
+                pathname: '/(tabs)/groups',
+            });
+
+        } catch (error) {
+
+            console.log("CREATE GROUP ERROR:", error);
+
+            alert("Create group failed");
+
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -100,8 +167,15 @@ export default function CreateGroupScreen() {
 
                 {/* Bottom Button */}
                 <View style={styles.bottomContainer}>
-                    <TouchableOpacity style={styles.createButton} activeOpacity={0.9}>
-                        <Text style={styles.createButtonText}>Create Group</Text>
+                    <TouchableOpacity
+                        style={styles.createButton}
+                        activeOpacity={0.9}
+                        onPress={handleCreateGroup}
+                        disabled={loading}
+                    >
+                        <Text style={styles.createButtonText}>
+                            {loading ? "Creating..." : "Create Group"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

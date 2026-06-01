@@ -46,9 +46,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/groups/places/**").authenticated()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth ->
-                        oauth.jwt(Customizer.withDefaults())
-                )
                 .addFilterBefore(
                         firebaseAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

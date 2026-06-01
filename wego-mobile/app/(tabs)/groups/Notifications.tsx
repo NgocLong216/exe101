@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { ArrowLeft, UserPlus, XCircle, MapPin, Clock } from 'lucide-react-native';
+import { useState, useEffect } from 'react';
+import { getAuth } from 'firebase/auth';
 
 // Định nghĩa kiểu dữ liệu cho Notification
 type NotificationItem = {
@@ -14,57 +16,117 @@ type NotificationItem = {
 };
 
 export default function NotificationsScreen() {
-  
-  // Dữ liệu giả lập mô phỏng chính xác theo ảnh
-  const notifications: NotificationItem[] = [
-    {
-      id: '1',
-      type: 'group_invite',
-      title: 'New Group Invite',
-      time: '2m ago',
-      description: (
-        <Text style={styles.descText}>
-          Alex invited you to join <Text style={styles.highlightText}>'Weekend Hiking'</Text>. Tap to view details.
-        </Text>
-      ),
-      hasButtons: true,
-    },
-    {
-      id: '2',
-      type: 'meeting_declined',
-      title: 'Meeting Point Declined',
-      time: '4m ago',
-      description: (
-        <Text style={styles.descText}>
-          <Text style={styles.highlightText}>'Sarah'</Text> and <Text style={styles.highlightText}>'Alex'</Text> decline the meeting point at <Text style={styles.highlightText}>'The Workshop Coffee'</Text>
-        </Text>
-      ),
-    },
-    {
-      id: '3',
-      type: 'new_meeting_point',
-      title: 'New Meeting Point Set',
-      time: '7m ago',
-      description: (
-        <Text style={styles.descText}>
-          A meeting point <Text style={styles.highlightText}>'The Workshop Coffee'</Text>. Tap to view details.
-        </Text>
-      ),
-      hasButtons: true,
-      hasDetailsButton: true,
-    },
-    {
-      id: '4',
-      type: 'meeting_soon',
-      title: 'Meeting starting soon',
-      time: '15m ago',
-      description: (
-        <Text style={styles.descText}>
-          'Project Sync' starts in 10 minutes at Central Library, Room 402.
-        </Text>
-      ),
-    },
-  ];
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInvitations();
+  }, []);
+  const fetchInvitations = async () => {
+    try {
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/invitations`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("INVITATIONS:", data);
+
+      setNotifications(data);
+
+    } catch (error) {
+      console.log(
+        "FETCH INVITATIONS ERROR:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const acceptInvite = async (
+    memberId: string
+  ) => {
+    try {
+
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/invitations/${memberId}/accept`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      setNotifications(prev =>
+        prev.filter(
+          item => item.memberId !== memberId
+        )
+      );
+
+    } catch (error) {
+      console.log(
+        "ACCEPT INVITE ERROR:",
+        error
+      );
+    }
+  };
+
+  const rejectInvite = async (
+    memberId: string
+  ) => {
+    try {
+
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/invitations/${memberId}/reject`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      setNotifications(prev =>
+        prev.filter(
+          item => item.memberId !== memberId
+        )
+      );
+
+    } catch (error) {
+      console.log(
+        "REJECT INVITE ERROR:",
+        error
+      );
+    }
+  };
 
   // Hàm render Icon và Background tương ứng cho từng loại thông báo
   const renderIcon = (type: string) => {
@@ -118,34 +180,85 @@ export default function NotificationsScreen() {
 
         {/* List thông báo */}
         {notifications.map((item) => (
-          <View key={item.id} style={styles.notificationCard}>
+          <View
+            key={item.memberId}
+            style={styles.notificationCard}
+          >
             <View style={styles.row}>
-              {renderIcon(item.type)}
-              
-              <View style={styles.textContainer}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.timeText}>{item.time}</Text>
-                </View>
-                
-                {item.description}
 
-                {/* Các nút hành động (nếu có) */}
-                {item.hasButtons && (
-                  <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={[styles.btn, styles.btnAccept]}>
-                      <Text style={styles.btnTextAccept}>Accept</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.btnDecline]}>
-                      <Text style={styles.btnTextDecline}>Decline</Text>
-                    </TouchableOpacity>
-                    {item.hasDetailsButton && (
-                      <TouchableOpacity style={[styles.btn, styles.btnDetails]}>
-                        <Text style={styles.btnTextDetails}>Details</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: "#EBF3FF" }
+                ]}
+              >
+                <UserPlus
+                  size={22}
+                  color="#22C55E"
+                />
+              </View>
+
+              <View style={styles.textContainer}>
+
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>
+                    Group Invitation
+                  </Text>
+
+                  <Text style={styles.timeText}>
+                    Pending
+                  </Text>
+                </View>
+
+                <Text style={styles.descText}>
+                  You have been invited to join{" "}
+                  <Text style={styles.highlightText}>
+                    {item.groupName}
+                  </Text>
+                </Text>
+
+                <View style={styles.buttonGroup}>
+                  <TouchableOpacity
+                    style={[
+                      styles.btn,
+                      styles.btnAccept,
+                    ]}
+                    onPress={() =>
+                      acceptInvite(
+                        item.memberId
+                      )
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.btnTextAccept
+                      }
+                    >
+                      Accept
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.btn,
+                      styles.btnDecline,
+                    ]}
+                    onPress={() =>
+                      rejectInvite(
+                        item.memberId
+                      )
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.btnTextDecline
+                      }
+                    >
+                      Decline
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
               </View>
             </View>
           </View>

@@ -8,6 +8,7 @@ import lombok.Data;
 public class GroupMemberResponse {
     private String firebaseUid;
     private String name;
+    private String avatar;
     private boolean isHost;
 }
 

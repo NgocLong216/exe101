@@ -25,6 +25,8 @@ export default function LoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
 
+      await GoogleSignin.signOut();
+
       const userInfo = await GoogleSignin.signIn();
 
       console.log('USER INFO:', userInfo);
