@@ -1,11 +1,18 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, Coffee, Heart, Navigation, Share2, Star, Wifi } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
-    StyleSheet, Text, View, Image, ScrollView,
-    TouchableOpacity, SafeAreaView, Platform,
-    StatusBar, Dimensions, ActivityIndicator
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet, Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
-import { ArrowLeft, Heart, Share2, Star, Navigation, Coffee, Wifi, Copy } from 'lucide-react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SERPAPI_KEY = process.env.EXPO_PUBLIC_SERPAPI_KEY;
@@ -21,17 +28,30 @@ interface PlaceData {
 
 export default function PlaceDetailScreen() {
     const router = useRouter();
-    const {placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
+    const {
+        placeId,
+        placeName,
+        lat,
+        lng,
+        prevRoute,
+        groupId,
+      } = useLocalSearchParams<{
         placeId: string;
         placeName: string;
         lat: string;
         lng: string;
-        prevRoute: string
-    }>();
+        prevRoute: string;
+        groupId: string;
+      }>();
 
     const [placeData, setPlaceData] = useState<PlaceData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    useEffect(() => {
+        console.log("placeName =", placeName);
+        console.log("lat =", lat);
+        console.log("lng =", lng);
+      }, []);
 
     useEffect(() => {
         if (!placeName || !lat || !lng) return;
@@ -45,6 +65,8 @@ export default function PlaceDetailScreen() {
 
                 const response = await fetch(url);
                 const data = await response.json();
+
+                console.log("SerpAPI response:", data.local_results);
 
                 // SerpAPI google_maps returns results in `local_results` array
                 if (data.local_results && data.local_results.length > 0) {
@@ -92,10 +114,25 @@ export default function PlaceDetailScreen() {
                             <TouchableOpacity
                                 style={styles.circleHeaderBtn}
                                 onPress={() => {
-                                    if (prevRoute) {
-                                        router.push({ pathname: prevRoute as any });
+
+                                    if (prevRoute === "/GroupChat") {
+                                  
+                                      router.push({
+                                        pathname: "/GroupChat",
+                                        params: {
+                                          groupId,
+                                        },
+                                      });
+                                  
+                                      return;
                                     }
-                                }}
+                                  
+                                    if (prevRoute) {
+                                      router.push({
+                                        pathname: prevRoute as any,
+                                      });
+                                    }
+                                  }}
                             >
                                 <ArrowLeft size={22} color="#FFFFFF" />
                             </TouchableOpacity>
