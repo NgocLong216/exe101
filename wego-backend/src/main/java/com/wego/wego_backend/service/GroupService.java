@@ -194,7 +194,11 @@ public class GroupService {
         groupRepository.save(group);
     }
 
-    public void inviteMember(UUID groupId, InviteMemberRequest request, String hostUid) {
+    public void inviteMember(
+            UUID groupId,
+            InviteMemberRequest request,
+            String hostUid
+    ) {
 
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
@@ -203,14 +207,36 @@ public class GroupService {
             throw new RuntimeException("Only host can invite");
         }
 
-        boolean exists = groupMemberRepository
-                .existsByGroupIdAndUserFirebaseUid(groupId, request.getFirebaseUid());
+        Optional<GroupMember> existing =
+                groupMemberRepository
+                        .findByGroup_IdAndUserFirebaseUid(
+                                groupId,
+                                request.getFirebaseUid()
+                        );
 
-        if (exists) {
-            throw new RuntimeException("User already invited or in group");
+        if (existing.isPresent()) {
+
+            GroupMember member = existing.get();
+
+            if (
+                    member.getStatus() == GroupMemberStatus.ACCEPTED ||
+                            member.getStatus() == GroupMemberStatus.INVITED
+            ) {
+                throw new RuntimeException(
+                        "User already in group"
+                );
+            }
+
+            member.setStatus(GroupMemberStatus.INVITED);
+            member.setRole(GroupRole.MEMBER);
+
+            groupMemberRepository.save(member);
+
+            return;
         }
 
         GroupMember invite = new GroupMember();
+
         invite.setGroup(group);
         invite.setUserFirebaseUid(request.getFirebaseUid());
         invite.setRole(GroupRole.MEMBER);
@@ -278,7 +304,7 @@ public class GroupService {
         groupRepository.delete(group);
     }
 
-    public List<GroupMemberResponse> getGroupMembers(UUID groupId) {
+    public List<GroupMemberResponse> getGroupMembers(UUID groupId, String currentUid) {
 
         List<GroupMember> members =
                 groupMemberRepository.findByGroup_IdAndStatus(
@@ -286,16 +312,37 @@ public class GroupService {
                         GroupMemberStatus.ACCEPTED
                 );
 
+        GroupMember currentMember = groupMemberRepository
+                .findByGroup_IdAndUserFirebaseUid(
+                        groupId,
+                        currentUid
+                )
+                .orElseThrow(() ->
+                        new RuntimeException("Not member of group"));
+
+        boolean isCurrentHost =
+                currentMember.getRole() == GroupRole.HOST;
+
         return members.stream()
                 .map(m -> {
                     User user = userRepository.findById(m.getUserFirebaseUid())
                             .orElse(null);
 
+                    boolean isHost =
+                            m.getRole() == GroupRole.HOST;
+
+                    boolean canKick =
+                            isCurrentHost
+                                    && !isHost
+                                    && !m.getUserFirebaseUid()
+                                    .equals(currentUid);
+
                     return new GroupMemberResponse(
                             m.getUserFirebaseUid(),
                             user != null ? user.getName() : "Unknown",
                             user != null ? user.getAvatar() : null,
-                            m.getRole() == GroupRole.HOST
+                            isHost,
+                            canKick
                     );
                 })
                 .toList();

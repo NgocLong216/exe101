@@ -1,8 +1,7 @@
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
-import React from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -11,9 +10,9 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  TextInput,
 } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -23,6 +22,7 @@ type GroupMember = {
   name: string;
   avatar: string;
   host: boolean;
+  canKick?: boolean;
   statusDot: 'green' | 'orange' | 'gray';
   distance: string;
 };
@@ -44,7 +44,13 @@ const STATUS_DOT_COLORS = {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function MemberRow({ item }: { item: GroupMember }) {
+function MemberRow({
+  item,
+  onKick,
+}: {
+  item: GroupMember;
+  onKick: (uid: string, name: string) => void;
+}) {
   return (
     <View style={styles.memberRow}>
       <View style={styles.avatarWrapper}>
@@ -57,12 +63,35 @@ function MemberRow({ item }: { item: GroupMember }) {
         />
       </View>
       <View style={styles.memberInfo}>
-        <Text style={styles.memberName}>{item.name}</Text>
+        <Text style={styles.memberName}>
+          {item.name}
+        </Text>
+
         <View style={styles.distanceRow}>
-          <Navigation size={12} color="#94a3b8" strokeWidth={2} style={{ marginRight: 3 }} />
-          <Text style={styles.distanceText}>{item.distance}</Text>
+          <Navigation
+            size={12}
+            color="#94a3b8"
+            strokeWidth={2}
+            style={{ marginRight: 3 }}
+          />
+          <Text style={styles.distanceText}>
+            {item.distance}
+          </Text>
         </View>
       </View>
+
+      {item.canKick && (
+        <TouchableOpacity
+          style={styles.kickButton}
+          onPress={() =>
+            onKick(item.firebaseUid, item.name)
+          }
+        >
+          <Text style={styles.kickText}>
+            Kick
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -95,6 +124,156 @@ export default function GroupMembersScreen({
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
+  const [isHost, setIsHost] = useState(false);
+
+  useEffect(() => {
+    const currentUser = getAuth().currentUser;
+
+    if (!currentUser) return;
+
+    const hostMember = members.find(
+      m =>
+        m.firebaseUid === currentUser.uid &&
+        m.host === true
+    );
+
+    setIsHost(!!hostMember);
+  }, [members]);
+
+  const leaveGroup = async () => {
+    try {
+
+      const user = getAuth().currentUser;
+
+      if (!user) return;
+
+      const token = await user.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/leave`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(text);
+      }
+
+      Alert.alert(
+        "Success",
+        "You left the group",
+        [
+          {
+            text: "OK",
+            onPress: () =>
+              router.replace("/(tabs)/groups"),
+          },
+        ]
+      );
+
+    } catch (error: any) {
+
+      Alert.alert(
+        "Leave Failed",
+        error?.message || "Cannot leave group"
+      );
+
+      console.log(error);
+    }
+  };
+
+  const handleLeaveGroup = () => {
+    Alert.alert(
+      "Leave Group",
+      "Are you sure you want to leave this group?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Leave",
+          style: "destructive",
+          onPress: leaveGroup,
+        },
+      ]
+    );
+  };
+
+  const kickMember = async (
+    firebaseUid: string,
+    memberName: string
+  ) => {
+    try {
+
+      const user = getAuth().currentUser;
+
+      if (!user) return;
+
+      const token = await user.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members/${firebaseUid}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(text);
+      }
+
+      Alert.alert(
+        "Success",
+        `${memberName} has been removed`
+      );
+
+      fetchMembers();
+
+    } catch (error: any) {
+
+      Alert.alert(
+        "Kick Failed",
+        error?.message || "Cannot remove member"
+      );
+
+      console.log(error);
+    }
+  };
+
+  const confirmKickMember = (
+    firebaseUid: string,
+    memberName: string
+  ) => {
+
+    Alert.alert(
+      "Remove Member",
+      `Remove ${memberName} from this group?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: () =>
+            kickMember(firebaseUid, memberName),
+        },
+      ]
+    );
+  };
 
   const searchUsers = async (keyword: string) => {
     try {
@@ -431,7 +610,10 @@ export default function GroupMembersScreen({
         <View style={styles.membersList}>
           {members.map((member, index) => (
             <View key={member.firebaseUid}>
-              <MemberRow item={member} />
+              <MemberRow
+                item={member}
+                onKick={confirmKickMember}
+              />
               {index < members.length - 1 && (
                 <View style={styles.memberSeparator} />
               )}
@@ -461,9 +643,17 @@ export default function GroupMembersScreen({
         <TouchableOpacity
           style={styles.deleteBtn}
           activeOpacity={0.8}
-          onPress={handleDeleteGroup}
+          onPress={
+            isHost
+              ? handleDeleteGroup
+              : handleLeaveGroup
+          }
         >
-          <Text style={styles.deleteText}>Delete Group</Text>
+          <Text style={styles.deleteText}>
+            {isHost
+              ? "Delete Group"
+              : "Leave Group"}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -788,7 +978,7 @@ const styles = StyleSheet.create({
   searchResultActions: {
     justifyContent: 'center',
   },
-  
+
   invitedButton: {
     paddingHorizontal: 12,
     height: 40,
@@ -797,9 +987,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   invitedText: {
     color: '#16a34a',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+
+  kickButton: {
+    backgroundColor: '#fee2e2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+
+  kickText: {
+    color: '#dc2626',
     fontWeight: '600',
     fontSize: 13,
   },

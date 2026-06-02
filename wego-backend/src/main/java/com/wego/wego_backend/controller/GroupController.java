@@ -143,11 +143,16 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/members")
-    public ResponseEntity<?> getGroupMembers(
-            @PathVariable UUID groupId
+    public List<GroupMemberResponse> getMembers(
+            @PathVariable UUID groupId,
+            Authentication authentication
     ) {
-        return ResponseEntity.ok(
-                groupService.getGroupMembers(groupId)
+
+        String firebaseUid = authentication.getName();
+
+        return groupService.getGroupMembers(
+                groupId,
+                firebaseUid
         );
     }
 

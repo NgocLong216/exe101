@@ -10,5 +10,6 @@ public class GroupMemberResponse {
     private String name;
     private String avatar;
     private boolean isHost;
+    private boolean canKick;
 }
 
