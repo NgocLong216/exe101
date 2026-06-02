@@ -10,5 +10,9 @@ import java.util.UUID;
 public interface GroupRepository extends JpaRepository<Group, UUID> {
     List<Group> findByHostFirebaseUid(String firebaseUid);
     List<Group> findByStatus(GroupStatus status);
+    List<Group> findByHostFirebaseUidAndStatus(
+            String hostFirebaseUid,
+            GroupStatus status
+    );
 }
 

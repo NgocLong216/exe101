@@ -33,7 +33,7 @@ public class GroupPlaceSuggestionService {
 
         List<String> memberUids =
                 groupMemberRepository
-                        .findByGroupIdAndStatus(
+                        .findByGroup_IdAndStatus(
                                 groupId,
                                 GroupMemberStatus.ACCEPTED
                         )

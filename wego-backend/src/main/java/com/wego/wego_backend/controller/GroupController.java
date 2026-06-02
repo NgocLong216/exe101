@@ -214,4 +214,16 @@ public class GroupController {
         groupService.scheduleMeet(groupId, request.getMeetingTime());
         return ResponseEntity.ok("Meet scheduled successfully");
     }
+
+    @GetMapping("/my-schedules")
+    public ResponseEntity<?> getMyMeetings(
+            Authentication authentication
+    ) {
+
+        String firebaseUid = authentication.getName();
+
+        return ResponseEntity.ok(
+                groupService.getMyMeetings(firebaseUid)
+        );
+    }
 }

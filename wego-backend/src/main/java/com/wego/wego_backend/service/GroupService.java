@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -257,7 +254,7 @@ public class GroupService {
     public List<String> getGroupMemberFirebaseUids(UUID groupId) {
 
         return groupMemberRepository
-                .findByGroupIdAndStatus(groupId, GroupMemberStatus.ACCEPTED)
+                .findByGroup_IdAndStatus(groupId, GroupMemberStatus.ACCEPTED)
                 .stream()
                 .map(GroupMember::getUserFirebaseUid)
                 .toList();
@@ -385,6 +382,79 @@ public class GroupService {
         group.setStatus(GroupStatus.ON_GOING);
 
         groupRepository.save(group);
+    }
+
+    public List<MeetingScheduleResponse> getMyMeetings(String firebaseUid) {
+
+        Map<UUID, Group> meetingMap = new HashMap<>();
+
+        // Group user tham gia
+        List<GroupMember> memberships =
+                groupMemberRepository.findByUserFirebaseUidAndStatus(
+                        firebaseUid,
+                        GroupMemberStatus.ACCEPTED
+                );
+
+        for (GroupMember gm : memberships) {
+
+            Group group = gm.getGroup();
+
+            if (group.getStatus() == GroupStatus.ON_GOING) {
+                meetingMap.put(group.getId(), group);
+            }
+        }
+
+        // Group user làm host
+        List<Group> hostGroups =
+                groupRepository.findByHostFirebaseUidAndStatus(
+                        firebaseUid,
+                        GroupStatus.ON_GOING
+                );
+
+        for (Group group : hostGroups) {
+            meetingMap.put(group.getId(), group);
+        }
+
+        return meetingMap.values().stream()
+                .map(group -> {
+
+                    List<GroupMember> members =
+                            groupMemberRepository.findByGroup_IdAndStatus(
+                                    group.getId(),
+                                    GroupMemberStatus.ACCEPTED
+                            );
+
+                    List<String> avatars =
+                            members.stream()
+                                    .map(m -> userRepository
+                                            .findById(m.getUserFirebaseUid())
+                                            .orElse(null))
+                                    .filter(Objects::nonNull)
+                                    .map(User::getAvatar)
+                                    .limit(3)
+                                    .toList();
+
+                    return new MeetingScheduleResponse(
+                            group.getId(),
+                            group.getTitle(),
+                            group.getDescription(),
+                            group.getMeetingTime(),
+                            group.getLocationLat(),
+                            group.getLocationLng(),
+                            group.getPlaceId(),
+                            group.getGroupPhoto(),
+                            members.size(),
+                            avatars,
+                            group.getStatus(),
+                            group.getHostFirebaseUid().equals(firebaseUid)
+                    );
+                })
+                .sorted(
+                        Comparator.comparing(
+                                MeetingScheduleResponse::getMeetingTime
+                        )
+                )
+                .toList();
     }
 
 }
