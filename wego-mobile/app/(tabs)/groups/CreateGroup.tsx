@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity,
-    SafeAreaView,
-    Platform,
-    StatusBar,
-    KeyboardAvoidingView,
-    ScrollView,
-    Image
-} from 'react-native';
-import { ArrowLeft, Pencil } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
+import { ArrowLeft, Pencil } from 'lucide-react-native';
+import React, { useState } from 'react';
+import {
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
@@ -22,6 +23,7 @@ export default function CreateGroupScreen() {
     const router = useRouter()
     const [loading, setLoading] = useState(false);
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const handleCreateGroup = async () => {
         try {
@@ -46,6 +48,27 @@ export default function CreateGroupScreen() {
 
             formData.append("title", groupName);
             formData.append("description", groupDescription);
+
+            if (selectedImage) {
+
+                const filename =
+                    selectedImage.split('/').pop() || 'group.jpg';
+
+                const match = /\.(\w+)$/.exec(filename);
+
+                const type = match
+                    ? `image/${match[1]}`
+                    : 'image/jpeg';
+
+                formData.append(
+                    "groupPhoto",
+                    {
+                        uri: selectedImage,
+                        name: filename,
+                        type,
+                    } as any
+                );
+            }
 
             // optional fields
             // formData.append("meetingTime", "2026-05-27T20:00:00");
@@ -87,6 +110,19 @@ export default function CreateGroupScreen() {
         }
     };
 
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <KeyboardAvoidingView
@@ -114,24 +150,38 @@ export default function CreateGroupScreen() {
                 >
                     {/* Avatar Upload Section */}
                     <View style={styles.avatarSection}>
-                        <TouchableOpacity style={styles.avatarContainer} activeOpacity={0.8}>
+                        <TouchableOpacity style={styles.avatarContainer} activeOpacity={0.8} onPress={pickImage}>
                             {/* Vòng tròn màu be sữa chứa icon nhóm mặc định */}
                             <View style={styles.avatarPlaceholder}>
-                                <Image
-                                    source={{ uri: 'https://img.icons8.com/illustrations/meaning/100/null/conference-call.png' }}
-                                    style={styles.groupDefaultIcon}
-                                    resizeMode="contain"
-                                />
+                                {selectedImage ? (
+                                    <Image
+                                        source={{ uri: selectedImage }}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                        }}
+                                    />
+                                ) : (
+                                    <Image
+                                        source={{
+                                            uri: 'https://img.icons8.com/illustrations/meaning/100/null/conference-call.png'
+                                        }}
+                                        style={styles.groupDefaultIcon}
+                                        resizeMode="contain"
+                                    />
+                                )}
                             </View>
                             {/* Nút Pencil màu xanh lá nhỏ ở góc */}
-                            {/* <View style={styles.editBadge}>
-                <Pencil size={14} color="#FFFFFF" strokeWidth={3} />
-              </View> */}
+                            <View style={styles.editBadge}>
+                                <Pencil size={14} color="#FFFFFF" strokeWidth={3} />
+                            </View>
                         </TouchableOpacity>
 
-                        {/* <TouchableOpacity>
-              <Text style={styles.uploadText}>Upload Group Photo</Text>
-            </TouchableOpacity> */}
+                        <TouchableOpacity onPress={pickImage}>
+                            <Text style={styles.uploadText}>
+                                Upload Group Photo
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Form Inputs */}

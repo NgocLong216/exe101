@@ -143,11 +143,16 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/members")
-    public ResponseEntity<?> getGroupMembers(
-            @PathVariable UUID groupId
+    public List<GroupMemberResponse> getMembers(
+            @PathVariable UUID groupId,
+            Authentication authentication
     ) {
-        return ResponseEntity.ok(
-                groupService.getGroupMembers(groupId)
+
+        String firebaseUid = authentication.getName();
+
+        return groupService.getGroupMembers(
+                groupId,
+                firebaseUid
         );
     }
 
@@ -213,5 +218,17 @@ public class GroupController {
 
         groupService.scheduleMeet(groupId, request.getMeetingTime());
         return ResponseEntity.ok("Meet scheduled successfully");
+    }
+
+    @GetMapping("/my-schedules")
+    public ResponseEntity<?> getMyMeetings(
+            Authentication authentication
+    ) {
+
+        String firebaseUid = authentication.getName();
+
+        return ResponseEntity.ok(
+                groupService.getMyMeetings(firebaseUid)
+        );
     }
 }

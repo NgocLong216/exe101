@@ -17,7 +17,8 @@
 ### Quản lý cuộc hẹn
 - Gợi ý địa điểm (POST /api/groups/{groupId}/suggest-place) api này mới chỉ tính toán khoảng cách chứ chưa có AI gợi ý.
 - Lấy thông tin địa điểm (GET /api/groups/places/{placeId})
-- Đặt lịch hẹn (POST /api/group/{groupId}/schedule-meet) api này mới chỉ đặt lịch tại 1 thời gian cụ thể cho cả nhóm chứ chưa tính toán traffic cho từng người 
+- Đặt lịch hẹn (POST /api/groups/{groupId}/schedule-meet) api này mới chỉ đặt lịch tại 1 thời gian cụ thể cho cả nhóm chứ chưa tính toán traffic cho từng người 
+- Lấy danh sách lịch hẹn (GET /api/groups/my-schedules)
 
 ### Quản lý người dùng
 - Lấy thông tin profile (GET /api/users/me)
