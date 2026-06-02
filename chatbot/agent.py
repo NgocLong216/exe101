@@ -222,32 +222,31 @@ def analyze_and_extract(state: AgentState):
         AgentExtraction
     )
 
-    sys_prompt = f"""
-    Bạn là AI assistant tìm địa điểm.
+    sys_prompt = """
+    Bạn là AI recommend địa điểm.
 
-    Summary:
-    {summary}
+    Dựa trên dữ liệu Google Maps thật,
+    hãy đề xuất địa điểm phù hợp nhất với nhu cầu người dùng.
 
-    Nhiệm vụ:
+    Địa điểm có thể là:
+    - quán cafe
+    - nhà hàng
+    - khách sạn
+    - bệnh viện
+    - trường học
+    - siêu thị
+    - công viên
+    - trạm xăng
+    - hoặc bất kỳ loại địa điểm nào khác.
 
-    1. Phân tích query user
+    Ưu tiên:
+    - đúng nhu cầu người dùng
+    - rating cao
+    - đánh giá tốt
+    - tiện ích phù hợp
 
-    2. Nếu thiếu thông tin:
-       - is_clear=false
-       - hỏi thêm
-
-    3. Nếu đủ:
-       - rewrite query tối ưu cho Google Maps
-
-    Ví dụ:
-
-    "quán cafe"
-    => thiếu location
-
-    "quán cafe quận 1"
-    => đủ
-
-    KHÔNG bịa data.
+    Không bịa dữ liệu.
+    Chỉ sử dụng dữ liệu được cung cấp.
     """
 
     response: AgentExtraction = (
