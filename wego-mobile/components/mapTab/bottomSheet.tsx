@@ -1,6 +1,7 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
     forwardRef,
+    useEffect,
     useImperativeHandle,
     useMemo,
     useRef,
@@ -9,6 +10,7 @@ import React, {
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { ChevronDown, MapPinPlus } from "lucide-react-native"; // Hoặc dùng Pencil/MapPin tùy ý bạn
 import { useRouter } from "expo-router";
+import { getUserGroups, GroupResponse } from "@/apis/groupAPI";
 
 export type PlaceDetail = {
   place_id: string;
@@ -49,13 +51,17 @@ export type PlaceBottomSheetRef = {
     close: () => void;
 };
 
-const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
+type PlaceBottomSheetProps = {
+    onClose?: () => void;
+};
+
+const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(({ onClose }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    // Thu gọn snapPoints xuống khoảng 22% - 25% vì UI này khá gọn, vừa đủ hiển thị dữ liệu
     const snapPoints = useMemo(() => ["30%"], []);
 
     const [place, setPlace] = useState<PlaceDetail | null>(null);
+    const [openRequested, setOpenRequested] = useState(false);
     const router = useRouter()
 
     const handleSetMeetingPoint = () => {
@@ -72,15 +78,33 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
         })
     }
 
+    const handleSheetClose = React.useCallback(() => {
+        setPlace(null);
+        setOpenRequested(false);
+        onClose?.();
+    }, [onClose]);
+
     useImperativeHandle(ref, () => ({
         open: (placeDetail: PlaceDetail) => {
             setPlace(placeDetail);
-            bottomSheetRef.current?.expand();
+            setOpenRequested(true);
         },
         close: () => {
             bottomSheetRef.current?.close();
+            handleSheetClose();
         }
     }));
+
+    React.useEffect(() => {
+        if (openRequested && place) {
+            const timeout = setTimeout(() => {
+                bottomSheetRef.current?.snapToIndex(0);
+                setOpenRequested(false);
+            }, 50);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [openRequested, place]);
 
     return (
         <BottomSheet
@@ -88,6 +112,11 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef>((_, ref) => {
             index={-1}
             snapPoints={snapPoints}
             enablePanDownToClose
+            onChange={(idx) => {
+                if (idx === -1) {
+                    handleSheetClose();
+                }
+            }}
             // Custom thanh gạch ngang (handle) phía trên cho mỏng và tinh tế giống ảnh
             handleIndicatorStyle={styles.handleIndicator}
             backgroundStyle={styles.sheetBackground}

@@ -69,7 +69,7 @@ export default function PlaceDetailScreen() {
         'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop';
 
     const displayName = placeData?.title ?? placeName ?? 'Loading...';
-    const isOpen = placeData?.open_state?.toLowerCase().includes('open');
+    const isOpen = (placeData?.open_state ?? '').toLowerCase().includes('open');
 
     return (
         <View style={styles.mainContainer}>

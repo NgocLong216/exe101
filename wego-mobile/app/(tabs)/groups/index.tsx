@@ -150,7 +150,7 @@ export default function GroupsScreen() {
     };
 
     const filtered = groups.filter((g) =>
-        g.name.toLowerCase().includes(query.toLowerCase())
+        (g.name ?? '').toLowerCase().includes((query ?? '').toLowerCase())
     );
 
     return (

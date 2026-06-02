@@ -154,6 +154,26 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
   };
 
   // MAP TAP → reverse geocode → open bottom sheet
+  const clearDestinationAndRoute = () => {
+    if (routeIds.length > 0) {
+      routeIds.forEach((id) => {
+        webRef.current?.injectJavaScript(`
+          if (map.getLayer("${id}")) {
+            map.removeLayer("${id}");
+          }
+          if (map.getSource("${id}")) {
+            map.removeSource("${id}");
+          }
+          true;
+        `);
+      });
+    }
+    setDestination(null);
+    setRoute([]);
+    setRouteIds([]);
+    setSelectedPlace(null);
+  };
+
   const handleSelectPlace = async (place: LatLng) => {
     try {
       const url = `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
@@ -276,7 +296,7 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
 
       <SearchBar onSelectLocation={handleSearch} />
 
-      <PlaceBottomSheet ref={bottomSheetRef} />
+      <PlaceBottomSheet ref={bottomSheetRef} onClose={clearDestinationAndRoute} />
     </View>
   );
 }
