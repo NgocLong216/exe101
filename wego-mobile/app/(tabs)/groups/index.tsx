@@ -13,7 +13,6 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { getUserGroups, GroupResponse } from '@/apis/groupAPI';
 
 const GREEN = process.env.EXPO_PUBLIC_GREEN_MAIN
 
@@ -92,21 +91,13 @@ type RootStackParamList = {
 
 export default function GroupsScreen() {
     const [query, setQuery] = useState('');
-
-    const [groups, setGroups] = useState<GroupResponse[]>([]);
-    // const [selectedGroup, setSelectedGroup] = useState<string>('');
-    // const [members, setMembers] = useState<GroupResponse[]>([]);
-
+    const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        const fetchGroups = async () => {
-            const data = await getUserGroups()
-            setGroups(data)
-        }
-        fetchGroups()
-    }, [])
+        fetchMyGroups();
+    }, []);
 
     const fetchMyGroups = async () => {
         try {
@@ -136,20 +127,20 @@ export default function GroupsScreen() {
                 throw new Error("Fetch groups failed");
             }
 
-            const data: GroupResponse[] = await response.json();
+            const data: MyGroupResponse[] = await response.json();
 
-            // const mapped: GroupResponse[] = data.map((g) => ({
-            //     id: g.id,
-            //     name: g.title,
-            //     members: g.memberCount,
-            //     status: g.host ? 'You are host' : 'Member',
-            //     avatar: g.groupPhoto,
-            //     statusDot: g.host ? 'active' : 'online',
-            // }));
+            const mapped: Group[] = data.map((g) => ({
+                id: g.id,
+                name: g.title,
+                members: g.memberCount,
+                status: g.host ? 'You are host' : 'Member',
+                avatar: g.groupPhoto,
+                statusDot: g.host ? 'active' : 'online',
+            }));
 
-            setGroups(data);
+            setGroups(mapped);
 
-            console.log("GROUP DATA:", data);
+            console.log("GROUP DATA:", mapped);
 
         } catch (error) {
             console.log("FETCH GROUP ERROR:", error);
@@ -158,9 +149,9 @@ export default function GroupsScreen() {
         }
     };
 
-    // const filtered = groups.filter((g) =>
-    //     g.title.toLowerCase().includes(query.toLowerCase())
-    // );
+    const filtered = groups.filter((g) =>
+        (g.name ?? '').toLowerCase().includes((query ?? '').toLowerCase())
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -206,21 +197,29 @@ export default function GroupsScreen() {
             </View>
 
             {/* List */}
-            {/* <FlatList
+            <FlatList
                 data={filtered}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <GroupItem
                         item={item}
                         onPress={() =>
-                            
+                            router.push({
+                                pathname: '/(tabs)/groups/GroupMembers',
+                                params: {
+                                    groupId: item.id,
+                                    groupName: item.name,
+                                    memberCount: item.members,
+                                    activeCount: item.members,
+                                },
+                            })
                         }
                     />
                 )}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
-            /> */}
+            />
         </SafeAreaView>
     );
 }
