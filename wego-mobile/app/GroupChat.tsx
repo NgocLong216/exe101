@@ -1,7 +1,14 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getAuth } from "firebase/auth";
-import { ArrowLeft, Plus, Send, Smile } from 'lucide-react-native';
-import React, { useState } from 'react';
+import {
+  off,
+  onValue,
+  push,
+  ref,
+  set,
+} from "firebase/database";
+import { ArrowLeft, Plus, Send } from 'lucide-react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -16,19 +23,23 @@ import {
   View
 } from 'react-native';
 
+import { db } from "@/firebase";
+
 // Định nghĩa kiểu dữ liệu tin nhắn đa dạng (text, map, image)
 type Message = {
   id: string;
+
+  senderUid?: string;
   senderName?: string;
   senderAvatar?: string;
+
   isMe: boolean;
-  imageUri?: string;
 
   type:
-  | 'text'
-  | 'map'
-  | 'image'
-  | 'ai-text';
+  | "text"
+  | "map"
+  | "image"
+  | "ai-text";
 
   text?: string;
 
@@ -39,6 +50,8 @@ type Message = {
     lat?: number;
     lng?: number;
   };
+
+  timestamp?: number;
 
   time: string;
 };
@@ -51,86 +64,221 @@ export default function GroupChatScreen() {
   const [keyword, setKeyword] = useState("");
   const [loadingSuggest, setLoadingSuggest] = useState(false);
   const [suggestedPlaces, setSuggestedPlaces] = useState<any[]>([]);
-  const { groupId } = useLocalSearchParams();
-  console.log("groupId in GroupChatScreen:", groupId);
+  const { groupId, groupName } = useLocalSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const [showMention, setShowMention] = useState(false);
+
+  const [members, setMembers] = useState<any[]>([]);
+
+  const [selectedMention, setSelectedMention] = useState<string | null>(null);
+
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+
+    setTimeout(() => {
+  
+      scrollRef.current?.scrollToEnd({
+        animated: false,
+      });
+  
+    }, 200);
+  
+  }, [messages]);
+
   const handleSend = async () => {
+
     if (!inputText.trim()) return;
 
-    const userText = inputText;
+    const text = inputText.trim();
 
     setInputText("");
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      isMe: true,
-      type: "text",
-      text: userText,
-      time: new Date().toLocaleTimeString(),
+    /*
+     * @bot quán cafe đẹp
+     */
+
+    if (
+      selectedMention === "@bot" ||
+      text.startsWith("@bot")
+    ) {
+      await sendNormalMessage(text);
+    
+      const question = text
+        .replace("@bot", "")
+        .trim();
+    
+      setLoadingSuggest(true);
+    
+      try {
+    
+        await sendBotMessage(question);
+    
+      } finally {
+    
+        setLoadingSuggest(false);
+      }
+    
+      setSelectedMention(null);
+    
+      return;
+    }
+
+    await sendNormalMessage(text);
+  };
+
+  useEffect(() => {
+    const messagesRef =
+      ref(db, `group_chats/${groupId}`);
+
+    onValue(messagesRef, snapshot => {
+      const data = snapshot.val();
+
+      if (!data) {
+        setMessages([]);
+        return;
+      }
+
+      const currentUid =
+        getAuth().currentUser?.uid;
+
+      const loaded = Object.entries(data).map(
+        ([id, value]: any) => ({
+          id,
+          ...value,
+          isMe:
+            value.senderUid === currentUid,
+        })
+      );
+
+      loaded.sort(
+        (a: any, b: any) =>
+          a.timestamp - b.timestamp
+      );
+
+      setMessages(loaded);
+    });
+
+    return () => {
+      off(messagesRef);
     };
+  }, [groupId]);
 
-    setMessages(prev => [...prev, userMessage]);
+  const sendNormalMessage = async (
+    text: string
+  ) => {
 
-    setLoadingSuggest(true);
+    const user = getAuth().currentUser;
 
+    if (!user) return;
+
+    const messagesRef =
+      ref(db, `group_chats/${groupId}`);
+
+    const newMessageRef =
+      push(messagesRef);
+
+    await set(newMessageRef, {
+      senderUid: user.uid,
+      senderName: user.displayName,
+      senderAvatar: user.photoURL,
+
+      type: "text",
+
+      text,
+
+      timestamp: Date.now(),
+    });
+  };
+
+  useEffect(() => {
+    loadMembers();
+  }, []);
+
+  const loadMembers = async () => {
     try {
-      await askAiSuggestPlace(userText);
-    } finally {
-      setLoadingSuggest(false);
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const res = await fetch(
+        `${API_URL}/api/groups/${groupId}/members`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      setMembers(data);
+    } catch (e) {
+      console.log(e);
     }
   };
 
-  const askAiSuggestPlace = async (keyword: string) => {
+  const sendBotMessage = async (
+    question: string
+  ) => {
+
     try {
 
       const token =
-        await getAuth().currentUser?.getIdToken();
+        await getAuth()
+          .currentUser
+          ?.getIdToken();
 
       const response = await fetch(
         `${API_URL}/api/groups/${groupId}/chat`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${token}`,
           },
           body: JSON.stringify({
-            message: keyword,
+            message: question,
           }),
         }
       );
 
       const data = await response.json();
 
-      const aiTextMessage: Message = {
-        id: Date.now().toString(),
+      const messagesRef =
+        ref(db, `group_chats/${groupId}`);
+
+      const aiRef =
+        push(messagesRef);
+
+      await set(aiRef, {
+        senderUid: "bot",
         senderName: "WEGO AI",
-        senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
-        isMe: false,
+        senderAvatar:
+          "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+
         type: "ai-text",
+
         text: data.message,
-        time: new Date().toLocaleTimeString(),
-      };
 
-      setMessages(prev => [
-        ...prev,
-        aiTextMessage,
-      ]);
+        timestamp: Date.now(),
+      });
 
-      const placeMessages: Message[] =
-        (data.places || []).map((place: any) => ({
-          id: Date.now().toString() + Math.random(),
+      for (const place of data.places || []) {
+
+        const placeRef =
+          push(messagesRef);
+
+        await set(placeRef, {
+          senderUid: "bot",
 
           senderName: "WEGO AI",
-
-          senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
-
-          isMe: false,
+          senderAvatar: "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
 
           type: "map",
-
-          time: new Date().toLocaleTimeString(),
 
           mapData: {
             title: place.name,
@@ -139,32 +287,15 @@ export default function GroupChatScreen() {
             lat: place.lat,
             lng: place.lng,
           },
-        }));
 
-      setMessages(prev => [
-        ...prev,
-        ...placeMessages,
-      ]);
+          timestamp: Date.now(),
+        });
+      }
 
     } catch (e) {
-
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        senderName: "WEGO AI",
-        senderAvatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop",
-        isMe: false,
-        type: "ai-text",
-        text: "Sorry, I couldn't find any suitable places.",
-        time: new Date().toLocaleTimeString(),
-      };
-
-      setMessages(prev => [
-        ...prev,
-        errorMessage,
-      ]);
+      console.log(e);
     }
   };
-
   // Dữ liệu mock-up chuẩn theo nội dung tin nhắn trong ảnh mẫu
 
 
@@ -177,6 +308,10 @@ export default function GroupChatScreen() {
             style={styles.backButton}
             onPress={() => router.push({
               pathname: '/(tabs)/groups/GroupMembers',
+              params: {
+                groupId: String(groupId),
+                groupName: String(groupName),
+              },
             })}
           >
             <ArrowLeft size={24} color="#1E293B" />
@@ -203,7 +338,7 @@ export default function GroupChatScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={20}
       >
-        <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingVertical: 16 }}>
+        <ScrollView ref={scrollRef} style={styles.chatContainer} contentContainerStyle={{ paddingVertical: 16 }}>
           {/* Tag phân tách thời gian ngày hôm nay */}
           <View style={styles.dateTagContainer}>
             <View style={styles.dateTag}>
@@ -211,7 +346,7 @@ export default function GroupChatScreen() {
             </View>
           </View>
 
-          
+
           {messages.map((msg) => (
             <View key={msg.id} style={[styles.messageRow, msg.isMe ? styles.myRow : styles.otherRow]}>
 
@@ -242,7 +377,18 @@ export default function GroupChatScreen() {
                           : styles.otherBubbleText
                       ]}
                     >
-                      {msg.text}
+                      {msg.text?.startsWith("@bot") ? (
+                        <>
+                          <Text style={{ color: "#2563EB", fontWeight: "700" }}>
+                            @bot
+                          </Text>
+                          <Text>
+                            {msg.text.replace("@bot", "")}
+                          </Text>
+                        </>
+                      ) : (
+                        msg.text
+                      )}
                     </Text>
                   </View>
                 )}
@@ -324,24 +470,72 @@ export default function GroupChatScreen() {
           )}
         </ScrollView>
 
+        {showMention && (
+
+          <View style={styles.mentionBox}>
+
+            <TouchableOpacity
+              style={styles.mentionItem}
+              onPress={() => {
+
+                setInputText("@bot ");
+
+                setSelectedMention("@bot");
+
+                setShowMention(false);
+              }}
+            >
+              <Text style={styles.mentionText}>
+                @bot
+              </Text>
+            </TouchableOpacity>
+
+            {members.map(member => (
+
+              <TouchableOpacity
+                key={member.firebaseUid}
+                style={styles.mentionItem}
+                onPress={() => {
+
+                  setInputText(prev =>
+                    prev.replace(/@\w*$/, `@${member.name} `)
+                  );
+
+                  setShowMention(false);
+                }}
+              >
+                <Text style={styles.mentionText}>
+                  {member.name}
+                </Text>
+              </TouchableOpacity>
+
+            ))}
+          </View>
+        )}
         {/* Bottom Input Message Bar */}
         <View style={styles.bottomBar}>
           <TouchableOpacity style={styles.circleActionButton}>
             <Plus size={22} color="#475569" />
           </TouchableOpacity>
 
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Type a message..."
-              placeholderTextColor="#94A3B8"
-              value={inputText}
-              onChangeText={setInputText}
-            />
-            <TouchableOpacity style={styles.emojiButton}>
-              <Smile size={22} color="#94A3B8" />
-            </TouchableOpacity>
-          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Type @bot for AI, send message..."
+            placeholderTextColor="#94A3B8"
+            value={inputText}
+            onChangeText={(text) => {
+
+              setInputText(text);
+
+              const lastWord = text.split(" ").pop();
+
+              if (lastWord?.startsWith("@")) {
+                setShowMention(true);
+              } else {
+                setShowMention(false);
+              }
+            }}
+          />
 
           <TouchableOpacity
             style={styles.sendButton}
@@ -488,7 +682,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   myBubble: {
-    backgroundColor: '#2563EB', // Màu xanh lam chủ đạo theo thiết kế trong hình
+    backgroundColor: '#F1F5F9',
     borderBottomRightRadius: 4,
   },
   bubbleText: {
@@ -499,7 +693,7 @@ const styles = StyleSheet.create({
     color: '#1E293B',
   },
   myBubbleText: {
-    color: '#FFFFFF',
+    color: '#1E293B',
   },
 
   // Share Map Card UI
@@ -509,7 +703,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderBottomLeftRadius: 4,
     overflow: 'hidden',
-  
+
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -596,5 +790,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#D97706', // Gradient/Cam-nâu ấm đặc trưng nút gửi ở góc dưới
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  mentionBox: {
+    position: "absolute",
+
+    bottom: 85,
+
+    left: 15,
+
+    right: 15,
+
+    backgroundColor: "#fff",
+
+    borderRadius: 12,
+
+    elevation: 5,
+
+    maxHeight: 250,
+
+    zIndex: 999,
+  },
+
+  mentionItem: {
+    padding: 14,
+
+    borderBottomWidth: 1,
+
+    borderBottomColor: "#eee",
+  },
+
+  mentionText: {
+    fontSize: 15,
+
+    fontWeight: "600",
   },
 });

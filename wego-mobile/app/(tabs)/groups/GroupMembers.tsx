@@ -581,6 +581,7 @@ export default function GroupMembersScreen() {
             pathname: '/GroupChat',
             params: {
               groupId: groupId,
+              groupName: groupName,
             },
           })}
         >
