@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
+import { getAuth } from "firebase/auth";
 import { Bell, ChevronRight, Plus, Search } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { getAuth } from "firebase/auth";
 import {
     FlatList,
     Image,

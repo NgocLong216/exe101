@@ -1,21 +1,20 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { getAuth } from "firebase/auth";
+import { ArrowLeft, Plus, Send, Smile } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-  ScrollView,
-  Image,
-  KeyboardAvoidingView
+  View
 } from 'react-native';
-import { ArrowLeft, Video, Phone, Plus, Smile, Send } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { getAuth } from "firebase/auth";
-import { useLocalSearchParams } from "expo-router";
 
 // Định nghĩa kiểu dữ liệu tin nhắn đa dạng (text, map, image)
 type Message = {
@@ -134,11 +133,11 @@ export default function GroupChatScreen() {
           time: new Date().toLocaleTimeString(),
 
           mapData: {
-            title: place.title,
+            title: place.name,
             description: place.address,
             imageUri: place.thumbnail,
-            lat: place.latitude,
-            lng: place.longitude,
+            lat: place.lat,
+            lng: place.lng,
           },
         }));
 
@@ -212,24 +211,7 @@ export default function GroupChatScreen() {
             </View>
           </View>
 
-          {/* Duyệt mảng để hiển thị danh sách tin nhắn */}
-          {loadingSuggest && (
-            <View
-              style={{
-                alignItems: "center",
-                marginBottom: 12,
-              }}
-            >
-              <Text
-                style={{
-                  color: "#64748B",
-                  fontStyle: "italic",
-                }}
-              >
-                WeGo AI is thinking...
-              </Text>
-            </View>
-          )}
+          
           {messages.map((msg) => (
             <View key={msg.id} style={[styles.messageRow, msg.isMe ? styles.myRow : styles.otherRow]}>
 
@@ -266,13 +248,49 @@ export default function GroupChatScreen() {
                 )}
 
                 {msg.type === 'map' && msg.mapData && (
-                  <View style={styles.mapCard}>
-                    <Image source={{ uri: msg.mapData.imageUri }} style={styles.mapImage} />
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.mapCard}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/PlaceDetail",
+                        params: {
+                          placeName: msg.mapData?.title,
+                          lat: String(msg.mapData?.lat ?? ""),
+                          lng: String(msg.mapData?.lng ?? ""),
+                          placeId: "",
+                          prevRoute: "/GroupChat",
+                          groupId: String(groupId),
+                        },
+                      })
+                    }
+                  >
+                    <Image
+                      source={{ uri: msg.mapData.imageUri }}
+                      style={styles.mapImage}
+                    />
+
                     <View style={styles.mapInfoBody}>
-                      <Text style={styles.mapTitle}>{msg.mapData.title}</Text>
-                      <Text style={styles.mapDesc}>{msg.mapData.description}</Text>
+                      <Text style={styles.mapTitle}>
+                        {msg.mapData.title}
+                      </Text>
+
+                      <Text style={styles.mapDesc}>
+                        {msg.mapData.description}
+                      </Text>
+
+                      <Text
+                        style={{
+                          color: "#22c55e",
+                          fontWeight: "700",
+                          fontSize: 12,
+                          marginTop: 6,
+                        }}
+                      >
+                        Tap to view details →
+                      </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 )}
 
                 {msg.type === 'image' && msg.imageUri && (
@@ -286,6 +304,24 @@ export default function GroupChatScreen() {
               </View>
             </View>
           ))}
+          {/* Duyệt mảng để hiển thị danh sách tin nhắn */}
+          {loadingSuggest && (
+            <View
+              style={{
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#64748B",
+                  fontStyle: "italic",
+                }}
+              >
+                WeGo AI is thinking...
+              </Text>
+            </View>
+          )}
         </ScrollView>
 
         {/* Bottom Input Message Bar */}
@@ -473,6 +509,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderBottomLeftRadius: 4,
     overflow: 'hidden',
+  
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   mapImage: {
     width: '100%',

@@ -98,26 +98,16 @@ function MemberRow({
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
-type Props = {
-  groupName?: string;
-  memberCount?: number;
-  activeCount?: number;
-  onBack?: () => void;
-};
-
-export default function GroupMembersScreen({
-  groupName = 'Weekend Hike',
-  memberCount = 6,
-  activeCount = 6,
-  onBack,
-}: Props) {
+export default function GroupMembersScreen() {
+  
   const router = useRouter()
 
   const [memberUids, setMemberUids] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [members, setMembers] = useState<GroupMember[]>([]);
-  const { groupId } = useLocalSearchParams<{
+  const { groupId, groupName } = useLocalSearchParams<{
     groupId: string;
+    groupName: string;
   }>();
 
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -483,7 +473,7 @@ export default function GroupMembersScreen({
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>{groupName}</Text>
-          <Text style={styles.headerSub}>{memberCount} Members Active</Text>
+          {/* <Text style={styles.headerSub}>{memberCount} Members Active</Text> */}
         </View>
         <View style={styles.searchContainer}>
           <Search

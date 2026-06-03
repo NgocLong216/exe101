@@ -416,7 +416,13 @@ public class GroupService {
         groupMemberRepository.save(member);
     }
 
-    public void scheduleMeet(UUID groupId, LocalDateTime meetingTime) {
+    public void scheduleMeet(
+            UUID groupId,
+            LocalDateTime meetingTime,
+            Double lat,
+            Double lng,
+            String placeId
+    ) {
 
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
@@ -426,6 +432,11 @@ public class GroupService {
         }
 
         group.setMeetingTime(meetingTime);
+
+        group.setLocationLat(lat);
+        group.setLocationLng(lng);
+        group.setPlaceId(placeId);
+
         group.setStatus(GroupStatus.ON_GOING);
 
         groupRepository.save(group);
