@@ -1,5 +1,12 @@
 import { useAuth } from "@/auth0/AuthContext";
 import { LocationResult } from "@/types/location";
+import { useLocalSearchParams } from "expo-router";
+import { getAuth } from "firebase/auth";
+import {
+  getDatabase,
+  onValue,
+  ref,
+} from "firebase/database";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -31,10 +38,9 @@ const GOONG_API_KEY_2 = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
 type Props = {
   latitude: number;
   longitude: number;
-  members: Member[]; // 👈 receive from HomeScreen
 };
 
-export default function GoongWebMap({ latitude, longitude, members }: Props) {
+export default function GoongWebMap({ latitude, longitude}: Props) {
   const { user } = useAuth();
   const isInteracting = useRef(false);
   const webRef = useRef<WebView>(null);
@@ -45,6 +51,221 @@ export default function GoongWebMap({ latitude, longitude, members }: Props) {
   const [destination, setDestination] = useState<LocationResult | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
   const [routeIds, setRouteIds] = useState<string[]>([]);
+  const {
+    placeId,
+    placeName,
+    lat,
+    lng,
+    prevRoute,
+  } = useLocalSearchParams<{
+    placeId?: string;
+    placeName?: string;
+    lat?: string;
+    lng?: string;
+    prevRoute?: string;
+  }>();
+  const { groupId } = useLocalSearchParams<{
+    groupId?: string;
+  }>();
+  const [members, setMembers] = useState<Member[]>([]);
+
+  useEffect(() => {
+
+    if (!groupId) {
+  
+      setMembers([]);
+  
+      return;
+    }
+  
+    loadGroupMembers();
+  
+  }, [groupId]);
+
+  const loadGroupMembers = async () => {
+
+    try {
+  
+      const token =
+        await getAuth()
+          .currentUser
+          ?.getIdToken();
+  
+      const response =
+        await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members/uids`,
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
+  
+      const memberUids: string[] =
+        await response.json();
+  
+      console.log(
+        "GROUP MEMBERS:",
+        memberUids
+      );
+  
+      const db = getDatabase();
+  
+      onValue(
+        ref(db, "live_locations"),
+        snapshot => {
+  
+          const locations =
+            snapshot.val() || {};
+  
+          const membersData =
+            memberUids
+              .map(uid => {
+  
+                const loc =
+                  locations[uid];
+  
+                if (!loc) return null;
+  
+                return {
+                  firebaseUid: uid,
+                  name: loc.name || "",
+                  lat: loc.lat,
+                  lng: loc.lng,
+                  updatedAt: loc.updatedAt || 0,
+                };
+  
+              })
+              .filter(Boolean);
+  
+          setMembers(
+            membersData as Member[]
+          );
+        }
+      );
+  
+    } catch (err) {
+  
+      console.log(
+        "LOAD MEMBERS ERROR",
+        err
+      );
+  
+    }
+  };
+
+  useEffect(() => {
+
+    if (
+      prevRoute !== "/PlaceDetail" ||
+      !lat ||
+      !lng
+    ) {
+      return;
+    }
+  
+    const selectedLat = Number(lat);
+    const selectedLng = Number(lng);
+  
+    const loadPlace = async () => {
+  
+      try {
+  
+        const url =
+          `https://rsapi.goong.io/Geocode?latlng=${selectedLat},${selectedLng}&api_key=${GOONG_API_KEY_2}`;
+  
+        const res = await fetch(url);
+        const data = await res.json();
+  
+        const placeResult =
+          data.results?.[0];
+  
+        if (!placeResult) return;
+  
+        const placeDetail: PlaceDetail = {
+          place_id:
+            placeId ||
+            placeResult.place_id,
+  
+          name:
+            placeName ||
+            placeResult.name,
+  
+          formatted_address:
+            placeResult.formatted_address,
+  
+          address:
+            placeResult.address,
+  
+          address_components:
+            placeResult.address_components,
+  
+          compound:
+            placeResult.compound,
+  
+          plus_code:
+            placeResult.plus_code,
+  
+          types:
+            placeResult.types,
+  
+          geometry: {
+            location: {
+              lat: selectedLat,
+              lng: selectedLng,
+            },
+          },
+        };
+  
+        setSelectedPlace(placeDetail);
+  
+        setDestination({
+          latitude: selectedLat,
+          longitude: selectedLng,
+        } as LocationResult);
+  
+        bottomSheetRef.current?.open(
+          placeDetail
+        );
+  
+        webRef.current?.injectJavaScript(`
+          map.flyTo({
+            center: [${selectedLng}, ${selectedLat}],
+            zoom: 16
+          });
+  
+          new goongjs.Marker({
+            color: "red"
+          })
+            .setLngLat([
+              ${selectedLng},
+              ${selectedLat}
+            ])
+            .addTo(map);
+  
+          true;
+        `);
+  
+      } catch (e) {
+  
+        console.log(
+          "AUTO LOAD PLACE ERROR",
+          e
+        );
+  
+      }
+    };
+  
+    loadPlace();
+  
+  }, [
+    placeId,
+    placeName,
+    lat,
+    lng,
+    prevRoute
+  ]);
 
   // Build points for MarkersOverlay from Firebase members + self
   const pointsData = [
