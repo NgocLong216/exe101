@@ -134,7 +134,6 @@ export default function HomeScreen() {
       <GoongWebMap
         latitude={userLocation.latitude}
         longitude={userLocation.longitude}
-        members={members} // 👈 add this
       />
     )}
   </>

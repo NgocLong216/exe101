@@ -234,16 +234,38 @@ export default function PlaceDetailScreen() {
                 <TouchableOpacity
                     style={styles.directionsButton}
                     activeOpacity={0.9}
-                    onPress={() => router.push({
-                        pathname: '/MeetingSetup',
-                        params: {
-                            placeId: placeId,
-                            placeName: placeName,
-                            lat: lat,
-                            lng: lng,
-                            prevRoute: '/PlaceDetail'
+                    onPress={() => {
+
+                        // Nếu đi từ ScheduleMeet sang
+                        if (prevRoute === "/(tabs)/schedule") {
+                            router.push({
+                                pathname: "/",
+                                params: {
+                                    placeId,
+                                    placeName,
+                                    lat,
+                                    lng,
+                                    prevRoute: "/PlaceDetail",
+                                    groupId,
+                                },
+                            });
+                    
+                            return;
                         }
-                    })}
+                    
+                        // Các trường hợp khác
+                        router.push({
+                            pathname: "/MeetingSetup",
+                            params: {
+                                placeId,
+                                placeName,
+                                lat,
+                                lng,
+                                prevRoute: "/PlaceDetail",
+                                groupId,
+                            },
+                        });
+                    }}
                 >
                     <Navigation size={20} color="#FFFFFF" fill="#FFFFFF"
                         style={{ marginRight: 8, transform: [{ rotate: '45deg' }] }} />
