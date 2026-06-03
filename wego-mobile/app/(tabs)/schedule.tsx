@@ -15,10 +15,13 @@ import { MapPin } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { getMySchedules, ScheduleResponse } from '@/apis/scheduleAPI';
+import { PlaceDetail } from '@/components/mapTab/bottomSheet';
+import { LatLng } from '@/types/location';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const TABS = ['Upcoming', 'Past', 'Invites'];
+const GOONG_API_KEY_2 = process.env.EXPO_PUBLIC_GOONG_API_KEY_2
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -56,6 +59,19 @@ function formatTime(meetingTime: string): string {
 
 function EventCard({ event }: { event: ScheduleResponse }) {
   const router = useRouter();
+  const [placeName, setPlaceName] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    GetInfo({ latitude: event.lat, longitude: event.lng }).then((info) => {
+      if (isMounted) setPlaceName(info?.name ?? '');
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [event.lat, event.lng]);
 
   return (
     <View style={styles.card}>
@@ -113,7 +129,12 @@ function EventCard({ event }: { event: ScheduleResponse }) {
             activeOpacity={0.8}
             onPress={() => router.push({
               pathname: '/PlaceDetail',
-              params: { prevRoute: '/(tabs)/schedule' },
+              params: {
+                placeName: placeName,
+                lat: event.lat,
+                lng: event.lng,
+                prevRoute: '/(tabs)/schedule'
+              },
             })}
           >
             <Text style={styles.detailsBtnText}>Details</Text>
@@ -211,6 +232,41 @@ export default function ScheduleScreen() {
     </SafeAreaView>
   );
 }
+
+// HELPER FUNCTION
+async function GetInfo(place: LatLng) {
+  try {
+    const url = `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const placeResult = data.results?.[0];
+    if (!placeResult) return;
+
+    const placeDetail: PlaceDetail = {
+      place_id: placeResult.place_id,
+      name: placeResult.name,
+      formatted_address: placeResult.formatted_address,
+      address: placeResult.address,
+      address_components: placeResult.address_components,
+      compound: placeResult.compound,
+      plus_code: placeResult.plus_code,
+      types: placeResult.types,
+      geometry: placeResult.geometry
+        ? {
+          location: {
+            lat: placeResult.geometry.location.lat,
+            lng: placeResult.geometry.location.lng,
+          },
+          boundary: placeResult.geometry.boundary ?? null,
+        }
+        : undefined,
+    };
+
+    return placeDetail
+  } catch (err) {
+    console.log("Select place error:", err);
+  }
+};
 
 // ─── Styles (unchanged) ───────────────────────────────────────────────────────
 

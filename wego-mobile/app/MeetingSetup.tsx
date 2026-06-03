@@ -13,6 +13,7 @@ import {
 import { ChevronLeft, ChevronDown, MapPin, Clock } from "lucide-react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getUserGroups, GroupResponse } from "@/apis/groupAPI";
+import { scheduleMeet } from "@/apis/scheduleAPI";
 
 const COLORS = {
   primary: "#22C55E",
@@ -64,11 +65,11 @@ function TimeScroll({ value, onChange, options }: TimeScrollProps) {
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setScrollOffset(offsetY);
-    
+
     const itemHeight = 36;
     const selectedIndex = Math.round(offsetY / itemHeight);
     const clampedIndex = Math.max(0, Math.min(selectedIndex, options.length - 1));
-    
+
     if (options[clampedIndex] && options[clampedIndex] !== value) {
       onChange(options[clampedIndex]);
     }
@@ -79,7 +80,7 @@ function TimeScroll({ value, onChange, options }: TimeScrollProps) {
     const itemHeight = 36;
     const selectedIndex = Math.round(offsetY / itemHeight);
     const clampedIndex = Math.max(0, Math.min(selectedIndex, options.length - 1));
-    
+
     const targetOffset = clampedIndex * itemHeight;
     scrollRef.current?.scrollTo({
       y: targetOffset,
@@ -134,7 +135,7 @@ export default function MeetingSetup() {
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [groups, setGroups] = useState<GroupResponse[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string>("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
   const [showGroupDropdown, setShowGroupDropdown] = useState(false);
@@ -179,22 +180,55 @@ export default function MeetingSetup() {
     setSelectedDate(selected);
   };
 
-  const handleConfirm = () => {
-    router.push({
-      pathname: '/(tabs)/schedule',
-    })
-  }
+  const handleConfirm = async () => {
+    try {
+      if (!selectedDate) {
+        alert("Please select a date");
+        return;
+      }
+
+      if (!selectedGroupId) {
+        alert("Please select a group");
+        return;
+      }
+
+      const meetingDateTime = new Date(selectedDate);
+
+      const meetingTime =
+        `${selectedDate.getFullYear()}-` +
+        `${String(selectedDate.getMonth() + 1).padStart(2, "0")}-` +
+        `${String(selectedDate.getDate()).padStart(2, "0")}T` +
+        `${hour}:${minute}:00`;
+
+      await scheduleMeet(selectedGroupId, {
+        meetingTime,
+        locationLat: Number(lat),
+        locationLng: Number(lng),
+        placeId,
+      });
+
+      router.push({
+        pathname: "/(tabs)/schedule",
+      });
+    } catch (error) {
+      console.error("Schedule meeting failed", error);
+      alert("Failed to schedule meeting");
+    }
+  };
 
   useEffect(() => {
     const fetchGroups = async () => {
-      const groupData = await getUserGroups()
-      setGroups(groupData)
+      const groupData = await getUserGroups();
+
+      setGroups(groupData);
+
       if (groupData.length > 0) {
-        setSelectedGroup(groupData[0].title)
+        setSelectedGroupId(groupData[0].id);
       }
-    }
-    fetchGroups()
-  },[])
+    };
+
+    fetchGroups();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -236,7 +270,7 @@ export default function MeetingSetup() {
         {/* Select Group */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Group</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.dropdownButton}
             onPress={() => setShowGroupDropdown(!showGroupDropdown)}
           >
@@ -245,11 +279,14 @@ export default function MeetingSetup() {
               <View style={styles.waveIconContainer}>
                 <Text style={styles.waveIcon}>〰</Text>
               </View>
-              <Text style={styles.dropdownText}>{selectedGroup || "Select a group"}</Text>
+              <Text style={styles.dropdownText}>
+                {groups.find(g => g.id === selectedGroupId)?.title ??
+                  "Select a group"}
+              </Text>
             </View>
-            <ChevronDown 
-              size={18} 
-              color={COLORS.textMuted} 
+            <ChevronDown
+              size={18}
+              color={COLORS.textMuted}
               strokeWidth={2}
               style={{ transform: [{ rotate: showGroupDropdown ? '180deg' : '0deg' }] }}
             />
@@ -262,14 +299,14 @@ export default function MeetingSetup() {
                   key={group.id}
                   style={styles.dropdownItem}
                   onPress={() => {
-                    setSelectedGroup(group.title);
+                    setSelectedGroupId(group.id);
                     setShowGroupDropdown(false);
                   }}
                 >
-                  <Text 
+                  <Text
                     style={[
                       styles.dropdownItemText,
-                      selectedGroup === group.title && styles.dropdownItemTextSelected
+                      selectedGroupId === group.id && styles.dropdownItemTextSelected
                     ]}
                   >
                     {group.title}
@@ -290,7 +327,7 @@ export default function MeetingSetup() {
 
           {/* Month Navigation */}
           <View style={styles.monthNavigation}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.navButton}
               onPress={handlePrevMonth}
             >
@@ -299,7 +336,7 @@ export default function MeetingSetup() {
             <Text style={styles.monthLabel}>
               {monthData.monthName} {monthData.year}
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.navButton}
               onPress={handleNextMonth}
             >
@@ -322,9 +359,9 @@ export default function MeetingSetup() {
               {calendarGrid.slice(row * 7, row * 7 + 7).map((day, col) => {
                 const isNull = day === null;
                 const isPast = day ? isDateInPast(day) : false;
-                const isSelected = selectedDate && 
-                  day === selectedDate.getDate() && 
-                  selectedDate.getMonth() === monthData.month && 
+                const isSelected = selectedDate &&
+                  day === selectedDate.getDate() &&
+                  selectedDate.getMonth() === monthData.month &&
                   selectedDate.getFullYear() === monthData.year;
 
                 return (
@@ -387,9 +424,9 @@ export default function MeetingSetup() {
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity 
-          style={styles.confirmButton}
-          onPress={handleConfirm}
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={handleConfirm}
           >
             <Text style={styles.confirmText}>Confirm Meeting</Text>
           </TouchableOpacity>
