@@ -1,5 +1,6 @@
 package com.wego.wego_backend.service;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
@@ -27,6 +28,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
     private final NotificationService notificationService;
+    private final FirebaseDatabase firebaseDatabase;
 
     public Group createGroup(
             String title,
@@ -292,15 +294,17 @@ public class GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        // chỉ host mới được xoá
         if (!group.getHostFirebaseUid().equals(firebaseUid)) {
             throw new RuntimeException("Only host can delete group");
         }
 
-        // 1. xoá member trước
+        firebaseDatabase
+                .getReference("group_chats")
+                .child(groupId.toString())
+                .removeValueAsync();
+
         groupMemberRepository.deleteByGroup_Id(groupId);
 
-        // 2. xoá group
         groupRepository.delete(group);
     }
 

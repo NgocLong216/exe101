@@ -1,3 +1,4 @@
 wego-backend/src/main/resources/application.properties
 wego-backend/src/main/resources/firebase-service-account.json
 wego-frontend/.env
+chatbot/.env
