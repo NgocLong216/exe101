@@ -346,11 +346,6 @@ export default function GroupMembersScreen() {
     }
   };
 
-  const handleBack = () => {
-    if (onBack) onBack();
-    // navigation.goBack();
-  };
-
   const handleCopyLink = () => {
     Alert.alert('Link Copied', 'Invite link has been copied to clipboard.');
   };
@@ -564,7 +559,7 @@ export default function GroupMembersScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Meeting Point Banner */}
-        <View style={styles.meetingBannerGreen}>
+        {/* <View style={styles.meetingBannerGreen}>
           <View style={styles.meetingIconWrap}>
             <MapPin size={20} color="#9dffc1" strokeWidth={2.2} />
           </View>
@@ -572,7 +567,7 @@ export default function GroupMembersScreen() {
             <Text style={styles.meetingLabel}>MEETING POINT</Text>
             <Text style={styles.meetingValue}>Central Park South Entrance</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* Chatbot Banner */}
         <TouchableOpacity
@@ -582,6 +577,7 @@ export default function GroupMembersScreen() {
             params: {
               groupId: groupId,
               groupName: groupName,
+              groupMembers: members.length
             },
           })}
         >

@@ -64,7 +64,7 @@ export default function GroupChatScreen() {
   const [keyword, setKeyword] = useState("");
   const [loadingSuggest, setLoadingSuggest] = useState(false);
   const [suggestedPlaces, setSuggestedPlaces] = useState<any[]>([]);
-  const { groupId, groupName } = useLocalSearchParams();
+  const { groupId, groupName, groupMembers } = useLocalSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [showMention, setShowMention] = useState(false);
@@ -326,8 +326,8 @@ export default function GroupChatScreen() {
           </View>
 
           <View style={styles.groupInfo}>
-            <Text style={styles.groupName} numberOfLines={1}>Beach Day Crew</Text>
-            <Text style={styles.groupSub}>8 members • 3 online</Text>
+            <Text style={styles.groupName} numberOfLines={1}>{groupName}</Text>
+            <Text style={styles.groupSub}>{groupMembers} Members</Text>
           </View>
         </View>
       </View>
@@ -439,9 +439,9 @@ export default function GroupChatScreen() {
                   </TouchableOpacity>
                 )}
 
-                {msg.type === 'image' && msg.imageUri && (
+                {/* {msg.type === 'image' && msg.imageUri && (
                   <Image source={{ uri: msg.imageUri }} style={styles.sharedImage} />
-                )}
+                )} */}
 
                 {/* Thời gian gửi tin nhắn */}
                 <Text style={styles.timeText}>
