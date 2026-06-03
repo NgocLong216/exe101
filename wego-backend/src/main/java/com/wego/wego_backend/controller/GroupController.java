@@ -214,9 +214,17 @@ public class GroupController {
     @PostMapping("/{groupId}/schedule-meet")
     public ResponseEntity<?> scheduleMeet(
             @PathVariable UUID groupId,
-            @RequestBody ScheduleMeetRequest request) {
+            @RequestBody ScheduleMeetRequest request
+    ) {
 
-        groupService.scheduleMeet(groupId, request.getMeetingTime());
+        groupService.scheduleMeet(
+                groupId,
+                request.getMeetingTime(),
+                request.getLocationLat(),
+                request.getLocationLng(),
+                request.getPlaceId()
+        );
+
         return ResponseEntity.ok("Meet scheduled successfully");
     }
 
