@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  SafeAreaView,
-  StatusBar,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
-import { MapPin } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { getMySchedules, ScheduleResponse } from '@/apis/scheduleAPI';
+import { ScheduleResponse, getMySchedules } from '@/apis/scheduleAPI';
 import { PlaceDetail } from '@/components/mapTab/bottomSheet';
 import { LatLng } from '@/types/location';
+import { useRouter } from 'expo-router';
+import { MapPin } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -133,7 +133,8 @@ function EventCard({ event }: { event: ScheduleResponse }) {
                 placeName: placeName,
                 lat: event.lat,
                 lng: event.lng,
-                prevRoute: '/(tabs)/schedule'
+                prevRoute: '/(tabs)/schedule',
+                groupId: event.groupId,
               },
             })}
           >
