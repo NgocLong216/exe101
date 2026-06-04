@@ -68,6 +68,14 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     groupId?: string;
   }>();
   const [members, setMembers] = useState<Member[]>([]);
+  const colors = [
+    "#2563EB",
+    "#EF4444",
+    "#22C55E",
+    "#F59E0B",
+    "#A855F7",
+    "#EC4899",
+  ];
 
   useEffect(() => {
 
@@ -303,7 +311,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   useEffect(() => {
     setRoute([]);
     fetchRoute();
-  }, [destination]);
+  }, [destination, members]);
 
   const fetchRoute = async () => {
     if (!destination) return;
@@ -327,11 +335,20 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       const newRouteIds: string[] = [];
 
       const origins = [
-        { latitude, longitude },
-        ...members.map((m) => ({ latitude: m.lat, longitude: m.lng })),
+        { latitude, longitude, color: "#2563EB"},
+        ...members.filter(
+          m => m.firebaseUid !== currentUid
+        ).map((m) => ({ latitude: m.lat, longitude: m.lng, color: "#FF0000"})),
       ];
 
-      for (const origin of origins) {
+      for (let i = 0; i < origins.length; i++) {
+        const origin = origins[i];
+
+        const color = colors[i % colors.length];
+        console.log(
+          "MEMBERS:",
+          members.length
+        );
         const url =
           `https://rsapi.goong.io/Direction?origin=${origin.latitude},${origin.longitude}` +
           `&destination=${destination.latitude},${destination.longitude}` +
@@ -363,7 +380,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
             type: "line",
             source: "${routeId}",
             layout: { "line-join": "round", "line-cap": "round" },
-            paint: { "line-color": "red", "line-width": 4 }
+            paint: { "line-color": "${color}", "line-width": 4 }
           });
           true;
         `);
