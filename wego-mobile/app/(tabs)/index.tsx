@@ -32,6 +32,7 @@ type Member = {
   name: string;
   lat: number;
   lng: number;
+  picture?: string;
   updatedAt: number;
 };
 
@@ -82,6 +83,7 @@ export default function HomeScreen() {
               name: user.displayName || "Anonymous",
               lat: latitude,
               lng: longitude,
+              picture: user.photoURL || null,
               updatedAt: Date.now(),
             };
 

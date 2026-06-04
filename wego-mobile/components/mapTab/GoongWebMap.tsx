@@ -40,7 +40,7 @@ type Props = {
   longitude: number;
 };
 
-export default function GoongWebMap({ latitude, longitude}: Props) {
+export default function GoongWebMap({ latitude, longitude }: Props) {
   const { user } = useAuth();
   const isInteracting = useRef(false);
   const webRef = useRef<WebView>(null);
@@ -72,25 +72,25 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
   useEffect(() => {
 
     if (!groupId) {
-  
+
       setMembers([]);
-  
+
       return;
     }
-  
+
     loadGroupMembers();
-  
+
   }, [groupId]);
 
   const loadGroupMembers = async () => {
 
     try {
-  
+
       const token =
         await getAuth()
           .currentUser
           ?.getIdToken();
-  
+
       const response =
         await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members/uids`,
@@ -101,57 +101,58 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
             },
           }
         );
-  
+
       const memberUids: string[] =
         await response.json();
-  
+
       console.log(
         "GROUP MEMBERS:",
         memberUids
       );
-  
+
       const db = getDatabase();
-  
+
       onValue(
         ref(db, "live_locations"),
         snapshot => {
-  
+
           const locations =
             snapshot.val() || {};
-  
+
           const membersData =
             memberUids
               .map(uid => {
-  
+
                 const loc =
                   locations[uid];
-  
+
                 if (!loc) return null;
-  
+
                 return {
                   firebaseUid: uid,
                   name: loc.name || "",
                   lat: loc.lat,
                   lng: loc.lng,
+                  picture: loc.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
                   updatedAt: loc.updatedAt || 0,
                 };
-  
+
               })
               .filter(Boolean);
-  
+
           setMembers(
             membersData as Member[]
           );
         }
       );
-  
+
     } catch (err) {
-  
+
       console.log(
         "LOAD MEMBERS ERROR",
         err
       );
-  
+
     }
   };
 
@@ -164,52 +165,52 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
     ) {
       return;
     }
-  
+
     const selectedLat = Number(lat);
     const selectedLng = Number(lng);
-  
+
     const loadPlace = async () => {
-  
+
       try {
-  
+
         const url =
           `https://rsapi.goong.io/Geocode?latlng=${selectedLat},${selectedLng}&api_key=${GOONG_API_KEY_2}`;
-  
+
         const res = await fetch(url);
         const data = await res.json();
-  
+
         const placeResult =
           data.results?.[0];
-  
+
         if (!placeResult) return;
-  
+
         const placeDetail: PlaceDetail = {
           place_id:
             placeId ||
             placeResult.place_id,
-  
+
           name:
             placeName ||
             placeResult.name,
-  
+
           formatted_address:
             placeResult.formatted_address,
-  
+
           address:
             placeResult.address,
-  
+
           address_components:
             placeResult.address_components,
-  
+
           compound:
             placeResult.compound,
-  
+
           plus_code:
             placeResult.plus_code,
-  
+
           types:
             placeResult.types,
-  
+
           geometry: {
             location: {
               lat: selectedLat,
@@ -217,18 +218,18 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
             },
           },
         };
-  
+
         setSelectedPlace(placeDetail);
-  
+
         setDestination({
           latitude: selectedLat,
           longitude: selectedLng,
         } as LocationResult);
-  
+
         bottomSheetRef.current?.open(
           placeDetail
         );
-  
+
         webRef.current?.injectJavaScript(`
           map.flyTo({
             center: [${selectedLng}, ${selectedLat}],
@@ -246,19 +247,19 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
   
           true;
         `);
-  
+
       } catch (e) {
-  
+
         console.log(
           "AUTO LOAD PLACE ERROR",
           e
         );
-  
+
       }
     };
-  
+
     loadPlace();
-  
+
   }, [
     placeId,
     placeName,
@@ -268,6 +269,7 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
   ]);
 
   // Build points for MarkersOverlay from Firebase members + self
+  const currentUid = getAuth().currentUser?.uid;
   const pointsData = [
     {
       id: "me",
@@ -275,11 +277,13 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
       y: longitude,
       user: { picture: user?.picture || "" },
     },
-    ...members.map((m) => ({
+    ...members
+    .filter(m => m.firebaseUid !== currentUid)
+    .map((m) => ({
       id: m.firebaseUid,
       x: m.lat,
       y: m.lng,
-      user: { picture: m.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" },
+      user: { picture: m.picture || "" },
     })),
   ];
 
@@ -305,7 +309,7 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
     if (!destination) return;
     try {
       setLoading(true);
-      
+
       // Clear old routes from map
       routeIds.forEach((id) => {
         webRef.current?.injectJavaScript(`
@@ -318,7 +322,7 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
           true;
         `);
       });
-      
+
       const routesResult: LatLng[][] = [];
       const newRouteIds: string[] = [];
 
@@ -414,12 +418,12 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
         types: placeResult.types,
         geometry: placeResult.geometry
           ? {
-              location: {
-                lat: placeResult.geometry.location.lat,
-                lng: placeResult.geometry.location.lng,
-              },
-              boundary: placeResult.geometry.boundary ?? null,
-            }
+            location: {
+              lat: placeResult.geometry.location.lat,
+              lng: placeResult.geometry.location.lng,
+            },
+            boundary: placeResult.geometry.boundary ?? null,
+          }
           : undefined,
       };
 
@@ -474,6 +478,10 @@ export default function GoongWebMap({ latitude, longitude}: Props) {
 </body>
 </html>
 `;
+
+console.log("groupId =", groupId);
+
+console.log("POINTS DATA:", pointsData);
 
   return (
     <View style={styles.container}>
