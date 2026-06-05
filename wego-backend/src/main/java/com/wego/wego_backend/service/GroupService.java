@@ -588,7 +588,7 @@ public class GroupService {
                         groupId.toString(),
                         prompt
                 );
-        
+
 
         // XÓA CHECKLIST SAU KHI GỬI AI
         aiChecklistRepository.deleteByGroupId(groupId);
