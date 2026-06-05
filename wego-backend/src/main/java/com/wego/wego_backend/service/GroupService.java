@@ -6,8 +6,10 @@ import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
+import com.wego.wego_backend.entity.GroupAiChecklist;
 import com.wego.wego_backend.entity.GroupMember;
 import com.wego.wego_backend.entity.User;
+import com.wego.wego_backend.repository.GroupAiChecklistRepository;
 import com.wego.wego_backend.repository.GroupMemberRepository;
 import com.wego.wego_backend.repository.GroupRepository;
 import com.wego.wego_backend.repository.UserRepository;
@@ -18,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,8 @@ public class GroupService {
     private final CloudinaryService cloudinaryService;
     private final NotificationService notificationService;
     private final FirebaseDatabase firebaseDatabase;
+    private final GroupAiChecklistRepository aiChecklistRepository;
+    private final AiPlaceService aiPlaceService;
 
     public Group createGroup(
             String title,
@@ -517,6 +523,77 @@ public class GroupService {
                         )
                 )
                 .toList();
+    }
+
+    public List<AiChecklistResponse> getAiChecklist(
+            UUID groupId
+    ) {
+
+        return aiChecklistRepository
+                .findByGroup_IdAndSentToAiFalseOrderByCreatedAtDesc(groupId)
+                .stream()
+                .map(item ->
+                        new AiChecklistResponse(
+                                item.getId(),
+                                item.getContent(),
+                                item.getCreatedAt()
+                        )
+                )
+                .toList();
+    }
+
+    public void createAiChecklist(
+            UUID groupId,
+            String firebaseUid,
+            CreateAiChecklistRequest request
+    ) {
+
+        Group group = groupRepository
+                .findById(groupId)
+                .orElseThrow();
+
+        GroupAiChecklist item =
+                GroupAiChecklist.builder()
+                        .group(group)
+                        .senderFirebaseUid(firebaseUid)
+                        .content(request.content())
+                        .createdAt(LocalDateTime.now())
+                        .sentToAi(false)
+                        .build();
+
+        aiChecklistRepository.save(item);
+    }
+
+    @Transactional
+    public AiChatResponse sendChecklistToAi(UUID groupId) {
+
+        List<GroupAiChecklist> checklist =
+                aiChecklistRepository
+                        .findByGroup_IdAndSentToAiFalseOrderByCreatedAtDesc(groupId);
+
+        if (checklist.isEmpty()) {
+            throw new RuntimeException("Checklist is empty");
+        }
+
+        String prompt =
+                IntStream.range(0, checklist.size())
+                        .mapToObj(i ->
+                                (i + 1) + ". " +
+                                        checklist.get(i).getContent()
+                        )
+                        .collect(Collectors.joining("\n"));
+
+        AiChatResponse response =
+                aiPlaceService.chat(
+                        groupId.toString(),
+                        prompt
+                );
+        
+
+        // XÓA CHECKLIST SAU KHI GỬI AI
+        aiChecklistRepository.deleteByGroupId(groupId);
+
+        return response;
     }
 
 }

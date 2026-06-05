@@ -7,7 +7,7 @@ import {
   ref,
   set,
 } from "firebase/database";
-import { ArrowLeft, Plus, Send } from 'lucide-react-native';
+import { ArrowLeft, Bot, Plus, Send } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
@@ -64,7 +64,20 @@ export default function GroupChatScreen() {
   const [keyword, setKeyword] = useState("");
   const [loadingSuggest, setLoadingSuggest] = useState(false);
   const [suggestedPlaces, setSuggestedPlaces] = useState<any[]>([]);
-  const { groupId, groupName, groupMembers } = useLocalSearchParams();
+  const {
+    groupId,
+    groupName,
+    groupMembers,
+    runChecklistAi,
+  } = useLocalSearchParams<{
+    groupId: string;
+    groupName?: string;
+    groupMembers?: string;
+    runChecklistAi?: string;
+  }>();
+
+  const [aiLoading, setAiLoading] =
+    useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [showMention, setShowMention] = useState(false);
@@ -75,16 +88,18 @@ export default function GroupChatScreen() {
 
   const scrollRef = useRef<ScrollView>(null);
 
+  const hasRunChecklistRef = useRef(false);
+
   useEffect(() => {
 
     setTimeout(() => {
-  
+
       scrollRef.current?.scrollToEnd({
         animated: false,
       });
-  
+
     }, 200);
-  
+
   }, [messages]);
 
   const handleSend = async () => {
@@ -98,30 +113,51 @@ export default function GroupChatScreen() {
     /*
      * @bot quán cafe đẹp
      */
+    const saveAiChecklist = async (
+      content: string
+    ) => {
+
+      const token =
+        await getAuth()
+          .currentUser
+          ?.getIdToken();
+
+      await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/ai-checklist`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+            Authorization:
+              `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content,
+          }),
+        }
+      );
+    };
 
     if (
       selectedMention === "@bot" ||
       text.startsWith("@bot")
     ) {
-      await sendNormalMessage(text);
-    
-      const question = text
-        .replace("@bot", "")
-        .trim();
-    
-      setLoadingSuggest(true);
-    
-      try {
-    
-        await sendBotMessage(question);
-    
-      } finally {
-    
-        setLoadingSuggest(false);
+
+      const question =
+        text.replace("@bot", "")
+          .trim();
+
+      if (!question) {
+        return;
       }
-    
+
+      await sendNormalMessage(text);
+
+      await saveAiChecklist(question);
+
       setSelectedMention(null);
-    
+
       return;
     }
 
@@ -298,6 +334,183 @@ export default function GroupChatScreen() {
   };
   // Dữ liệu mock-up chuẩn theo nội dung tin nhắn trong ảnh mẫu
 
+  useEffect(() => {
+
+    if (runChecklistAi !== "true") {
+      return;
+    }
+
+    if (
+      hasRunChecklistRef.current
+    ) {
+      return;
+    }
+
+    hasRunChecklistRef.current =
+      true;
+
+    runChecklistRequest();
+
+  }, [runChecklistAi]);
+
+  const runChecklistRequest = async () => {
+
+    try {
+
+      setAiLoading(true);
+
+      const thinkingMessage: Message = {
+        id: `thinking_${Date.now()}`,
+
+        senderUid: "wego_ai",
+        senderName: "WeGo AI",
+
+        isMe: false,
+
+        type: "ai-text",
+
+        text: "WeGo AI is thinking...",
+
+        timestamp: Date.now(),
+
+        time: new Date().toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        ),
+      };
+      setMessages(prev => [
+        ...prev,
+        thinkingMessage,
+      ]);
+
+      const token =
+        await getAuth()
+          .currentUser
+          ?.getIdToken();
+
+      const response =
+        await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/chat-checklist`,
+          {
+            method: "POST",
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
+
+      const aiResponse =
+        await response.json();
+
+        const messagesRef =
+        ref(db, `group_chats/${groupId}`);
+      
+      // lưu text AI
+      const aiRef =
+        push(messagesRef);
+      
+      await set(aiRef, {
+        senderUid: "wego_ai",
+        senderName: "WeGo AI",
+        senderAvatar:
+          "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+      
+        type: "ai-text",
+      
+        text:
+          aiResponse.message ??
+          "No response",
+      
+        timestamp: Date.now(),
+      });
+      
+      // lưu place cards
+      for (const place of aiResponse.places || []) {
+      
+        const placeRef =
+          push(messagesRef);
+      
+        await set(placeRef, {
+          senderUid: "wego_ai",
+      
+          senderName: "WeGo AI",
+      
+          senderAvatar:
+            "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+      
+          type: "map",
+      
+          mapData: {
+            title: place.name,
+            description: place.address,
+            imageUri: place.thumbnail,
+            lat: place.lat,
+            lng: place.lng,
+          },
+      
+          timestamp: Date.now(),
+        });
+      }
+
+    } catch (err) {
+
+      console.log(
+        "CHECKLIST AI ERROR",
+        err
+      );
+
+      setMessages(prev =>
+        prev.filter(
+          m =>
+            !(
+              m.senderUid === "wego_ai" &&
+              m.text === "WeGo AI is thinking..."
+            )
+        )
+      );
+
+      const errorMessage: Message = {
+        id: `error_${Date.now()}`,
+
+        senderUid: "wego_ai",
+        senderName: "WeGo AI",
+
+        isMe: false,
+
+        type: "ai-text",
+
+        text: "AI request failed",
+
+        timestamp: Date.now(),
+
+        time: new Date().toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        ),
+      };
+
+      setMessages(prev => [
+        ...prev,
+        errorMessage,
+      ]);
+
+    } finally {
+
+      setAiLoading(false);
+
+      router.setParams({
+        runChecklistAi: undefined,
+      });
+
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -329,6 +542,30 @@ export default function GroupChatScreen() {
             <Text style={styles.groupName} numberOfLines={1}>{groupName}</Text>
             <Text style={styles.groupSub}>{groupMembers} Members</Text>
           </View>
+        </View>
+        <View style={styles.headerActions}>
+
+          <TouchableOpacity
+            style={styles.headerBtn}
+            onPress={() =>
+              router.push({
+                pathname:
+                  "/GroupAiChecklist",
+                params: {
+                  groupId:
+                    String(groupId),
+                  groupName: String(groupName),
+                  groupMembers: String(groupMembers),
+                },
+              })
+            }
+          >
+            <Bot
+              size={22}
+              color="#2563EB"
+            />
+          </TouchableOpacity>
+
         </View>
       </View>
 

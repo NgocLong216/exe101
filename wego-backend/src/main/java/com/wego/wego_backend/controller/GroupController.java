@@ -181,6 +181,13 @@ public class GroupController {
         );
     }
 
+    @PostMapping("/{groupId}/chat-checklist")
+    public AiChatResponse chatChecklist(
+            @PathVariable UUID groupId
+    ) {
+        return groupService.sendChecklistToAi(groupId);
+    }
+
     @GetMapping("/places/{placeId}")
     public ResponseEntity<?> getPlaceDetail(
             @PathVariable String placeId
@@ -238,5 +245,31 @@ public class GroupController {
         return ResponseEntity.ok(
                 groupService.getMyMeetings(firebaseUid)
         );
+    }
+
+    @GetMapping("/{groupId}/ai-checklist")
+    public ResponseEntity<?> getAiChecklist(
+            @PathVariable UUID groupId
+    ) {
+
+        return ResponseEntity.ok(
+                groupService.getAiChecklist(groupId)
+        );
+    }
+
+    @PostMapping("/{groupId}/ai-checklist")
+    public ResponseEntity<?> createAiChecklist(
+            @PathVariable UUID groupId,
+            @RequestBody CreateAiChecklistRequest request,
+            Authentication authentication
+    ) {
+
+        groupService.createAiChecklist(
+                groupId,
+                authentication.getName(),
+                request
+        );
+
+        return ResponseEntity.ok().build();
     }
 }
