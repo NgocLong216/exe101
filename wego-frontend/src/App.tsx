@@ -12,6 +12,8 @@ import InvitationsPage from "./pages/InvitationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import GroupChatPage from "./pages/GroupChatPage";
 import GroupAIChatPage from "./pages/GroupAIChatPage";
+import AdminPage from "./pages/AdminPage";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -45,6 +47,15 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/groups/:groupId/chat" element={<GroupChatPage />} />
         <Route path="/groups/:groupId/ai-chat" element={<GroupAIChatPage />} />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </>
   );

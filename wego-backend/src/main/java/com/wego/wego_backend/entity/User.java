@@ -25,4 +25,7 @@ public class User {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

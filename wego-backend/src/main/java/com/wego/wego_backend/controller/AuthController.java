@@ -37,17 +37,6 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/auth0")
-    public ResponseEntity<User> login(
-            @AuthenticationPrincipal Jwt jwt
-    ) {
-
-        System.out.println("AUTH0 LOGIN HIT");
-        User user = googleAuthService.loginWithAuth0(jwt);
-
-        return ResponseEntity.ok(user);
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @RequestHeader("Authorization") String authHeader

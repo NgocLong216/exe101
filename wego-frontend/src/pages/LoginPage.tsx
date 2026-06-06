@@ -14,11 +14,9 @@ export default function LoginPage({ setUser }) {
       const provider = new FacebookAuthProvider();
 
       const result = await signInWithPopup(auth, provider);
-      console.log('result: ', result)
       const firebaseUser = result.user;
 
       const firebaseIdToken = await firebaseUser.getIdToken();
-      console.log('firebaseIdToken: ', firebaseIdToken)
 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/firebase`,
@@ -39,7 +37,11 @@ export default function LoginPage({ setUser }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);
 
-      navigate("/home");
+      if (data.role?.name === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
 
     } catch (err) {
       console.error(err);
@@ -56,7 +58,6 @@ export default function LoginPage({ setUser }) {
       const firebaseUser = result.user;
 
       const firebaseIdToken = await firebaseUser.getIdToken();
-      console.log("Firebase ID Token:", firebaseIdToken);
 
       // 🔥 LOGIN BACKEND
       const res = await fetch(
@@ -75,7 +76,6 @@ export default function LoginPage({ setUser }) {
       if (!res.ok) throw new Error("Backend login failed");
 
       const data = await res.json();
-      console.log("Backend response:", data);
 
       // Lưu JWT
       localStorage.setItem("token", data.token);
@@ -101,7 +101,11 @@ export default function LoginPage({ setUser }) {
         });
       }
 
-      navigate("/home");
+      if (data.role?.name === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
     } catch (err) {
       console.error(err);
       setError("Đăng nhập Google thất bại");
