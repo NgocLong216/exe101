@@ -1,5 +1,6 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.UserCountResponse;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,18 @@ public class AdminController {
     ) {
         return ResponseEntity.ok(
                 adminService.getAllUsers(auth.getName())
+        );
+    }
+
+    @GetMapping("/users/count")
+    public ResponseEntity<UserCountResponse> getUserCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getUserCount(
+                        authentication.getName()
+                )
         );
     }
 }

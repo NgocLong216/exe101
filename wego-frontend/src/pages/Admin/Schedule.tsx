@@ -4,7 +4,7 @@ import { useState } from "react";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-const appointments = [
+const schedules = [
   { id: 1, title: "AI Model Review", time: "9:00 AM", duration: "1h", user: "Sophia Turner", type: "video", day: 3, color: "bg-blue-500" },
   { id: 2, title: "System Health Check", time: "11:30 AM", duration: "30m", user: "Marcus Chen", type: "call", day: 3, color: "bg-emerald-500" },
   { id: 3, title: "Chatbot Optimization", time: "2:00 PM", duration: "2h", user: "Aisha Patel", type: "video", day: 5, color: "bg-violet-500" },
@@ -14,7 +14,7 @@ const appointments = [
 ];
 
 export default function Schedule() {
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 5, 1));
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 5, 1));
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const year = currentDate.getFullYear();
@@ -27,19 +27,15 @@ export default function Schedule() {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const dayAppointments = selectedDay ? appointments.filter((a) => a.day === selectedDay) : appointments.slice(0, 3);
+  const daySchedules = selectedDay ? schedules.filter((a) => a.day === selectedDay) : schedules.slice(0, 3);
 
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Schedule</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage appointments and time blocks.</p>
+          <p className="text-sm text-slate-500 mt-0.5">Manage schedules and time blocks.</p>
         </div>
-        <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
-          <Plus size={15} />
-          New Appointment
-        </button>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -69,7 +65,7 @@ export default function Schedule() {
           <div className="grid grid-cols-7 gap-1">
             {cells.map((day, i) => {
               if (!day) return <div key={`empty-${i}`} />;
-              const hasAppt = appointments.some((a) => a.day === day);
+              const hasAppt = schedules.some((a) => a.day === day);
               const isSelected = selectedDay === day;
               const isToday = day === 15;
               return (
@@ -94,16 +90,16 @@ export default function Schedule() {
           </div>
         </div>
 
-        {/* Appointment list */}
+        {/* Schedule list */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col">
           <h2 className="text-sm font-bold text-slate-800 mb-4">
-            {selectedDay ? `Day ${selectedDay} — Appointments` : "Upcoming Appointments"}
+            {selectedDay ? `Day ${selectedDay} — Schedules` : "Upcoming Schedules"}
           </h2>
           <div className="space-y-3 flex-1 overflow-y-auto">
-            {dayAppointments.length === 0 ? (
-              <p className="text-xs text-slate-400 text-center py-6">No appointments this day</p>
+            {daySchedules.length === 0 ? (
+              <p className="text-xs text-slate-400 text-center py-6">No schedules this day</p>
             ) : (
-              dayAppointments.map((appt) => (
+              daySchedules.map((appt) => (
                 <div key={appt.id} className="flex gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer">
                   <div className={`w-1 rounded-full ${appt.color} shrink-0`} />
                   <div className="flex-1 min-w-0">

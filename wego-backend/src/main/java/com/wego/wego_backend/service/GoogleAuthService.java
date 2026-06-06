@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -69,6 +70,7 @@ public class GoogleAuthService {
                     u.setName(decoded.getName());
                     u.setAvatar(decoded.getPicture());
                     u.setRole(userRole);
+                    u.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(u);
                 });
     }

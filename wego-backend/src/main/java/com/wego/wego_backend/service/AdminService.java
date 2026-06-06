@@ -1,5 +1,6 @@
 package com.wego.wego_backend.service;
 
+import com.wego.wego_backend.dto.UserCountResponse;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,14 @@ public class AdminService {
         requireAdmin(currentUid);
 
         return userRepository.findAll();
+    }
+
+    public UserCountResponse getUserCount(String currentUid) {
+
+        requireAdmin(currentUid);
+
+        long totalUsers = userRepository.count();
+
+        return new UserCountResponse(totalUsers);
     }
 }

@@ -1,30 +1,37 @@
 import { Search, UserPlus, MoreHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-
-const users = [
-  { id: 1, name: "Sophia Turner", email: "sophia@example.com", role: "Admin", status: "Active", joined: "Jan 12, 2024" },
-  { id: 2, name: "Marcus Chen", email: "marcus@example.com", role: "Editor", status: "Active", joined: "Feb 3, 2024" },
-  { id: 3, name: "Aisha Patel", email: "aisha@example.com", role: "Viewer", status: "Inactive", joined: "Feb 20, 2024" },
-  { id: 4, name: "Liam O'Brien", email: "liam@example.com", role: "Editor", status: "Active", joined: "Mar 5, 2024" },
-  { id: 5, name: "Yuna Nakamura", email: "yuna@example.com", role: "Viewer", status: "Active", joined: "Mar 18, 2024" },
-  { id: 6, name: "Carlos Mendez", email: "carlos@example.com", role: "Admin", status: "Active", joined: "Apr 2, 2024" },
-  { id: 7, name: "Fatima Hassan", email: "fatima@example.com", role: "Viewer", status: "Inactive", joined: "Apr 14, 2024" },
-  { id: 8, name: "Ethan Park", email: "ethan@example.com", role: "Editor", status: "Active", joined: "May 1, 2024" },
-];
+import { useEffect, useState } from "react";
+import { getAllUsers } from "../../services/adminService";
 
 const roleColors: Record<string, string> = {
-  Admin: "bg-slate-800 text-white",
-  Editor: "bg-blue-100 text-blue-700",
-  Viewer: "bg-slate-100 text-slate-600",
+  ADMIN: "bg-slate-800 text-white",
+  USER: "bg-blue-100 text-blue-700",
 };
 
 export default function Users() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await getAllUsers();
+  
+        setUsers(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUsers();
+  }, []);
 
   return (
     <div className="p-8 space-y-6">
@@ -82,8 +89,8 @@ export default function Users() {
                   </div>
                 </td>
                 <td className="px-5 py-3.5">
-                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${roleColors[user.role]}`}>
-                    {user.role}
+                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${roleColors[user.role?.name]}`}>
+                    {user.role?.name}
                   </span>
                 </td>
                 <td className="px-5 py-3.5">
@@ -92,7 +99,7 @@ export default function Users() {
                     {user.status}
                   </span>
                 </td>
-                <td className="px-5 py-3.5 text-xs text-slate-500">{user.joined}</td>
+                <td className="px-5 py-3.5 text-xs text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td className="px-5 py-3.5 text-right">
                   <button className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all">
                     <MoreHorizontal size={15} />
