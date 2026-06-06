@@ -1,185 +1,216 @@
-import { Send, Bot, RotateCcw, Zap, MessageSquare, TrendingUp, Activity } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import {
+  TrendingUp,
+  TrendingDown,
+  CalendarDays,
+  Download,
+} from "lucide-react";
 
-interface Message {
-  id: number;
-  role: "user" | "assistant";
-  content: string;
-  time: string;
-}
-
-const initialMessages: Message[] = [
-  {
-    id: 1,
-    role: "assistant",
-    content: "Hello! I'm your AI assistant. How can I help you manage operations today?",
-    time: "09:00 AM",
-  },
-  {
-    id: 2,
-    role: "user",
-    content: "How many active users do we have this month?",
-    time: "09:01 AM",
-  },
-  {
-    id: 3,
-    role: "assistant",
-    content: "Based on the latest data, you have 24,892 total users with a 12% growth compared to last month. Approximately 18,400 users are currently active this month.",
-    time: "09:01 AM",
-  },
+// ── Stat cards ────────────────────────────────────────────────────────────────
+const stats = [
+  { label: "Total Conversations", value: "12,842", change: "+12%",  up: true  },
+  { label: "Resolution Rate",     value: "84.2%",  change: "+3.5%", up: true  },
+  { label: "Avg. Response Time",  value: "1.2s",   change: "-0.4s", up: false },
+  { label: "Fallback Rate",       value: "5.1%",   change: "+0.8%", up: false },
 ];
 
-const quickPrompts = [
-  "Show system status",
-  "List recent appointments",
-  "Token usage summary",
-  "Active users today",
+// ── Top queries ───────────────────────────────────────────────────────────────
+const queries = [
+  { q: '"How do I reset my password?"',        freq: 2410, max: 2410 },
+  { q: '"What are your business hours?"',       freq: 1892, max: 2410 },
+  { q: '"Can I talk to a human?"',              freq: 1540, max: 2410 },
+  { q: '"Track my recent order status"',        freq: 1311, max: 2410 },
+  { q: '"Pricing for enterprise plans"',        freq: 982,  max: 2410 },
 ];
 
-const tokenStats = [
-  { label: "Tokens Today", value: "42.3k", icon: Zap, color: "text-amber-500" },
-  { label: "Conversations", value: "1,284", icon: MessageSquare, color: "text-blue-500" },
-  { label: "Avg. Response", value: "1.2s", icon: Activity, color: "text-emerald-500" },
-  { label: "Satisfaction", value: "94%", icon: TrendingUp, color: "text-violet-500" },
+// ── Keyword cloud ─────────────────────────────────────────────────────────────
+const keywords: { word: string; style: string }[] = [
+  { word: "Password",    style: "bg-slate-800 text-white text-base font-bold px-5 py-2" },
+  { word: "Login",       style: "bg-white border border-slate-200 text-slate-700 text-sm font-medium px-4 py-1.5" },
+  { word: "Pricing",     style: "bg-white border border-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5" },
+  { word: "Support",     style: "bg-slate-100 text-slate-500 text-xs font-medium px-3 py-1.5" },
+  { word: "Account",     style: "bg-slate-700 text-white text-sm font-semibold px-4 py-1.5" },
+  { word: "Status",      style: "bg-white border border-slate-200 text-slate-500 text-xs px-3 py-1.5" },
+  { word: "Human",       style: "bg-white border border-slate-300 text-slate-700 text-sm font-medium px-4 py-1.5" },
+  { word: "Refund",      style: "bg-teal-400 text-white text-sm font-semibold px-4 py-1.5" },
+  { word: "Billing",     style: "bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5" },
+  { word: "Security",    style: "bg-slate-200 text-slate-500 text-xs px-3 py-1.5" },
+  { word: "Integration", style: "bg-slate-600 text-white text-sm font-semibold px-4 py-1.5" },
+  { word: "API",         style: "bg-white border border-slate-300 text-slate-600 text-xs px-3 py-1.5" },
 ];
 
-let nextId = 4;
+// ── Interaction Volume heatmap ────────────────────────────────────────────────
+const heatmap = [
+  [1, 1, 2, 1, 1, 0, 0],
+  [2, 2, 3, 2, 2, 1, 1],
+  [2, 3, 3, 4, 3, 2, 1],
+  [3, 3, 4, 4, 3, 2, 1],
+  [2, 2, 3, 3, 2, 1, 1],
+  [1, 1, 2, 2, 1, 1, 0],
+];
+
+const heatColors = [
+  "bg-slate-100",
+  "bg-slate-300",
+  "bg-slate-400",
+  "bg-slate-600",
+  "bg-slate-800",
+];
+
+const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 export default function Chatbot() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
-
-  const now = () =>
-    new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-
-  const sendMessage = (text: string) => {
-    if (!text.trim()) return;
-    const userMsg: Message = { id: nextId++, role: "user", content: text, time: now() };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const botMsg: Message = {
-        id: nextId++,
-        role: "assistant",
-        content: `I've processed your request: "${text}". This is a demo response — in production, this would connect to your AI backend.`,
-        time: now(),
-      };
-      setMessages((prev) => [...prev, botMsg]);
-      setIsTyping(false);
-    }, 1400);
-  };
-
   return (
-    <div className="p-8 space-y-6 h-full flex flex-col">
-      <div className="flex items-center justify-between shrink-0">
+    <div className="p-8 space-y-5">
+      {/* ── Page header ── */}
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Chatbot</h1>
-          <p className="text-sm text-slate-500 mt-0.5">AI-powered assistant for operational queries.</p>
+          <h1 className="text-2xl font-bold text-slate-800">Chatbot Analytics</h1>
+          <p className="text-sm text-slate-500 mt-0.5">
+            Reviewing 24.5k user interactions from the last 30 days.
+          </p>
         </div>
-        <button
-          onClick={() => setMessages(initialMessages)}
-          className="flex items-center gap-2 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors"
-        >
-          <RotateCcw size={13} /> Reset Chat
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-3.5 py-2 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+            <CalendarDays size={14} />
+            Last 30 Days
+          </button>
+          <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+            <Download size={14} />
+            Export Report
+          </button>
+        </div>
       </div>
 
-      {/* Token stats */}
-      <div className="grid grid-cols-4 gap-3 shrink-0">
-        {tokenStats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex items-center gap-3">
-            <Icon size={18} className={color} />
-            <div>
-              <p className="text-base font-bold text-slate-800">{value}</p>
-              <p className="text-[10px] text-slate-400">{label}</p>
+      {/* ── Stat cards ── */}
+      <div className="grid grid-cols-4 gap-4">
+        {stats.map(({ label, value, change, up }) => (
+          <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">{label}</p>
+            <div className="flex items-end justify-between">
+              <p className="text-3xl font-bold text-slate-800 tracking-tight">{value}</p>
+              <span className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${up ? "text-emerald-600" : "text-red-400"}`}>
+                {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {change}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Chat window */}
-      <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col min-h-0">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              {msg.role === "assistant" && (
-                <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5">
-                  <Bot size={14} className="text-white" />
+      {/* ── Middle row ── */}
+      <div className="grid grid-cols-2 gap-4">
+
+        {/* Top User Queries */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+            <h2 className="text-sm font-bold text-slate-800">Top User Queries</h2>
+            <button className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors">View All</button>
+          </div>
+          <div>
+            <div className="grid grid-cols-[1fr_80px_90px] px-5 py-2 border-b border-slate-50">
+              <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Query / Question</span>
+              <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Frequency</span>
+              <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Trend</span>
+            </div>
+            {queries.map(({ q, freq, max }) => (
+              <div key={q} className="grid grid-cols-[1fr_80px_90px] px-5 py-3.5 border-b border-slate-50 hover:bg-slate-50/60 transition-colors items-center">
+                <p className="text-xs text-slate-700 pr-3 leading-snug">{q}</p>
+                <p className="text-xs font-semibold text-slate-700">{freq.toLocaleString()}</p>
+                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden w-20">
+                  <div className="h-full bg-slate-700 rounded-full" style={{ width: `${(freq / max) * 100}%` }} />
                 </div>
-              )}
-              <div className={`max-w-[70%] ${msg.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
-                <div
-                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-slate-800 text-white rounded-tr-sm"
-                      : "bg-slate-100 text-slate-700 rounded-tl-sm"
-                  }`}
-                >
-                  {msg.content}
-                </div>
-                <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Keyword Cloud */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-bold text-slate-800 mb-5">Keyword Cloud</h2>
+          <div className="flex flex-wrap gap-2 items-center">
+            {keywords.map(({ word, style }) => (
+              <span key={word} className={`rounded-full cursor-default select-none transition-transform hover:scale-105 ${style}`}>
+                {word}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom row ── */}
+      <div className="grid grid-cols-2 gap-4">
+
+        {/* User Sentiment */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-bold text-slate-800 mb-4">User Sentiment</h2>
+          <div className="flex gap-5 items-start">
+            {/* Donut */}
+            <div className="relative shrink-0 w-24 h-24">
+              <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="4" />
+                <circle cx="18" cy="18" r="14" fill="none" stroke="#334155" strokeWidth="4"
+                  strokeDasharray={`${0.72 * 87.96} ${87.96}`} strokeLinecap="round" />
+                <circle cx="18" cy="18" r="14" fill="none" stroke="#94a3b8" strokeWidth="4"
+                  strokeDasharray={`${0.18 * 87.96} ${87.96}`}
+                  strokeDashoffset={`-${0.72 * 87.96}`} strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-lg font-bold text-slate-800 leading-none">72%</span>
+                <span className="text-[9px] text-slate-400 uppercase tracking-wide mt-0.5">Positive</span>
               </div>
             </div>
-          ))}
-
-          {isTyping && (
-            <div className="flex gap-3">
-              <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
-                <Bot size={14} className="text-white" />
-              </div>
-              <div className="bg-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1 items-center">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
-                    style={{ animationDelay: `${i * 0.15}s` }}
-                  />
+            {/* Bars */}
+            <div className="flex-1">
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                Overall mood of interactions has improved by 4% since the last model update.
+              </p>
+              <div className="space-y-2.5">
+                {[
+                  { label: "POSITIVE", pct: 72, color: "bg-slate-700" },
+                  { label: "NEUTRAL",  pct: 18, color: "bg-slate-400" },
+                  { label: "NEGATIVE", pct: 10, color: "bg-slate-200" },
+                ].map(({ label, pct, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">{label}</span>
+                      <span className="text-[9px] font-semibold text-slate-600">{pct}%</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          )}
-          <div ref={bottomRef} />
+          </div>
         </div>
 
-        {/* Quick prompts */}
-        <div className="px-5 pb-3 flex gap-2 flex-wrap border-t border-slate-100 pt-3">
-          {quickPrompts.map((p) => (
-            <button
-              key={p}
-              onClick={() => sendMessage(p)}
-              className="text-xs px-3 py-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-800 hover:text-white hover:border-slate-800 transition-all"
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-
-        {/* Input */}
-        <div className="px-5 pb-5">
-          <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
-              placeholder="Ask about system status, users, or metrics..."
-              className="flex-1 px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-300 transition-all"
-            />
-            <button
-              onClick={() => sendMessage(input)}
-              disabled={!input.trim() || isTyping}
-              className="w-10 h-10 bg-slate-800 text-white rounded-xl flex items-center justify-center hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-            >
-              <Send size={14} />
-            </button>
+        {/* Interaction Volume heatmap */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-slate-800">Interaction Volume</h2>
+            <span className="text-[10px] text-slate-400">Peak: 14:00 – 16:00 EST</span>
+          </div>
+          <div className="space-y-1.5">
+            {heatmap.map((row, ri) => (
+              <div key={ri} className="grid grid-cols-7 gap-1.5">
+                {row.map((val, ci) => (
+                  <div key={ci} className={`h-8 rounded-lg ${heatColors[val]}`} />
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1.5 mt-2">
+            {DAYS.map((d) => (
+              <p key={d} className="text-center text-[9px] font-semibold text-slate-400 uppercase tracking-wider">{d}</p>
+            ))}
+          </div>
+          <div className="flex items-center justify-end gap-1.5 mt-3">
+            <span className="text-[9px] text-slate-400">Less</span>
+            {heatColors.map((c, i) => (
+              <div key={i} className={`w-3.5 h-3.5 rounded-sm ${c}`} />
+            ))}
+            <span className="text-[9px] text-slate-400">More</span>
           </div>
         </div>
       </div>
