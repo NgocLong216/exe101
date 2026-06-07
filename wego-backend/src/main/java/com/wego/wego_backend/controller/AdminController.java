@@ -99,4 +99,46 @@ public class AdminController {
                 )
         );
     }
+
+    @GetMapping("/activities")
+    public ResponseEntity<List<ActivityResponse>>
+    getActivities(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getRecentActivities(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules/trend")
+    public ResponseEntity<List<ScheduleTrendResponse>>
+    getScheduleTrend(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getScheduleTrend(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/avg-response-time")
+    public ResponseEntity<AvgResponseTimeResponse>
+    getAvgResponseTime(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                new AvgResponseTimeResponse(
+                        adminService
+                                .getAverageResponseTime(
+                                        authentication.getName()
+                                )
+                )
+        );
+    }
 }

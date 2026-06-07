@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -158,21 +158,97 @@ export const getAllQueries = async () => {
 
 export const getInteractionHeatmap = async () => {
     const user = getAuth().currentUser;
-  
+
     if (!user) {
-      throw new Error("User not authenticated");
+        throw new Error("User not authenticated");
     }
-  
+
     const token = await user.getIdToken();
-  
+
     const res = await fetch(
-      `${API_URL}/api/admin/queries/heatmap`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+        `${API_URL}/api/admin/queries/heatmap`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
-  
+
     return res.json();
-  };
+};
+
+export const logout = async () => {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error("Logout failed");
+    }
+
+    // logout phía client
+    await signOut(getAuth());
+
+    return res.text();
+};
+
+export const getRecentActivities = async () => {
+    const headers = await getAuthHeader();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/activities`,
+        {
+            headers,
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch activities");
+    }
+
+    return res.json();
+};
+
+export const getScheduleTrend = async () => {
+    const headers = await getAuthHeader();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/schedules/trend`,
+        {
+            headers,
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch trend");
+    }
+
+    return res.json();
+};
+
+export const getAvgResponseTime =
+    async () => {
+
+        const headers =
+            await getAuthHeader();
+
+        const res = await fetch(
+            `${API_URL}/api/admin/queries/avg-response-time`,
+            {
+                headers,
+            }
+        );
+
+        return res.json();
+    };

@@ -24,5 +24,8 @@ public class AiQueryHistory {
     @Column(columnDefinition = "TEXT")
     private String prompt;
 
+    @Column
+    private Long responseTimeMs;
+
     private LocalDateTime createdAt;
 }

@@ -2,6 +2,7 @@ package com.wego.wego_backend.service;
 
 import com.cloudinary.provisioning.Account;
 import com.wego.wego_backend.dto.*;
+import com.wego.wego_backend.entity.AiQueryHistory;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.AiQueryHistoryRepository;
 import com.wego.wego_backend.repository.GroupAiChecklistRepository;
@@ -10,7 +11,11 @@ import com.wego.wego_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -123,6 +128,30 @@ public class AdminService {
                 .toList();
     }
 
+    public double getAverageResponseTime(
+            String currentUid
+    ) {
+
+        requireAdmin(currentUid);
+
+        List<AiQueryHistory> queries =
+                aiQueryHistoryRepository.findAll();
+
+        if (queries.isEmpty()) {
+            return 0;
+        }
+
+        return queries.stream()
+                .filter(q ->
+                        q.getResponseTimeMs()
+                                != null)
+                .mapToLong(
+                        AiQueryHistory::getResponseTimeMs
+                )
+                .average()
+                .orElse(0);
+    }
+
     public List<InteractionHeatmapResponse> getInteractionHeatmap(
             String currentUid
     ) {
@@ -164,5 +193,114 @@ public class AdminService {
                     );
                 })
                 .toList();
+    }
+
+    public List<ActivityResponse> getRecentActivities(
+            String currentUid
+    ) {
+
+        requireAdmin(currentUid);
+
+        List<ActivityResponse> activities = new ArrayList<>();
+
+        // User registrations
+        userRepository.findAll()
+                .forEach(user ->
+                        activities.add(
+                                new ActivityResponse(
+                                        "USER_REGISTER",
+                                        user.getName() + " registered",
+                                        user.getCreatedAt()
+                                )
+                        )
+                );
+
+        // Schedule created
+        scheduleHistoryRepository.findAll()
+                .forEach(schedule ->
+                        activities.add(
+                                new ActivityResponse(
+                                        "SCHEDULE_CREATED",
+                                        "Schedule created for group: "
+                                                + schedule.getGroupTitle(),
+                                        schedule.getCreatedAt()
+                                )
+                        )
+                );
+
+        // AI queries
+        aiQueryHistoryRepository.findAll()
+                .forEach(query -> {
+
+                    User sender =
+                            userRepository
+                                    .findById(query.getSenderFirebaseUid())
+                                    .orElse(null);
+
+                    activities.add(
+                            new ActivityResponse(
+                                    "CHATBOT_QUERY",
+                                    (sender != null
+                                            ? sender.getName()
+                                            : "Unknown User")
+                                            + " searched: "
+                                            + query.getPrompt(),
+                                    query.getCreatedAt()
+                            )
+                    );
+                });
+
+        return activities.stream()
+                .sorted(
+                        Comparator.comparing(
+                                ActivityResponse::getCreatedAt
+                        ).reversed()
+                )
+                .limit(10)
+                .toList();
+    }
+
+    public List<ScheduleTrendResponse> getScheduleTrend(
+            String currentUid
+    ) {
+
+        requireAdmin(currentUid);
+
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(29);
+
+        Map<LocalDate, Long> counts =
+                scheduleHistoryRepository.findAll()
+                        .stream()
+                        .filter(schedule ->
+                                !schedule.getCreatedAt()
+                                        .toLocalDate()
+                                        .isBefore(startDate))
+                        .collect(
+                                Collectors.groupingBy(
+                                        schedule ->
+                                                schedule.getCreatedAt()
+                                                        .toLocalDate(),
+                                        Collectors.counting()
+                                )
+                        );
+
+        List<ScheduleTrendResponse> result =
+                new ArrayList<>();
+
+        for (int i = 0; i < 30; i++) {
+
+            LocalDate date =
+                    startDate.plusDays(i);
+
+            result.add(
+                    new ScheduleTrendResponse(
+                            date.toString(),
+                            counts.getOrDefault(date, 0L)
+                    )
+            );
+        }
+
+        return result;
     }
 }

@@ -1,4 +1,7 @@
 import { Search, Bell, Settings } from "lucide-react";
+import { getAuth } from "firebase/auth";
+
+const user = getAuth().currentUser;
 
 interface NavbarProps {
   userName?: string;
@@ -8,11 +11,17 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  userName = "Alex Rivera",
-  userRole = "Systems Admin",
-  avatarUrl,
   notificationCount = 3,
 }: NavbarProps) {
+  const user = getAuth().currentUser;
+
+  const userName =
+    user?.displayName ||
+    user?.email?.split("@")[0] ||
+    "Admin";
+
+  const avatarUrl = user?.photoURL || undefined;
+
   return (
     <header className="h-14 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0 shadow-sm">
       {/* Brand */}
@@ -56,14 +65,22 @@ export default function Navbar({
         <div className="flex items-center gap-2.5">
           <div className="text-right">
             <p className="text-xs font-semibold text-slate-800 leading-tight">{userName}</p>
-            <p className="text-[10px] text-slate-400 leading-tight">{userRole}</p>
+            <p className="text-[10px] text-slate-400 leading-tight">System Admin</p>
           </div>
           <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden ring-2 ring-slate-200">
             {avatarUrl ? (
-              <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+              <img
+                src={avatarUrl}
+                alt={userName}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="text-white text-xs font-bold">
-                {userName.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                {userName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)}
               </span>
             )}
           </div>
