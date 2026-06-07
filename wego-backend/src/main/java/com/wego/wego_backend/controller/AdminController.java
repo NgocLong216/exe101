@@ -1,8 +1,6 @@
 package com.wego.wego_backend.controller;
 
-import com.wego.wego_backend.dto.ScheduleCountResponse;
-import com.wego.wego_backend.dto.ScheduleHistoryResponse;
-import com.wego.wego_backend.dto.UserCountResponse;
+import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +58,43 @@ public class AdminController {
 
         return ResponseEntity.ok(
                 adminService.getAllSchedules(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/count")
+    public ResponseEntity<QueryCountResponse> getQueryCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getQueryCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries")
+    public ResponseEntity<List<AiQueryHistoryResponse>> getQueries(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getAllQueries(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/heatmap")
+    public ResponseEntity<List<InteractionHeatmapResponse>>
+    getHeatmap(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getInteractionHeatmap(
                         authentication.getName()
                 )
         );
