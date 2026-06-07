@@ -106,3 +106,73 @@ export const getAllSchedules = async () => {
     return res.json();
 };
 
+export const getQueryCount = async () => {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/queries/count`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch query count");
+    }
+
+    return res.json();
+};
+
+export const getAllQueries = async () => {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/queries`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch queries");
+    }
+
+    return res.json();
+};
+
+export const getInteractionHeatmap = async () => {
+    const user = getAuth().currentUser;
+  
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+  
+    const token = await user.getIdToken();
+  
+    const res = await fetch(
+      `${API_URL}/api/admin/queries/heatmap`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  
+    return res.json();
+  };

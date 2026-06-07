@@ -30,6 +30,7 @@ public class GroupService {
     private final GroupAiChecklistRepository aiChecklistRepository;
     private final AiPlaceService aiPlaceService;
     private final ScheduleHistoryRepository scheduleHistoryRepository;
+    private final AiQueryHistoryRepository aiQueryHistoryRepository;
 
     public Group createGroup(
             String title,
@@ -594,9 +595,25 @@ public class GroupService {
                         prompt
                 );
 
+        // lưu lịch sử query
+        AiQueryHistory history = new AiQueryHistory();
 
-        // XÓA CHECKLIST SAU KHI GỬI AI
-        aiChecklistRepository.deleteByGroupId(groupId);
+        history.setGroupId(groupId);
+        history.setSenderFirebaseUid(
+                checklist.getFirst().getSenderFirebaseUid()
+        );
+        history.setPrompt(prompt);
+        history.setCreatedAt(LocalDateTime.now());
+
+        aiQueryHistoryRepository.save(history);
+
+
+        // Đánh dấu đã gửi AI
+        checklist.forEach(item ->
+                item.setSentToAi(true)
+        );
+
+        aiChecklistRepository.saveAll(checklist);
 
         return response;
     }

@@ -155,46 +155,6 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-
-      {/* Bottom row */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* System Status */}
-        <div className="bg-slate-800 rounded-2xl p-5 text-white">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <h2 className="text-sm font-bold">System Status: Optimal</h2>
-          </div>
-          <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-            AI models are performing within expected latency parameters. All scheduling clusters are healthy.
-          </p>
-          <div className="flex gap-3">
-            {[{ label: "LATENCY", value: "142ms" }, { label: "UPTIME", value: "99.98%" }].map(({ label, value }) => (
-              <div key={label} className="bg-slate-700 rounded-xl px-4 py-2.5 text-center">
-                <p className="text-[9px] text-slate-400 uppercase tracking-widest">{label}</p>
-                <p className="text-base font-bold text-white mt-0.5">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Automated Optimization */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex gap-4">
-          <div className="w-20 h-20 rounded-xl bg-slate-800 shrink-0 overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-slate-600 to-slate-900 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full border-2 border-slate-400 opacity-60" />
-            </div>
-          </div>
-          <div className="flex-1">
-            <h2 className="text-sm font-bold text-slate-800 mb-1">Automated Optimization</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Chatbot resource allocation was automatically scaled by 15% to handle peak traffic.
-            </p>
-            <button className="mt-3 text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1 transition-colors">
-              Review Changes <span className="text-base leading-none">→</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

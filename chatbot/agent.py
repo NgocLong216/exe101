@@ -318,6 +318,11 @@ def fetch_real_data_from_api(
         results = root.get(
             "local_results"
         )
+        results = sorted(
+            results,
+            key=lambda x: x.get("rating", 0),
+            reverse=True
+        )[:5]
 
         if results is None:
 
