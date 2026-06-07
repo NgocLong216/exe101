@@ -2,6 +2,7 @@ package com.wego.wego_backend.service;
 
 import com.cloudinary.provisioning.Account;
 import com.wego.wego_backend.dto.*;
+import com.wego.wego_backend.entity.AiQueryHistory;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.AiQueryHistoryRepository;
 import com.wego.wego_backend.repository.GroupAiChecklistRepository;
@@ -125,6 +126,30 @@ public class AdminService {
                     );
                 })
                 .toList();
+    }
+
+    public double getAverageResponseTime(
+            String currentUid
+    ) {
+
+        requireAdmin(currentUid);
+
+        List<AiQueryHistory> queries =
+                aiQueryHistoryRepository.findAll();
+
+        if (queries.isEmpty()) {
+            return 0;
+        }
+
+        return queries.stream()
+                .filter(q ->
+                        q.getResponseTimeMs()
+                                != null)
+                .mapToLong(
+                        AiQueryHistory::getResponseTimeMs
+                )
+                .average()
+                .orElse(0);
     }
 
     public List<InteractionHeatmapResponse> getInteractionHeatmap(

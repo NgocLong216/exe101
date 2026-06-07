@@ -589,11 +589,18 @@ public class GroupService {
                         )
                         .collect(Collectors.joining("\n"));
 
+        long start = System.currentTimeMillis();
+
         AiChatResponse response =
                 aiPlaceService.chat(
                         groupId.toString(),
                         prompt
                 );
+
+        long end = System.currentTimeMillis();
+
+        long responseTime =
+                end - start;
 
         // lưu lịch sử query
         AiQueryHistory history = new AiQueryHistory();
@@ -603,6 +610,9 @@ public class GroupService {
                 checklist.getFirst().getSenderFirebaseUid()
         );
         history.setPrompt(prompt);
+        history.setResponseTimeMs(
+                responseTime
+        );
         history.setCreatedAt(LocalDateTime.now());
 
         aiQueryHistoryRepository.save(history);

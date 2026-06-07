@@ -125,4 +125,20 @@ public class AdminController {
                 )
         );
     }
+
+    @GetMapping("/queries/avg-response-time")
+    public ResponseEntity<AvgResponseTimeResponse>
+    getAvgResponseTime(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                new AvgResponseTimeResponse(
+                        adminService
+                                .getAverageResponseTime(
+                                        authentication.getName()
+                                )
+                )
+        );
+    }
 }

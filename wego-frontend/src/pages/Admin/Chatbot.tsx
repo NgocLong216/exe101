@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
-import { getQueryCount, getAllQueries, getInteractionHeatmap } from "../../services/adminService";
+import { getQueryCount, getAllQueries, getInteractionHeatmap, getAvgResponseTime } from "../../services/adminService";
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
@@ -27,6 +27,10 @@ export default function Chatbot() {
       count: number;
     }[]
   >([]);
+
+  const [avgResponseTime,
+    setAvgResponseTime] =
+    useState<number>(0);
 
   const [heatmap, setHeatmap] = useState<number[][]>(
     Array.from({ length: 8 }, () =>
@@ -87,6 +91,15 @@ export default function Chatbot() {
     URL.revokeObjectURL(url);
   };
 
+  useEffect(() => {
+    getAvgResponseTime()
+      .then(data =>
+        setAvgResponseTime(
+          data.avgResponseTimeMs
+        )
+      );
+  }, []);
+  
   useEffect(() => {
     const loadHeatmap = async () => {
 
@@ -320,7 +333,7 @@ export default function Chatbot() {
     },
     {
       label: "Avg. Response Time",
-      value: "5.2s",
+      value: `${(avgResponseTime / 1000).toFixed(2)}s`,
       change: "-0.4s",
       up: false,
     },
