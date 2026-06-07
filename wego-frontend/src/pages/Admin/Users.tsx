@@ -1,6 +1,7 @@
 import { Search, UserPlus, MoreHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getAllUsers } from "../../services/adminService";
+import { getDatabase, ref, onValue } from "firebase/database";
 
 const roleColors: Record<string, string> = {
   ADMIN: "bg-slate-800 text-white",
@@ -16,12 +17,28 @@ export default function Users() {
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase())
   );
+  const [presence, setPresence] = useState<any>({});
+
+  useEffect(() => {
+    const db = getDatabase();
+
+    const presenceRef = ref(db, "presence");
+
+    const unsubscribe = onValue(
+      presenceRef,
+      (snapshot) => {
+        setPresence(snapshot.val() || {});
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const data = await getAllUsers();
-  
+
         setUsers(data);
       } catch (error) {
         console.error(error);
@@ -29,7 +46,7 @@ export default function Users() {
         setLoading(false);
       }
     };
-  
+
     fetchUsers();
   }, []);
 
@@ -73,40 +90,55 @@ export default function Users() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filtered.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50/60 transition-colors group">
-                <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
-                      <span className="text-white text-xs font-bold">
-                        {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                      </span>
+            {filtered.map((user) => {
+              const online =
+                presence[user.firebaseUid]?.online;
+
+              return (
+                <tr key={user.id} className="hover:bg-slate-50/60 transition-colors group">
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
+                        <span className="text-white text-xs font-bold">
+                          {user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-800">{user.name}</p>
+                        <p className="text-xs text-slate-400">{user.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-800">{user.name}</p>
-                      <p className="text-xs text-slate-400">{user.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-5 py-3.5">
-                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${roleColors[user.role?.name]}`}>
-                    {user.role?.name}
-                  </span>
-                </td>
-                <td className="px-5 py-3.5">
-                  <span className={`flex items-center gap-1.5 text-xs font-medium ${user.status === "Active" ? "text-emerald-600" : "text-slate-400"}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${user.status === "Active" ? "bg-emerald-400" : "bg-slate-300"}`} />
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-5 py-3.5 text-xs text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td className="px-5 py-3.5 text-right">
-                  <button className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all">
-                    <MoreHorizontal size={15} />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${roleColors[user.role?.name]}`}>
+                      {user.role?.name}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span
+                      className={`flex items-center gap-1.5 text-xs font-medium ${online
+                          ? "text-emerald-600"
+                          : "text-slate-400"
+                        }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${online
+                            ? "bg-emerald-400"
+                            : "bg-slate-300"
+                          }`}
+                      />
+                      {online ? "Online" : "Offline"}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5 text-xs text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td className="px-5 py-3.5 text-right">
+                    <button className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all">
+                      <MoreHorizontal size={15} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 

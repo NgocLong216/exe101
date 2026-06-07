@@ -51,7 +51,41 @@ export default function Chatbot() {
   ];
 
   const [peakTime, setPeakTime] =
-        useState("No data");
+    useState("No data");
+
+  const exportCSV = () => {
+    const rows = [
+      ["Metric", "Value"],
+      ["Total Conversations", totalConversations],
+      ["Peak Time", peakTime],
+      [],
+      ["Top Queries", "Frequency"],
+      ...queries.map(q => [q.q, q.freq]),
+    ];
+
+    const csvContent = rows
+      .map((row) => row.join(","))
+      .join("\n");
+
+    const BOM = "\uFEFF";
+
+    const blob = new Blob(
+      [BOM + csvContent],
+      {
+        type: "text/csv;charset=utf-8;",
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `chatbot-report-${Date.now()}.csv`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     const loadHeatmap = async () => {
@@ -307,7 +341,10 @@ export default function Chatbot() {
             <CalendarDays size={14} />
             Last 30 Days
           </button>
-          <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl"
+          >
             <Download size={14} />
             Export Report
           </button>
@@ -315,16 +352,16 @@ export default function Chatbot() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {stats.map(({ label, value, change, up }) => (
           <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">{label}</p>
             <div className="flex items-end justify-between">
               <p className="text-3xl font-bold text-slate-800 tracking-tight">{value}</p>
-              <span className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${up ? "text-emerald-600" : "text-red-400"}`}>
+              {/* <span className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${up ? "text-emerald-600" : "text-red-400"}`}>
                 {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {change}
-              </span>
+              </span> */}
             </div>
           </div>
         ))}
@@ -371,7 +408,7 @@ export default function Chatbot() {
       </div>
 
       {/* ── Bottom row ── */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
 
         {/* Interaction Volume heatmap */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">

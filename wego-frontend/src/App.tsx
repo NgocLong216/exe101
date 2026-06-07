@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { listenForegroundMessage } from "./firebase-messaging";
+import { getAuth } from "firebase/auth";
+import { setupPresence } from "./firebasePresence";
+
 import { Toaster } from "react-hot-toast";
 
 import LoginPage from "./pages/LoginPage";
@@ -16,6 +19,7 @@ import AdminPage from "./pages/AdminPage";
 import AdminRoute from "./components/AdminRoute";
 
 function App() {
+  const auth = getAuth();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -32,6 +36,18 @@ function App() {
 
   useEffect(() => {
     listenForegroundMessage();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(
+      async (user) => {
+        if (user) {
+          await setupPresence();
+        }
+      }
+    );
+  
+    return unsubscribe;
   }, []);
 
   return (

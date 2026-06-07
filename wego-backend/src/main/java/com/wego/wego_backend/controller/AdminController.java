@@ -99,4 +99,30 @@ public class AdminController {
                 )
         );
     }
+
+    @GetMapping("/activities")
+    public ResponseEntity<List<ActivityResponse>>
+    getActivities(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getRecentActivities(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules/trend")
+    public ResponseEntity<List<ScheduleTrendResponse>>
+    getScheduleTrend(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getScheduleTrend(
+                        authentication.getName()
+                )
+        );
+    }
 }
