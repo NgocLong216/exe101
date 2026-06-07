@@ -9,8 +9,7 @@ import {
     View
 } from "react-native";
 
-const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY;
-const GOONG_API_LINK = process.env.EXPO_PUBLIC_GOONG_API_LINK as string;
+const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2;
 // hoặc: import { GOONG_API_KEY } from "../config";
 
 export default function SearchBar({ onSelectLocation } : {onSelectLocation : any}) {
@@ -56,7 +55,7 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
 
         // 👉 Lấy chi tiết toạ độ
         const url =
-            `${GOONG_API_LINK}/Place/Detail` +
+            `https://rsapi.goong.io/Place/Detail` +
             `?place_id=${place.place_id}&api_key=${GOONG_API_KEY}`;
 
         const res = await fetch(url);

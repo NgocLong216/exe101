@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/groups").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/groups/*/suggest-place").authenticated()
                         .requestMatchers("/api/groups/places/**").authenticated()
+                        .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

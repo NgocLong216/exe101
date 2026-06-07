@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -25,4 +27,9 @@ public class User {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    private LocalDateTime createdAt;
 }

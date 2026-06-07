@@ -5,14 +5,8 @@ import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.*;
-import com.wego.wego_backend.entity.Group;
-import com.wego.wego_backend.entity.GroupAiChecklist;
-import com.wego.wego_backend.entity.GroupMember;
-import com.wego.wego_backend.entity.User;
-import com.wego.wego_backend.repository.GroupAiChecklistRepository;
-import com.wego.wego_backend.repository.GroupMemberRepository;
-import com.wego.wego_backend.repository.GroupRepository;
-import com.wego.wego_backend.repository.UserRepository;
+import com.wego.wego_backend.entity.*;
+import com.wego.wego_backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +29,7 @@ public class GroupService {
     private final FirebaseDatabase firebaseDatabase;
     private final GroupAiChecklistRepository aiChecklistRepository;
     private final AiPlaceService aiPlaceService;
+    private final ScheduleHistoryRepository scheduleHistoryRepository;
 
     public Group createGroup(
             String title,
@@ -450,6 +445,16 @@ public class GroupService {
         group.setStatus(GroupStatus.ON_GOING);
 
         groupRepository.save(group);
+
+        ScheduleHistory history = new ScheduleHistory();
+
+        history.setGroupId(group.getId());
+        history.setHostFirebaseUid(group.getHostFirebaseUid());
+        history.setGroupTitle(group.getTitle());
+        history.setMeetingTime(meetingTime);
+        history.setCreatedAt(LocalDateTime.now());
+
+        scheduleHistoryRepository.save(history);
     }
 
     public List<MeetingScheduleResponse> getMyMeetings(String firebaseUid) {

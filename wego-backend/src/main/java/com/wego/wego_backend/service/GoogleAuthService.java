@@ -3,7 +3,9 @@ package com.wego.wego_backend.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.wego.wego_backend.dto.GoogleUserInfo;
+import com.wego.wego_backend.entity.Role;
 import com.wego.wego_backend.entity.User;
+import com.wego.wego_backend.repository.RoleRepository;
 import com.wego.wego_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -23,6 +26,8 @@ public class GoogleAuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
 
     private static final String GOOGLE_USERINFO_URL =
             "https://www.googleapis.com/oauth2/v3/userinfo";
@@ -54,6 +59,9 @@ public class GoogleAuthService {
 
         String firebaseUid = decoded.getUid();
 
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow();
+
         return userRepository.findByFirebaseUid(firebaseUid)
                 .orElseGet(() -> {
                     User u = new User();
@@ -61,28 +69,13 @@ public class GoogleAuthService {
                     u.setEmail(decoded.getEmail());
                     u.setName(decoded.getName());
                     u.setAvatar(decoded.getPicture());
+                    u.setRole(userRole);
+                    u.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(u);
                 });
     }
 
-    public User loginWithAuth0(Jwt jwt) {
 
-        String auth0Id = jwt.getSubject();
-
-        return userRepository.findById(auth0Id)
-                .orElseGet(() -> {
-
-                    User user = new User();
-
-                    user.setFirebaseUid(auth0Id);
-
-                    user.setEmail(jwt.getClaim("email"));
-                    user.setName(jwt.getClaim("name"));
-                    user.setAvatar(jwt.getClaim("picture"));
-
-                    return userRepository.save(user);
-                });
-    }
 
     public void logout(String firebaseUid) {
         try {
