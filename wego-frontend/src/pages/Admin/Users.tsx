@@ -40,10 +40,10 @@ export default function Users() {
           <h1 className="text-2xl font-bold text-slate-800">Users</h1>
           <p className="text-sm text-slate-500 mt-0.5">Manage and monitor all registered users.</p>
         </div>
-        <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+        {/* <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
           <UserPlus size={15} />
           Add User
-        </button>
+        </button> */}
       </div>
 
       {/* Search & filter */}

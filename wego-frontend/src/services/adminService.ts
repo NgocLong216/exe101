@@ -56,3 +56,53 @@ export async function getAllUsers() {
     return res.json();
 }
 
+export const getScheduleCount = async () => {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/schedules/count`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch schedule count");
+    }
+
+    return res.json();
+};
+
+export const getAllSchedules = async () => {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch(
+        `${API_URL}/api/admin/schedules`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch schedules");
+    }
+
+    return res.json();
+};
+

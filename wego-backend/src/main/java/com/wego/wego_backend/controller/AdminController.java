@@ -1,5 +1,7 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.ScheduleCountResponse;
+import com.wego.wego_backend.dto.ScheduleHistoryResponse;
 import com.wego.wego_backend.dto.UserCountResponse;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.AdminService;
@@ -34,6 +36,30 @@ public class AdminController {
 
         return ResponseEntity.ok(
                 adminService.getUserCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules/count")
+    public ResponseEntity<ScheduleCountResponse> getScheduleCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getScheduleCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleHistoryResponse>> getSchedules(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getAllSchedules(
                         authentication.getName()
                 )
         );

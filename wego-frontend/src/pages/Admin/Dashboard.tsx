@@ -1,6 +1,6 @@
 import { TrendingUp, TrendingDown, Users, CalendarDays, Cpu, UserPlus, CalendarCheck, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUserCount } from "../../services/adminService";
+import { getUserCount, getScheduleCount } from "../../services/adminService";
 
 const growthData = [18, 24, 22, 30, 28, 35, 32, 40, 44, 42, 50, 48, 55, 58, 62, 60, 65, 68, 72, 70, 75, 73, 80, 82, 85, 83, 88, 90, 92, 95];
 
@@ -12,19 +12,26 @@ const activityItems = [
 
 export default function Dashboard() {
   const maxVal = Math.max(...growthData);
-  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
+  const [totalSchedules, setTotalSchedules] = useState<number | null>(null);
 
   const stats = [
     {
       label: "Total Users",
-      value: totalUsers.toLocaleString(),
+      value:
+        totalUsers === null
+          ? "..."
+          : totalUsers.toLocaleString(),
       change: 12,
       icon: Users,
       positive: true,
     },
     {
       label: "Schedules Created",
-      value: "1,420",
+      value:
+        totalSchedules === null
+          ? "..."
+          : totalSchedules.toLocaleString(),
       change: 8,
       icon: CalendarDays,
       positive: true,
@@ -41,13 +48,18 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getUserCount();
-        setTotalUsers(data.totalUsers);
+        const [userData, scheduleData] = await Promise.all([
+          getUserCount(),
+          getScheduleCount(),
+        ]);
+
+        setTotalUsers(userData.totalUsers);
+        setTotalSchedules(scheduleData.totalSchedules);
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     fetchData();
   }, []);
 
