@@ -252,3 +252,25 @@ export const getAvgResponseTime =
 
         return res.json();
     };
+
+export const getAvgTimeToFirstSchedule =
+    async () => {
+
+        const headers =
+            await getAuthHeader();
+
+        const res = await fetch(
+            `${API_URL}/api/admin/schedules/avg-time-to-first`,
+            {
+                headers,
+            }
+        );
+
+        if (!res.ok) {
+            throw new Error(
+                "Failed to fetch avg time"
+            );
+        }
+
+        return res.json();
+    };

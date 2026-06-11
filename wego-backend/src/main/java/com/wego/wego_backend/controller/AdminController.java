@@ -141,4 +141,20 @@ public class AdminController {
                 )
         );
     }
+
+    @GetMapping("/schedules/avg-time-to-first")
+    public ResponseEntity<AvgTimeToFirstScheduleResponse>
+    getAvgTimeToFirstSchedule(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                new AvgTimeToFirstScheduleResponse(
+                        adminService
+                                .getAvgTimeToFirstSchedule(
+                                        authentication.getName()
+                                )
+                )
+        );
+    }
 }

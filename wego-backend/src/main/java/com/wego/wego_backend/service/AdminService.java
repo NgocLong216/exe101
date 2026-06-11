@@ -3,11 +3,9 @@ package com.wego.wego_backend.service;
 import com.cloudinary.provisioning.Account;
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.AiQueryHistory;
+import com.wego.wego_backend.entity.Group;
 import com.wego.wego_backend.entity.User;
-import com.wego.wego_backend.repository.AiQueryHistoryRepository;
-import com.wego.wego_backend.repository.GroupAiChecklistRepository;
-import com.wego.wego_backend.repository.ScheduleHistoryRepository;
-import com.wego.wego_backend.repository.UserRepository;
+import com.wego.wego_backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final ScheduleHistoryRepository scheduleHistoryRepository;
     private final AiQueryHistoryRepository aiQueryHistoryRepository;
+    private final GroupRepository groupRepository;
 
     public void requireAdmin(String firebaseUid) {
 
@@ -302,5 +305,67 @@ public class AdminService {
         }
 
         return result;
+    }
+
+    public double getAvgTimeToFirstSchedule(
+            String currentUid
+    ) {
+
+        requireAdmin(currentUid);
+
+        List<Group> groups =
+                groupRepository.findAll();
+
+        Map<UUID, LocalDateTime> firstScheduleMap =
+                new HashMap<>();
+
+        scheduleHistoryRepository.findAll()
+                .forEach(schedule -> {
+
+                    UUID groupId =
+                            schedule.getGroupId();
+
+                    LocalDateTime createdAt =
+                            schedule.getCreatedAt();
+
+                    firstScheduleMap.merge(
+                            groupId,
+                            createdAt,
+                            (oldValue, newValue) ->
+                                    oldValue.isBefore(newValue)
+                                            ? oldValue
+                                            : newValue
+                    );
+                });
+
+        double totalHours = 0;
+        int count = 0;
+
+        for (Group group : groups) {
+
+            LocalDateTime firstSchedule =
+                    firstScheduleMap.get(
+                            group.getId()
+                    );
+
+            if (firstSchedule == null) {
+                continue;
+            }
+
+            double hours =
+                    Duration.between(
+                            group.getCreatedAt(),
+                            firstSchedule
+                    ).toMinutes() / 60.0;
+
+            totalHours += hours;
+            count++;
+        }
+
+        return count == 0
+                ? 0
+                : Math.round(
+                (totalHours / count) * 100.0
+        ) / 100.0;
     }
 }

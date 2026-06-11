@@ -473,20 +473,20 @@ public class GroupService {
 
             Group group = gm.getGroup();
 
-            if (group.getStatus() == GroupStatus.ON_GOING) {
+            if (group.getStatus() != GroupStatus.WAITING) {
                 meetingMap.put(group.getId(), group);
             }
         }
 
         // Group user làm host
         List<Group> hostGroups =
-                groupRepository.findByHostFirebaseUidAndStatus(
-                        firebaseUid,
-                        GroupStatus.ON_GOING
-                );
+                groupRepository.findByHostFirebaseUid(firebaseUid);
 
         for (Group group : hostGroups) {
-            meetingMap.put(group.getId(), group);
+
+            if (group.getStatus() != GroupStatus.WAITING) {
+                meetingMap.put(group.getId(), group);
+            }
         }
 
         return meetingMap.values().stream()
@@ -626,6 +626,22 @@ public class GroupService {
         aiChecklistRepository.saveAll(checklist);
 
         return response;
+    }
+
+    @Transactional
+    public void completeMeet(UUID groupId, String currentUid) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // chỉ host được kết thúc
+        if (!group.getHostFirebaseUid().equals(currentUid)) {
+            throw new RuntimeException("Only host can complete meeting");
+        }
+
+        group.setStatus(GroupStatus.FINISHED);
+
+        groupRepository.save(group);
     }
 
 }

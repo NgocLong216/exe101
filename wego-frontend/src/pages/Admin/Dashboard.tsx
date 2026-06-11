@@ -1,6 +1,6 @@
 import { TrendingUp, TrendingDown, Users, CalendarDays, Cpu, UserPlus, CalendarCheck, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUserCount, getScheduleCount, getQueryCount, getRecentActivities, getScheduleTrend } from "../../services/adminService";
+import { getUserCount, getScheduleCount, getQueryCount, getRecentActivities, getScheduleTrend, getAvgTimeToFirstSchedule } from "../../services/adminService";
 
 export default function Dashboard() {
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
@@ -16,6 +16,11 @@ export default function Dashboard() {
     growthData.length > 0
       ? Math.max(...growthData)
       : 1;
+
+  const [
+    avgTimeToFirstSchedule,
+    setAvgTimeToFirstSchedule,
+  ] = useState<number | null>(null);
 
   const stats = [
     {
@@ -47,7 +52,26 @@ export default function Dashboard() {
       icon: Cpu,
       positive: false,
     },
+    {
+      label: "Avg Time To First Schedule",
+      value:
+        avgTimeToFirstSchedule === null
+          ? "..."
+          : `${avgTimeToFirstSchedule.toFixed(1)}h`,
+      icon: CalendarCheck,
+      positive: true,
+    }
   ];
+
+  useEffect(() => {
+    getAvgTimeToFirstSchedule()
+      .then((data) =>
+        setAvgTimeToFirstSchedule(
+          data.avgHours
+        )
+      )
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     getScheduleTrend()
@@ -135,7 +159,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {stats.map(({ label, value, change, icon: Icon, positive }) => (
           <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-3">

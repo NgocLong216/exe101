@@ -77,3 +77,11 @@ export async function scheduleMeet(
         body: JSON.stringify(data),
     });
 }
+
+export async function completeSchedule(
+    groupId: string
+  ): Promise<void> {
+    await apiFetch(`/api/groups/${groupId}/complete`, {
+      method: "POST",
+    });
+  }
