@@ -24,6 +24,7 @@ public class SecurityConfig {
     // Danh sách endpoint public dùng chung
     public static final String[] PUBLIC_ENDPOINTS = {
             "/api/auth/**",
+            "/api/public/**"
     };
 
     @Bean
