@@ -3,6 +3,7 @@ package com.wego.wego_backend.service;
 import com.wego.wego_backend.dto.AiChatRequest;
 import com.wego.wego_backend.dto.AiChatResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,12 +16,15 @@ public class AiPlaceService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${ai.service.url}")
+    private String aiServiceUrl;
+
     public AiChatResponse chat(
             String sessionId,
             String message
     ) {
 
-        String url = "http://localhost:8000/chat";
+        String url = aiServiceUrl + "/chat";
 
         AiChatRequest request =
                 new AiChatRequest();
