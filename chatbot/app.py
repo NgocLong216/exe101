@@ -11,6 +11,9 @@ from agent import run_agent
 
 app = FastAPI()
 
+@app.get("/")
+def health():
+    return {"status": "ok"}
 
 @app.post(
     "/chat",
