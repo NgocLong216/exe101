@@ -2,38 +2,33 @@ import { useAuth } from "@/auth0/AuthContext";
 import { LocationResult } from "@/types/location";
 import { useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
-import {
-  getDatabase,
-  onValue,
-  ref,
-} from "firebase/database";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
+
 import SearchBar from "./SearchBar";
 import PlaceBottomSheet, {
   PlaceBottomSheetRef,
   PlaceDetail,
 } from "./bottomSheet";
 import MarkersOverlay from "./overlayMarker/MarkersOverlay";
+import {
+  LatLng,
+  Member,
+  buildMapHtml,
+  fetchDirection,
+  reverseGeocode,
+  subscribeGroupMembers,
+} from "@/apis/goongAPI";
 
-export type LatLng = {
-  latitude: number;
-  longitude: number;
-};
-
-// Member type passed in from HomeScreen via Firebase
-export type Member = {
-  firebaseUid: string;
-  name: string;
-  lat: number;
-  lng: number;
-  updatedAt: number;
-  picture?: string;
-};
-
-const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
-const GOONG_API_KEY_2 = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
+const ROUTE_COLORS = [
+  "#2563EB",
+  "#EF4444",
+  "#22C55E",
+  "#F59E0B",
+  "#A855F7",
+  "#EC4899",
+];
 
 type Props = {
   latitude: number;
@@ -51,319 +46,123 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   const [destination, setDestination] = useState<LocationResult | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
   const [routeIds, setRouteIds] = useState<string[]>([]);
-  const {
-    placeId,
-    placeName,
-    lat,
-    lng,
-    prevRoute,
-  } = useLocalSearchParams<{
+  const [members, setMembers] = useState<Member[]>([]);
+
+  const { placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
     placeId?: string;
     placeName?: string;
     lat?: string;
     lng?: string;
     prevRoute?: string;
   }>();
-  const { groupId } = useLocalSearchParams<{
-    groupId?: string;
-  }>();
-  const [members, setMembers] = useState<Member[]>([]);
-  const colors = [
-    "#2563EB",
-    "#EF4444",
-    "#22C55E",
-    "#F59E0B",
-    "#A855F7",
-    "#EC4899",
-  ];
+  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
 
+  // ─── KEY FIX: html is memoized with initial coords only ─────────────────────
+  // Changing `members`, `route`, `destination`, etc. no longer causes a reload.
+  // Any map updates after init go through injectJavaScript.
+  const html = useMemo(
+    () => buildMapHtml(latitude, longitude),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [] // intentionally empty — we never want this to change after first render
+  );
+
+  // ─── Subscribe to group members ──────────────────────────────────────────────
   useEffect(() => {
-
     if (!groupId) {
-
       setMembers([]);
-
       return;
     }
 
-    loadGroupMembers();
+    const unsub = subscribeGroupMembers(
+      groupId,
+      (updated) => setMembers(updated),
+      (err) => console.log("LOAD MEMBERS ERROR", err)
+    );
 
+    return unsub;
   }, [groupId]);
 
-  const loadGroupMembers = async () => {
-
-    try {
-
-      const token =
-        await getAuth()
-          .currentUser
-          ?.getIdToken();
-
-      const response =
-        await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/members/uids`,
-          {
-            headers: {
-              Authorization:
-                `Bearer ${token}`,
-            },
-          }
-        );
-
-      const memberUids: string[] =
-        await response.json();
-
-      console.log(
-        "GROUP MEMBERS:",
-        memberUids
-      );
-
-      const db = getDatabase();
-
-      onValue(
-        ref(db, "live_locations"),
-        snapshot => {
-
-          const locations =
-            snapshot.val() || {};
-
-          const membersData =
-            memberUids
-              .map(uid => {
-
-                const loc =
-                  locations[uid];
-
-                if (!loc) return null;
-
-                return {
-                  firebaseUid: uid,
-                  name: loc.name || "",
-                  lat: loc.lat,
-                  lng: loc.lng,
-                  picture: loc.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-                  updatedAt: loc.updatedAt || 0,
-                };
-
-              })
-              .filter(Boolean);
-
-          setMembers(
-            membersData as Member[]
-          );
-        }
-      );
-
-    } catch (err) {
-
-      console.log(
-        "LOAD MEMBERS ERROR",
-        err
-      );
-
-    }
-  };
-
+  // ─── Auto-load place from navigation params ──────────────────────────────────
   useEffect(() => {
-
-    if (
-      prevRoute !== "/PlaceDetail" ||
-      !lat ||
-      !lng
-    ) {
-      return;
-    }
+    if (prevRoute !== "/PlaceDetail" || !lat || !lng) return;
 
     const selectedLat = Number(lat);
     const selectedLng = Number(lng);
 
-    const loadPlace = async () => {
-
+    (async () => {
       try {
+        const place = await reverseGeocode(selectedLat, selectedLng);
+        if (!place) return;
 
-        const url =
-          `https://rsapi.goong.io/Geocode?latlng=${selectedLat},${selectedLng}&api_key=${GOONG_API_KEY_2}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const placeResult =
-          data.results?.[0];
-
-        if (!placeResult) return;
-
-        const placeDetail: PlaceDetail = {
-          place_id:
-            placeId ||
-            placeResult.place_id,
-
-          name:
-            placeName ||
-            placeResult.name,
-
-          formatted_address:
-            placeResult.formatted_address,
-
-          address:
-            placeResult.address,
-
-          address_components:
-            placeResult.address_components,
-
-          compound:
-            placeResult.compound,
-
-          plus_code:
-            placeResult.plus_code,
-
-          types:
-            placeResult.types,
-
-          geometry: {
-            location: {
-              lat: selectedLat,
-              lng: selectedLng,
-            },
-          },
+        const detail: PlaceDetail = {
+          ...place,
+          place_id: placeId || place.place_id,
+          name: placeName || place.name,
+          geometry: { location: { lat: selectedLat, lng: selectedLng }, boundary: undefined },
         };
 
-        setSelectedPlace(placeDetail);
-
-        setDestination({
-          latitude: selectedLat,
-          longitude: selectedLng,
-        } as LocationResult);
-
-        bottomSheetRef.current?.open(
-          placeDetail
-        );
+        setSelectedPlace(detail);
+        setDestination({ latitude: selectedLat, longitude: selectedLng } as LocationResult);
+        bottomSheetRef.current?.open(detail);
 
         webRef.current?.injectJavaScript(`
-          map.flyTo({
-            center: [${selectedLng}, ${selectedLat}],
-            zoom: 16
-          });
-  
-          new goongjs.Marker({
-            color: "red"
-          })
-            .setLngLat([
-              ${selectedLng},
-              ${selectedLat}
-            ])
+          map.flyTo({ center: [${selectedLng}, ${selectedLat}], zoom: 16 });
+          new goongjs.Marker({ color: "red" })
+            .setLngLat([${selectedLng}, ${selectedLat}])
             .addTo(map);
-  
           true;
         `);
-
       } catch (e) {
-
-        console.log(
-          "AUTO LOAD PLACE ERROR",
-          e
-        );
-
+        console.log("AUTO LOAD PLACE ERROR", e);
       }
-    };
+    })();
+  }, [placeId, placeName, lat, lng, prevRoute]);
 
-    loadPlace();
-
-  }, [
-    placeId,
-    placeName,
-    lat,
-    lng,
-    prevRoute
-  ]);
-
-  // Build points for MarkersOverlay from Firebase members + self
-  const currentUid = getAuth().currentUser?.uid;
-  const pointsData = [
-    {
-      id: "me",
-      x: latitude,
-      y: longitude,
-      user: { picture: user?.picture || "" },
-    },
-    ...members
-    .filter(m => m.firebaseUid !== currentUid)
-    .map((m) => ({
-      id: m.firebaseUid,
-      x: m.lat,
-      y: m.lng,
-      user: { picture: m.picture || "" },
-    })),
-  ];
-
-  // SEARCH
-  const handleSearch = (location: LocationResult) => {
-    setDestination(location);
-    webRef.current?.injectJavaScript(`
-      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
-      new goongjs.Marker({ color: "red" })
-        .setLngLat([${location.longitude}, ${location.latitude}])
-        .addTo(map);
-      true;
-    `);
-  };
-
-  // ROUTE — re-fetch whenever destination changes
+  // ─── Re-fetch routes whenever destination or members change ─────────────────
   useEffect(() => {
     setRoute([]);
-    fetchRoute();
+    fetchRoutes();
   }, [destination, members]);
 
-  const fetchRoute = async () => {
+  const fetchRoutes = async () => {
     if (!destination) return;
+
     try {
       setLoading(true);
 
-      // Clear old routes from map
+      // Remove old route layers from map
       routeIds.forEach((id) => {
         webRef.current?.injectJavaScript(`
-          if (map.getLayer("${id}")) {
-            map.removeLayer("${id}");
-          }
-          if (map.getSource("${id}")) {
-            map.removeSource("${id}");
-          }
+          if (map.getLayer("${id}")) map.removeLayer("${id}");
+          if (map.getSource("${id}")) map.removeSource("${id}");
           true;
         `);
       });
 
-      const routesResult: LatLng[][] = [];
-      const newRouteIds: string[] = [];
-
+      const currentUid = getAuth().currentUser?.uid;
       const origins = [
-        { latitude, longitude, color: "#2563EB"},
-        ...members.filter(
-          m => m.firebaseUid !== currentUid
-        ).map((m) => ({ latitude: m.lat, longitude: m.lng, color: "#FF0000"})),
+        { latitude, longitude },
+        ...members
+          .filter((m) => m.firebaseUid !== currentUid)
+          .map((m) => ({ latitude: m.lat, longitude: m.lng })),
       ];
 
+      const newRouteIds: string[] = [];
+      const routesResult: LatLng[][] = [];
+
       for (let i = 0; i < origins.length; i++) {
-        const origin = origins[i];
+        const coords = await fetchDirection(origins[i], {
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+        });
+        if (!coords.length) continue;
 
-        const color = colors[i % colors.length];
-        console.log(
-          "MEMBERS:",
-          members.length
-        );
-        const url =
-          `https://rsapi.goong.io/Direction?origin=${origin.latitude},${origin.longitude}` +
-          `&destination=${destination.latitude},${destination.longitude}` +
-          `&vehicle=bike&api_key=${GOONG_API_KEY_2}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!data.routes?.length) continue;
-
-        const points = data.routes[0].overview_polyline.points;
-        const coords = decodePolyline(points);
         routesResult.push(coords);
 
-        const routeId = `route_${Math.random()}`;
+        const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
+        const routeId = `route_${Math.random().toString(36).slice(2)}`;
         newRouteIds.push(routeId);
+
         webRef.current?.injectJavaScript(`
           map.addSource("${routeId}", {
             type: "geojson",
@@ -395,114 +194,79 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     }
   };
 
-  // MAP TAP → reverse geocode → open bottom sheet
-  const clearDestinationAndRoute = () => {
-    if (routeIds.length > 0) {
-      routeIds.forEach((id) => {
-        webRef.current?.injectJavaScript(`
-          if (map.getLayer("${id}")) {
-            map.removeLayer("${id}");
-          }
-          if (map.getSource("${id}")) {
-            map.removeSource("${id}");
-          }
-          true;
-        `);
-      });
+  // ─── Search bar handler ──────────────────────────────────────────────────────
+  const handleSearch = (location: LocationResult) => {
+    setDestination(location);
+    webRef.current?.injectJavaScript(`
+      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
+      new goongjs.Marker({ color: "red" })
+        .setLngLat([${location.longitude}, ${location.latitude}])
+        .addTo(map);
+      true;
+    `);
+  };
+
+  // ─── Map tap handler ─────────────────────────────────────────────────────────
+  const handleSelectPlace = async (place: LatLng) => {
+    try {
+      const detail = await reverseGeocode(place.latitude, place.longitude);
+      if (!detail) return;
+
+      // Ensure geometry.boundary exists to satisfy BottomSheet PlaceDetail type
+      const detailForBottomSheet = {
+        ...detail,
+        geometry: detail.geometry
+          ? { ...detail.geometry, boundary: detail.geometry.boundary ?? null }
+          : undefined,
+      } as any;
+      bottomSheetRef.current?.open(detailForBottomSheet);
+      setSelectedPlace(detailForBottomSheet);
+      setDestination({ latitude: place.latitude, longitude: place.longitude } as LocationResult);
+    } catch (err) {
+      console.log("Select place error:", err);
     }
+  };
+
+  // ─── Clear destination & routes ──────────────────────────────────────────────
+  const clearDestinationAndRoute = () => {
+    routeIds.forEach((id) => {
+      webRef.current?.injectJavaScript(`
+        if (map.getLayer("${id}")) map.removeLayer("${id}");
+        if (map.getSource("${id}")) map.removeSource("${id}");
+        true;
+      `);
+    });
     setDestination(null);
     setRoute([]);
     setRouteIds([]);
     setSelectedPlace(null);
   };
 
-  const handleSelectPlace = async (place: LatLng) => {
-    try {
-      const url = `https://rsapi.goong.io/Geocode?latlng=${place.latitude},${place.longitude}&api_key=${GOONG_API_KEY_2}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const placeResult = data.results?.[0];
-      if (!placeResult) return;
+  // ─── Overlay marker points ───────────────────────────────────────────────────
+  const currentUid = getAuth().currentUser?.uid;
+  const pointsData = useMemo(
+    () => [
+      {
+        id: "me",
+        x: latitude,
+        y: longitude,
+        user: { picture: user?.picture || "" },
+      },
+      ...members
+        .filter((m) => m.firebaseUid !== currentUid)
+        .map((m) => ({
+          id: m.firebaseUid,
+          x: m.lat,
+          y: m.lng,
+          user: { picture: m.picture || "" },
+        })),
+    ],
+    [members, latitude, longitude, user?.picture]
+  );
 
-      const placeDetail: PlaceDetail = {
-        place_id: placeResult.place_id,
-        name: placeResult.name,
-        formatted_address: placeResult.formatted_address,
-        address: placeResult.address,
-        address_components: placeResult.address_components,
-        compound: placeResult.compound,
-        plus_code: placeResult.plus_code,
-        types: placeResult.types,
-        geometry: placeResult.geometry
-          ? {
-            location: {
-              lat: placeResult.geometry.location.lat,
-              lng: placeResult.geometry.location.lng,
-            },
-            boundary: placeResult.geometry.boundary ?? null,
-          }
-          : undefined,
-      };
-
-      bottomSheetRef.current?.open(placeDetail);
-      setSelectedPlace(placeDetail);
-
-      // Set as destination to draw polylines
-      setDestination({
-        latitude: place.latitude,
-        longitude: place.longitude,
-      } as LocationResult);
-    } catch (err) {
-      console.log("Select place error:", err);
-    }
-  };
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.css" rel="stylesheet" />
-  <style>
-    html, body { margin: 0; padding: 0; overflow: hidden; }
-    #map { width: 100vw; height: 100vh; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.js"></script>
-  <script>
-    goongjs.accessToken = "${GOONG_API_KEY}";
-    window.map = new goongjs.Map({
-      container: "map",
-      style: "https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_API_KEY}",
-      center: [${longitude}, ${latitude}],
-      zoom: 15
-    });
-
-    new goongjs.Marker({ color: "#2563EB" })
-      .setLngLat([${longitude}, ${latitude}])
-      .addTo(map);
-
-    map.on("click", (e) => {
-      window.ReactNativeWebView.postMessage(JSON.stringify({
-        type: "MAP_CLICK",
-        latitude: e.lngLat.lat,
-        longitude: e.lngLat.lng
-      }));
-    });
-  </script>
-</body>
-</html>
-`;
-
-console.log("groupId =", groupId);
-
-console.log("POINTS DATA:", pointsData);
-
+  // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <View style={styles.container}>
-      {/* MAP */}
       <WebView
         ref={webRef}
         source={{ html }}
@@ -513,12 +277,12 @@ console.log("POINTS DATA:", pointsData);
         onMessage={(event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
-
             if (data.type === "MAP_CLICK") {
-              handleSelectPlace({ latitude: data.latitude, longitude: data.longitude });
+              handleSelectPlace({
+                latitude: data.latitude,
+                longitude: data.longitude,
+              });
             }
-
-            // Forward to MarkersOverlay
             (MarkersOverlay as any)._onMessage?.(data);
           } catch (err) {
             console.log(err);
@@ -526,7 +290,6 @@ console.log("POINTS DATA:", pointsData);
         }}
       />
 
-      {/* OVERLAY MARKERS */}
       <MarkersOverlay
         points={pointsData}
         mapRef={webRef}
@@ -542,172 +305,25 @@ console.log("POINTS DATA:", pointsData);
 
       <SearchBar onSelectLocation={handleSearch} />
 
-      <PlaceBottomSheet ref={bottomSheetRef} onClose={clearDestinationAndRoute} />
+      <PlaceBottomSheet
+        ref={bottomSheetRef}
+        onClose={clearDestinationAndRoute}
+      />
     </View>
   );
 }
 
-// ... keep your existing decodePolyline and styles
-
-/* ===================== */
-/* POLYLINE DECODE */
-/* ===================== */
-
-function decodePolyline(
-  encoded: string
-): LatLng[] {
-
-  let points: LatLng[] = [];
-
-  let index = 0;
-
-  let lat = 0;
-
-  let lng = 0;
-
-  while (index < encoded.length) {
-
-    let b;
-
-    let shift = 0;
-
-    let result = 0;
-
-    do {
-
-      b =
-        encoded.charCodeAt(
-          index++
-        ) - 63;
-
-      result |=
-        (b & 0x1f)
-        << shift;
-
-      shift += 5;
-
-    } while (b >= 0x20);
-
-    const dlat =
-      result & 1
-        ? ~(result >> 1)
-        : result >> 1;
-
-    lat += dlat;
-
-    shift = 0;
-
-    result = 0;
-
-    do {
-
-      b =
-        encoded.charCodeAt(
-          index++
-        ) - 63;
-
-      result |=
-        (b & 0x1f)
-        << shift;
-
-      shift += 5;
-
-    } while (b >= 0x20);
-
-    const dlng =
-      result & 1
-        ? ~(result >> 1)
-        : result >> 1;
-
-    lng += dlng;
-
-    points.push({
-      latitude:
-        lat / 1e5,
-
-      longitude:
-        lng / 1e5,
-    });
-  }
-
-  return points;
-}
-
 const styles = StyleSheet.create({
-
-  markerContainer: {
-    position: "absolute",
-
-    alignItems: "center",
-  },
-
-  avatarWrapper: {
-
-    width: 52,
-
-    height: 52,
-
-    borderRadius: 26,
-
-    backgroundColor: "#fff",
-
-    padding: 3,
-
-    elevation: 4,
-
-    shadowColor: "#000",
-
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-
-    shadowOpacity: 0.25,
-
-    shadowRadius: 3,
-  },
-
-  avatar: {
-
-    width: "100%",
-
-    height: "100%",
-
-    borderRadius: 999,
-  },
-
-  pin: {
-
-    width: 10,
-
-    height: 10,
-
-    backgroundColor:
-      "#2563EB",
-
-    borderRadius: 5,
-
-    marginTop: -2,
-  },
-
   container: {
     flex: 1,
   },
-
   loading: {
-
     position: "absolute",
-
     top: 0,
-
     left: 0,
-
     right: 0,
-
     bottom: 0,
-
     justifyContent: "center",
-
     alignItems: "center",
   },
 });
