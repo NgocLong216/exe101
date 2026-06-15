@@ -42,11 +42,18 @@
       ],
       "expo-web-browser",
       "expo-secure-store",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6bac3c2b-a4e0-4c25-9f13-7a40565c3931"
+      }
     }
   }
 }
