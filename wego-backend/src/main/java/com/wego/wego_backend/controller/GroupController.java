@@ -272,4 +272,20 @@ public class GroupController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{groupId}/complete")
+    public ResponseEntity<?> completeMeet(
+            @PathVariable UUID groupId,
+            Authentication authentication
+    ) {
+
+        String firebaseUid = authentication.getName();
+
+        groupService.completeMeet(
+                groupId,
+                firebaseUid
+        );
+
+        return ResponseEntity.ok("Meeting completed");
+    }
 }

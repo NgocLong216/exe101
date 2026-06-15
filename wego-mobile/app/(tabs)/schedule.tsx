@@ -1,4 +1,4 @@
-import { ScheduleResponse, getMySchedules } from '@/apis/scheduleAPI';
+import { ScheduleResponse, getMySchedules, completeSchedule } from '@/apis/scheduleAPI';
 import { PlaceDetail } from '@/components/mapTab/bottomSheet';
 import { LatLng } from '@/types/location';
 import { useRouter } from 'expo-router';
@@ -57,9 +57,18 @@ function formatTime(meetingTime: string): string {
 
 // ─── Event Card ───────────────────────────────────────────────────────────────
 
-function EventCard({ event }: { event: ScheduleResponse }) {
+function EventCard({
+  event,
+  onRefresh,
+  activeTab,
+}: {
+  event: ScheduleResponse;
+  onRefresh: () => Promise<void>;
+  activeTab: string;
+}) {
   const router = useRouter();
   const [placeName, setPlaceName] = useState('');
+  const isPast = new Date(event.meetingTime) < new Date();
 
   useEffect(() => {
     let isMounted = true;
@@ -115,31 +124,62 @@ function EventCard({ event }: { event: ScheduleResponse }) {
               <Image
                 key={i}
                 source={{ uri }}
-                style={[styles.attendeeAvatar, { marginLeft: i === 0 ? 0 : -10, zIndex: 10 - i }]}
+                style={[
+                  styles.attendeeAvatar,
+                  {
+                    marginLeft: i === 0 ? 0 : -10,
+                    zIndex: 10 - i,
+                  },
+                ]}
               />
             ))}
+
             {event.attendeeCount > 3 && (
               <View style={[styles.extraCount, { marginLeft: -10 }]}>
-                <Text style={styles.extraCountText}>+{event.attendeeCount - 3}</Text>
+                <Text style={styles.extraCountText}>
+                  +{event.attendeeCount - 3}
+                </Text>
               </View>
             )}
           </View>
-          <TouchableOpacity
-            style={styles.detailsBtn}
-            activeOpacity={0.8}
-            onPress={() => router.push({
-              pathname: '/PlaceDetail',
-              params: {
-                placeName: placeName,
-                lat: event.lat,
-                lng: event.lng,
-                prevRoute: '/(tabs)/schedule',
-                groupId: event.groupId,
-              },
-            })}
-          >
-            <Text style={styles.detailsBtnText}>Details</Text>
-          </TouchableOpacity>
+
+          <View style={styles.actionButtons}>
+            {activeTab === 'Upcoming' && event.host && (
+              <TouchableOpacity
+                style={styles.doneBtn}
+                activeOpacity={0.8}
+                onPress={async () => {
+                  try {
+                    await completeSchedule(event.groupId);
+                    await onRefresh();
+                  } catch (err) {
+                    console.log(err);
+                  }
+                }}
+              >
+                <Text style={styles.doneBtnText}>Done</Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              style={styles.detailsBtn}
+              activeOpacity={0.8}
+              onPress={() =>
+                router.push({
+                  pathname: '/PlaceDetail',
+                  params: {
+                    placeName,
+                    lat: event.lat,
+                    lng: event.lng,
+                    prevRoute: '/(tabs)/schedule',
+                    groupId: event.groupId,
+                  },
+                })
+              }
+            >
+              <Text style={styles.detailsBtnText}>Details</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -148,12 +188,28 @@ function EventCard({ event }: { event: ScheduleResponse }) {
 
 // ─── Date Section ─────────────────────────────────────────────────────────────
 
-function DateSection({ date, events }: { date: string; events: ScheduleResponse[] }) {
+function DateSection({
+  date,
+  events,
+  onRefresh,
+  activeTab,
+}: {
+  date: string;
+  events: ScheduleResponse[];
+  onRefresh: () => Promise<void>;
+  activeTab: string;
+}) {
   return (
     <View style={styles.dateSection}>
       <Text style={styles.dateSectionLabel}>{date}</Text>
+
       {events.map((event) => (
-        <EventCard key={event.groupId} event={event} />
+        <EventCard
+          key={event.groupId}
+          event={event}
+          onRefresh={onRefresh}
+          activeTab={activeTab}
+        />
       ))}
     </View>
   );
@@ -167,23 +223,32 @@ export default function ScheduleScreen() {
   const [loading, setLoading] = useState(true);
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    async function fetchSchedules() {
+  const fetchSchedules = async () => {
+    try {
       setLoading(true);
       const data = await getMySchedules();
       setSchedules(data);
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchSchedules();
   }, []);
 
   const now = new Date();
 
   const filtered = schedules.filter((s) => {
-    const isPast = new Date(s.meetingTime) < now;
-    if (activeTab === 'Upcoming') return !isPast;
-    if (activeTab === 'Past') return isPast;
-    return false; // Invites — wire up separately
+    if (activeTab === 'Upcoming') {
+      return ['WAITING', 'ON_GOING'].includes(s.status);
+    }
+
+    if (activeTab === 'Past') {
+      return ['FINISHED', 'CANCELED'].includes(s.status);
+    }
+
+    return false;
   });
 
   const grouped = groupByDate(filtered);
@@ -226,7 +291,13 @@ export default function ScheduleScreen() {
           </View>
         ) : (
           Object.entries(grouped).map(([date, events]) => (
-            <DateSection key={date} date={date} events={events} />
+            <DateSection
+              key={date}
+              date={date}
+              events={events}
+              onRefresh={fetchSchedules}
+              activeTab={activeTab}
+            />
           ))
         )}
       </ScrollView>
@@ -454,5 +525,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#94a3b8',
     fontWeight: '500',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  doneBtn: {
+    backgroundColor: '#16a34a',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+
+  doneBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#fff',
   },
 });

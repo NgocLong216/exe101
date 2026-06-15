@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class FirebaseConfig {
@@ -20,13 +22,32 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("firebase-service-account.json");
+        GoogleCredentials credentials;
 
-        InputStream serviceAccount = resource.getInputStream();
+        String firebaseJson = System.getenv("FIREBASE_SERVICE_ACCOUNT_JSON");
+
+        if (firebaseJson != null && !firebaseJson.isBlank()) {
+
+            // Render
+            credentials = GoogleCredentials.fromStream(
+                    new ByteArrayInputStream(
+                            firebaseJson.getBytes(StandardCharsets.UTF_8)
+                    )
+            );
+
+        } else {
+
+            // Local
+            ClassPathResource resource =
+                    new ClassPathResource("firebase-service-account.json");
+
+            InputStream serviceAccount = resource.getInputStream();
+
+            credentials = GoogleCredentials.fromStream(serviceAccount);
+        }
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(credentials)
                 .setDatabaseUrl(
                         "https://crested-drive-483712-e5-default-rtdb.firebaseio.com"
                 )
@@ -35,6 +56,7 @@ public class FirebaseConfig {
         if (FirebaseApp.getApps().isEmpty()) {
             return FirebaseApp.initializeApp(options);
         }
+
         return FirebaseApp.getInstance();
     }
 

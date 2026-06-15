@@ -24,6 +24,7 @@ public class SecurityConfig {
     // Danh sách endpoint public dùng chung
     public static final String[] PUBLIC_ENDPOINTS = {
             "/api/auth/**",
+            "/api/public/**"
     };
 
     @Bean
@@ -44,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/groups").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/groups/*/suggest-place").authenticated()
                         .requestMatchers("/api/groups/places/**").authenticated()
+                        .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

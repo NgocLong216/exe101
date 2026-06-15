@@ -1,5 +1,6 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,137 @@ public class AdminController {
     ) {
         return ResponseEntity.ok(
                 adminService.getAllUsers(auth.getName())
+        );
+    }
+
+    @GetMapping("/users/count")
+    public ResponseEntity<UserCountResponse> getUserCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getUserCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules/count")
+    public ResponseEntity<ScheduleCountResponse> getScheduleCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getScheduleCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleHistoryResponse>> getSchedules(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getAllSchedules(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/count")
+    public ResponseEntity<QueryCountResponse> getQueryCount(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getQueryCount(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries")
+    public ResponseEntity<List<AiQueryHistoryResponse>> getQueries(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getAllQueries(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/heatmap")
+    public ResponseEntity<List<InteractionHeatmapResponse>>
+    getHeatmap(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getInteractionHeatmap(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/activities")
+    public ResponseEntity<List<ActivityResponse>>
+    getActivities(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getRecentActivities(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/schedules/trend")
+    public ResponseEntity<List<ScheduleTrendResponse>>
+    getScheduleTrend(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                adminService.getScheduleTrend(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @GetMapping("/queries/avg-response-time")
+    public ResponseEntity<AvgResponseTimeResponse>
+    getAvgResponseTime(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                new AvgResponseTimeResponse(
+                        adminService
+                                .getAverageResponseTime(
+                                        authentication.getName()
+                                )
+                )
+        );
+    }
+
+    @GetMapping("/schedules/avg-time-to-first")
+    public ResponseEntity<AvgTimeToFirstScheduleResponse>
+    getAvgTimeToFirstSchedule(
+            Authentication authentication
+    ) {
+
+        return ResponseEntity.ok(
+                new AvgTimeToFirstScheduleResponse(
+                        adminService
+                                .getAvgTimeToFirstSchedule(
+                                        authentication.getName()
+                                )
+                )
         );
     }
 }

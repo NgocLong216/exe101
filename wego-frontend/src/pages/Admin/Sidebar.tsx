@@ -1,5 +1,6 @@
 import { LayoutDashboard, Users, CalendarDays, Bot, HelpCircle, LogOut } from "lucide-react";
 import { useState } from "react";
+import { logout } from "../../services/adminService";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "#dashboard" },
@@ -25,6 +26,18 @@ export default function Sidebar({ activeTab = "dashboard", onTabChange }: Sideba
     const tab = href.replace("#", "");
     setActive(tab);
     onTabChange?.(tab);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+  
+      // chuyển về login
+      window.location.href = "/";
+    } catch (error) {
+      console.error(error);
+      alert("Logout failed");
+    }
   };
 
   return (
@@ -80,7 +93,13 @@ export default function Sidebar({ activeTab = "dashboard", onTabChange }: Sideba
           <a
             key={label}
             href={href}
-            onClick={(e) => e.preventDefault()}
+            onClick={async (e) => {
+              e.preventDefault();
+            
+              if (label === "Logout") {
+                await handleLogout();
+              }
+            }}
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700 transition-all duration-150 group"
           >
             <Icon size={16} className="shrink-0 group-hover:text-slate-600" />

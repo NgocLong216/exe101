@@ -5,14 +5,8 @@ import com.wego.wego_backend.constant.GroupMemberStatus;
 import com.wego.wego_backend.constant.GroupRole;
 import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.*;
-import com.wego.wego_backend.entity.Group;
-import com.wego.wego_backend.entity.GroupAiChecklist;
-import com.wego.wego_backend.entity.GroupMember;
-import com.wego.wego_backend.entity.User;
-import com.wego.wego_backend.repository.GroupAiChecklistRepository;
-import com.wego.wego_backend.repository.GroupMemberRepository;
-import com.wego.wego_backend.repository.GroupRepository;
-import com.wego.wego_backend.repository.UserRepository;
+import com.wego.wego_backend.entity.*;
+import com.wego.wego_backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +29,8 @@ public class GroupService {
     private final FirebaseDatabase firebaseDatabase;
     private final GroupAiChecklistRepository aiChecklistRepository;
     private final AiPlaceService aiPlaceService;
+    private final ScheduleHistoryRepository scheduleHistoryRepository;
+    private final AiQueryHistoryRepository aiQueryHistoryRepository;
 
     public Group createGroup(
             String title,
@@ -450,6 +446,16 @@ public class GroupService {
         group.setStatus(GroupStatus.ON_GOING);
 
         groupRepository.save(group);
+
+        ScheduleHistory history = new ScheduleHistory();
+
+        history.setGroupId(group.getId());
+        history.setHostFirebaseUid(group.getHostFirebaseUid());
+        history.setGroupTitle(group.getTitle());
+        history.setMeetingTime(meetingTime);
+        history.setCreatedAt(LocalDateTime.now());
+
+        scheduleHistoryRepository.save(history);
     }
 
     public List<MeetingScheduleResponse> getMyMeetings(String firebaseUid) {
@@ -467,20 +473,20 @@ public class GroupService {
 
             Group group = gm.getGroup();
 
-            if (group.getStatus() == GroupStatus.ON_GOING) {
+            if (group.getStatus() != GroupStatus.WAITING) {
                 meetingMap.put(group.getId(), group);
             }
         }
 
         // Group user làm host
         List<Group> hostGroups =
-                groupRepository.findByHostFirebaseUidAndStatus(
-                        firebaseUid,
-                        GroupStatus.ON_GOING
-                );
+                groupRepository.findByHostFirebaseUid(firebaseUid);
 
         for (Group group : hostGroups) {
-            meetingMap.put(group.getId(), group);
+
+            if (group.getStatus() != GroupStatus.WAITING) {
+                meetingMap.put(group.getId(), group);
+            }
         }
 
         return meetingMap.values().stream()
@@ -583,17 +589,59 @@ public class GroupService {
                         )
                         .collect(Collectors.joining("\n"));
 
+        long start = System.currentTimeMillis();
+
         AiChatResponse response =
                 aiPlaceService.chat(
                         groupId.toString(),
                         prompt
                 );
 
+        long end = System.currentTimeMillis();
 
-        // XÓA CHECKLIST SAU KHI GỬI AI
-        aiChecklistRepository.deleteByGroupId(groupId);
+        long responseTime =
+                end - start;
+
+        // lưu lịch sử query
+        AiQueryHistory history = new AiQueryHistory();
+
+        history.setGroupId(groupId);
+        history.setSenderFirebaseUid(
+                checklist.getFirst().getSenderFirebaseUid()
+        );
+        history.setPrompt(prompt);
+        history.setResponseTimeMs(
+                responseTime
+        );
+        history.setCreatedAt(LocalDateTime.now());
+
+        aiQueryHistoryRepository.save(history);
+
+
+        // Đánh dấu đã gửi AI
+        checklist.forEach(item ->
+                item.setSentToAi(true)
+        );
+
+        aiChecklistRepository.saveAll(checklist);
 
         return response;
+    }
+
+    @Transactional
+    public void completeMeet(UUID groupId, String currentUid) {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // chỉ host được kết thúc
+        if (!group.getHostFirebaseUid().equals(currentUid)) {
+            throw new RuntimeException("Only host can complete meeting");
+        }
+
+        group.setStatus(GroupStatus.FINISHED);
+
+        groupRepository.save(group);
     }
 
 }

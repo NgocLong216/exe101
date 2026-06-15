@@ -5,6 +5,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { usePathname } from 'expo-router';
 import { useEffect } from 'react';
+import { AppState } from "react-native";
+import { getAuth } from "firebase/auth";
+import { getDatabase, ref, update } from "firebase/database";
+import { setupPresence } from "@/firebasePresence";
 
 import { AuthProvider } from '@/auth0/AuthContext';
 import AuthGate from '@/auth0/AuthGate';
@@ -18,6 +22,46 @@ export default function RootLayout() {
   useEffect(() => {
     console.log('CURRENT ROUTE:', pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    const unsubscribe = getAuth().onAuthStateChanged(async (user) => {
+      if (user) {
+        await setupPresence();
+      }
+    });
+  
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener(
+      "change",
+      async (state) => {
+        const user = getAuth().currentUser;
+  
+        if (!user) return;
+  
+        const statusRef = ref(
+          getDatabase(),
+          `presence/${user.uid}`
+        );
+  
+        if (state === "active") {
+          await update(statusRef, {
+            online: true,
+            lastSeen: Date.now(),
+          });
+        } else {
+          await update(statusRef, {
+            online: false,
+            lastSeen: Date.now(),
+          });
+        }
+      }
+    );
+  
+    return () => sub.remove();
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

@@ -5,60 +5,340 @@ import {
   Download,
 } from "lucide-react";
 
-// ── Stat cards ────────────────────────────────────────────────────────────────
-const stats = [
-  { label: "Total Conversations", value: "12,842", change: "+12%",  up: true  },
-  { label: "Resolution Rate",     value: "84.2%",  change: "+3.5%", up: true  },
-  { label: "Avg. Response Time",  value: "1.2s",   change: "-0.4s", up: false },
-  { label: "Fallback Rate",       value: "5.1%",   change: "+0.8%", up: false },
-];
-
-// ── Top queries ───────────────────────────────────────────────────────────────
-const queries = [
-  { q: '"How do I reset my password?"',        freq: 2410, max: 2410 },
-  { q: '"What are your business hours?"',       freq: 1892, max: 2410 },
-  { q: '"Can I talk to a human?"',              freq: 1540, max: 2410 },
-  { q: '"Track my recent order status"',        freq: 1311, max: 2410 },
-  { q: '"Pricing for enterprise plans"',        freq: 982,  max: 2410 },
-];
-
-// ── Keyword cloud ─────────────────────────────────────────────────────────────
-const keywords: { word: string; style: string }[] = [
-  { word: "Password",    style: "bg-slate-800 text-white text-base font-bold px-5 py-2" },
-  { word: "Login",       style: "bg-white border border-slate-200 text-slate-700 text-sm font-medium px-4 py-1.5" },
-  { word: "Pricing",     style: "bg-white border border-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5" },
-  { word: "Support",     style: "bg-slate-100 text-slate-500 text-xs font-medium px-3 py-1.5" },
-  { word: "Account",     style: "bg-slate-700 text-white text-sm font-semibold px-4 py-1.5" },
-  { word: "Status",      style: "bg-white border border-slate-200 text-slate-500 text-xs px-3 py-1.5" },
-  { word: "Human",       style: "bg-white border border-slate-300 text-slate-700 text-sm font-medium px-4 py-1.5" },
-  { word: "Refund",      style: "bg-teal-400 text-white text-sm font-semibold px-4 py-1.5" },
-  { word: "Billing",     style: "bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5" },
-  { word: "Security",    style: "bg-slate-200 text-slate-500 text-xs px-3 py-1.5" },
-  { word: "Integration", style: "bg-slate-600 text-white text-sm font-semibold px-4 py-1.5" },
-  { word: "API",         style: "bg-white border border-slate-300 text-slate-600 text-xs px-3 py-1.5" },
-];
-
-// ── Interaction Volume heatmap ────────────────────────────────────────────────
-const heatmap = [
-  [1, 1, 2, 1, 1, 0, 0],
-  [2, 2, 3, 2, 2, 1, 1],
-  [2, 3, 3, 4, 3, 2, 1],
-  [3, 3, 4, 4, 3, 2, 1],
-  [2, 2, 3, 3, 2, 1, 1],
-  [1, 1, 2, 2, 1, 1, 0],
-];
-
-const heatColors = [
-  "bg-slate-100",
-  "bg-slate-300",
-  "bg-slate-400",
-  "bg-slate-600",
-  "bg-slate-800",
-];
+import { useEffect, useState } from "react";
+import { getQueryCount, getAllQueries, getInteractionHeatmap, getAvgResponseTime } from "../../services/adminService";
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 export default function Chatbot() {
+  const [totalConversations, setTotalConversations] = useState<number | null>(null);
+
+  const [queries, setQueries] = useState<
+    {
+      q: string;
+      freq: number;
+      max: number;
+    }[]
+  >([]);
+
+  const [keywords, setKeywords] = useState<
+    {
+      word: string;
+      count: number;
+    }[]
+  >([]);
+
+  const [avgResponseTime,
+    setAvgResponseTime] =
+    useState<number>(0);
+
+  const [heatmap, setHeatmap] = useState<number[][]>(
+    Array.from({ length: 8 }, () =>
+      Array(7).fill(0)
+    )
+  );
+
+  const heatColors = [
+    "bg-slate-100",
+    "bg-slate-300",
+    "bg-slate-500",
+    "bg-slate-700",
+    "bg-slate-900",
+  ];
+
+  const keywordStyles = [
+    "bg-slate-800 text-white text-base font-bold px-5 py-2",
+    "bg-slate-700 text-white text-sm font-semibold px-4 py-1.5",
+    "bg-slate-600 text-white text-sm font-medium px-4 py-1.5",
+    "bg-slate-200 text-slate-700 text-xs font-medium px-3 py-1.5",
+    "bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5",
+  ];
+
+  const [peakTime, setPeakTime] =
+    useState("No data");
+
+  const exportCSV = () => {
+    const rows = [
+      ["Metric", "Value"],
+      ["Total Conversations", totalConversations],
+      ["Peak Time", peakTime],
+      [],
+      ["Top Queries", "Frequency"],
+      ...queries.map(q => [q.q, q.freq]),
+    ];
+
+    const csvContent = rows
+      .map((row) => row.join(","))
+      .join("\n");
+
+    const BOM = "\uFEFF";
+
+    const blob = new Blob(
+      [BOM + csvContent],
+      {
+        type: "text/csv;charset=utf-8;",
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `chatbot-report-${Date.now()}.csv`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  useEffect(() => {
+    getAvgResponseTime()
+      .then(data =>
+        setAvgResponseTime(
+          data.avgResponseTimeMs
+        )
+      );
+  }, []);
+  
+  useEffect(() => {
+    const loadHeatmap = async () => {
+
+      const data =
+        await getInteractionHeatmap();
+
+      const matrix =
+        Array.from(
+          { length: 8 },
+          () => Array(7).fill(0)
+        );
+
+      data.forEach((item: any) => {
+
+        const day =
+          item.dayOfWeek % 7;
+
+        matrix[item.timeSlot][day] =
+          item.count;
+      });
+
+      let peakCount = 0;
+      let peakDay = "";
+      let peakSlot = 0;
+
+      matrix.forEach((row, slot) => {
+        row.forEach((count, day) => {
+          if (count > peakCount) {
+            peakCount = count;
+            peakDay = DAYS[day];
+            peakSlot = slot;
+          }
+        });
+      });
+
+      const startHour = peakSlot * 3;
+      const endHour = startHour + 3;
+
+      const peakLabel =
+        peakCount > 0
+          ? `${peakDay} ${startHour
+            .toString()
+            .padStart(2, "0")}:00 - ${endHour
+              .toString()
+              .padStart(2, "0")}:00`
+          : "No data";
+
+      setPeakTime(peakLabel);
+
+      const max =
+        Math.max(
+          ...matrix.flat(),
+          1
+        );
+
+      const normalized =
+        matrix.map(row =>
+          row.map(value => {
+
+            const ratio =
+              value / max;
+
+            if (ratio === 0) return 0;
+            if (ratio < 0.25) return 1;
+            if (ratio < 0.5) return 2;
+            if (ratio < 0.75) return 3;
+
+            return 4;
+          })
+        );
+
+      setHeatmap(normalized);
+    };
+
+    loadHeatmap();
+  }, []);
+
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      try {
+        const data = await getAllQueries();
+
+        const stopWords = new Set([
+          "quán",
+          "nhà",
+          "hàng",
+          "có",
+          "và",
+          "ở",
+          "gần",
+          "tìm",
+          "giúp",
+        ]);
+
+        const meaningfulPhrases = [
+          "cà phê",
+          "trà sữa",
+          "buffet",
+          "hải sản",
+          "nhà hàng",
+          "khách sạn",
+          "bệnh viện",
+          "công viên",
+          "trung tâm",
+          "thủ đức",
+          "quận 1",
+          "quận 7",
+          "sài gòn",
+          "wifi",
+          "học nhóm",
+          "yên tĩnh",
+          "quán nướng"
+        ];
+
+        const counts: Record<string, number> = {};
+
+        data.forEach((item: any) => {
+          const prompt = item.prompt?.toLowerCase() || "";
+
+          meaningfulPhrases.forEach((phrase) => {
+            if (prompt.includes(phrase)) {
+              counts[phrase] = (counts[phrase] || 0) + 1;
+            }
+          });
+        });
+
+        const result = Object.entries(counts)
+          .map(([word, count]) => ({
+            word,
+            count,
+          }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 15);
+
+        const maxCount = result[0]?.count || 1;
+
+        const formattedKeywords = result.map((item) => {
+          const ratio = item.count / maxCount;
+
+          let style = keywordStyles[4];
+
+          if (ratio >= 0.8) {
+            style = keywordStyles[0];
+          } else if (ratio >= 0.6) {
+            style = keywordStyles[1];
+          } else if (ratio >= 0.4) {
+            style = keywordStyles[2];
+          } else if (ratio >= 0.2) {
+            style = keywordStyles[3];
+          }
+
+          return {
+            word: item.word,
+            style,
+          };
+        });
+
+        setKeywords(formattedKeywords);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchKeywords();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getQueryCount();
+        setTotalConversations(data.totalQueries);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchQueries = async () => {
+      try {
+        const data = await getAllQueries();
+
+        const counts: Record<string, number> = {};
+
+        data.forEach((item: any) => {
+          const prompt = item.prompt?.trim();
+
+          if (!prompt) return;
+
+          counts[prompt] = (counts[prompt] || 0) + 1;
+        });
+
+        const result = Object.entries(counts)
+          .map(([prompt, count]) => ({
+            q: `"${prompt}"`,
+            freq: count,
+          }))
+          .sort((a, b) => b.freq - a.freq);
+
+        const max =
+          result.length > 0
+            ? result[0].freq
+            : 1;
+
+        setQueries(
+          result.slice(0, 5).map((item) => ({
+            ...item,
+            max,
+          }))
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchQueries();
+  }, []);
+
+  const stats = [
+    {
+      label: "Total Conversations",
+      value:
+        totalConversations === null
+          ? "..."
+          : totalConversations.toLocaleString(),
+      change: "+12%",
+      up: true,
+    },
+    {
+      label: "Avg. Response Time",
+      value: `${(avgResponseTime / 1000).toFixed(2)}s`,
+      change: "-0.4s",
+      up: false,
+    },
+  ];
+
   return (
     <div className="p-8 space-y-5">
       {/* ── Page header ── */}
@@ -66,7 +346,7 @@ export default function Chatbot() {
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Chatbot Analytics</h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Reviewing 24.5k user interactions from the last 30 days.
+            Reviewing user interactions from the last 30 days.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -74,7 +354,10 @@ export default function Chatbot() {
             <CalendarDays size={14} />
             Last 30 Days
           </button>
-          <button className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl"
+          >
             <Download size={14} />
             Export Report
           </button>
@@ -82,16 +365,16 @@ export default function Chatbot() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {stats.map(({ label, value, change, up }) => (
           <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">{label}</p>
             <div className="flex items-end justify-between">
               <p className="text-3xl font-bold text-slate-800 tracking-tight">{value}</p>
-              <span className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${up ? "text-emerald-600" : "text-red-400"}`}>
+              {/* <span className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${up ? "text-emerald-600" : "text-red-400"}`}>
                 {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {change}
-              </span>
+              </span> */}
             </div>
           </div>
         ))}
@@ -138,58 +421,13 @@ export default function Chatbot() {
       </div>
 
       {/* ── Bottom row ── */}
-      <div className="grid grid-cols-2 gap-4">
-
-        {/* User Sentiment */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-slate-800 mb-4">User Sentiment</h2>
-          <div className="flex gap-5 items-start">
-            {/* Donut */}
-            <div className="relative shrink-0 w-24 h-24">
-              <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="4" />
-                <circle cx="18" cy="18" r="14" fill="none" stroke="#334155" strokeWidth="4"
-                  strokeDasharray={`${0.72 * 87.96} ${87.96}`} strokeLinecap="round" />
-                <circle cx="18" cy="18" r="14" fill="none" stroke="#94a3b8" strokeWidth="4"
-                  strokeDasharray={`${0.18 * 87.96} ${87.96}`}
-                  strokeDashoffset={`-${0.72 * 87.96}`} strokeLinecap="round" />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-bold text-slate-800 leading-none">72%</span>
-                <span className="text-[9px] text-slate-400 uppercase tracking-wide mt-0.5">Positive</span>
-              </div>
-            </div>
-            {/* Bars */}
-            <div className="flex-1">
-              <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                Overall mood of interactions has improved by 4% since the last model update.
-              </p>
-              <div className="space-y-2.5">
-                {[
-                  { label: "POSITIVE", pct: 72, color: "bg-slate-700" },
-                  { label: "NEUTRAL",  pct: 18, color: "bg-slate-400" },
-                  { label: "NEGATIVE", pct: 10, color: "bg-slate-200" },
-                ].map(({ label, pct, color }) => (
-                  <div key={label}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">{label}</span>
-                      <span className="text-[9px] font-semibold text-slate-600">{pct}%</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-4">
 
         {/* Interaction Volume heatmap */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-slate-800">Interaction Volume</h2>
-            <span className="text-[10px] text-slate-400">Peak: 14:00 – 16:00 EST</span>
+            <span className="text-[10px] text-slate-400">Peak: {peakTime}</span>
           </div>
           <div className="space-y-1.5">
             {heatmap.map((row, ri) => (
