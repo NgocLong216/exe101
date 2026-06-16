@@ -63,12 +63,12 @@ export async function reverseGeocode(
     types: r.types,
     geometry: r.geometry
       ? {
-          location: {
-            lat: r.geometry.location.lat,
-            lng: r.geometry.location.lng,
-          },
-          boundary: r.geometry.boundary ?? null,
-        }
+        location: {
+          lat: r.geometry.location.lat,
+          lng: r.geometry.location.lng,
+        },
+        boundary: r.geometry.boundary ?? null,
+      }
       : undefined,
   };
 }
@@ -183,16 +183,30 @@ export function buildMapHtml(latitude: number, longitude: number): string {
       zoom: 15
     });
 
-    new goongjs.Marker({ color: "#2563EB" })
-      .setLngLat([${longitude}, ${latitude}])
-      .addTo(map);
+    window.destinationMarker = null;
 
     map.on("click", (e) => {
-      window.ReactNativeWebView.postMessage(JSON.stringify({
-        type: "MAP_CLICK",
-        latitude: e.lngLat.lat,
-        longitude: e.lngLat.lng
-      }));
+
+      // Xóa marker cũ
+      if (window.destinationMarker) {
+        window.destinationMarker.remove();
+      }
+
+      // Tạo marker đỏ mới
+      window.destinationMarker = new goongjs.Marker({
+        color: "red"
+      })
+        .setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map);
+
+      // Gửi tọa độ về React Native
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: "MAP_CLICK",
+          latitude: e.lngLat.lat,
+          longitude: e.lngLat.lng
+        })
+      );
     });
   </script>
 </body>

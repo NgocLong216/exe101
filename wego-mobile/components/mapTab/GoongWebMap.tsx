@@ -6,12 +6,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 
-import SearchBar from "./SearchBar";
-import PlaceBottomSheet, {
-  PlaceBottomSheetRef,
-  PlaceDetail,
-} from "./bottomSheet";
-import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 import {
   LatLng,
   Member,
@@ -20,6 +14,12 @@ import {
   reverseGeocode,
   subscribeGroupMembers,
 } from "@/apis/goongAPI";
+import SearchBar from "./SearchBar";
+import PlaceBottomSheet, {
+  PlaceBottomSheetRef,
+  PlaceDetail,
+} from "./bottomSheet";
+import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 
 const ROUTE_COLORS = [
   "#2563EB",
@@ -197,11 +197,26 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   // ─── Search bar handler ──────────────────────────────────────────────────────
   const handleSearch = (location: LocationResult) => {
     setDestination(location);
+  
     webRef.current?.injectJavaScript(`
-      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
-      new goongjs.Marker({ color: "red" })
-        .setLngLat([${location.longitude}, ${location.latitude}])
-        .addTo(map);
+      map.flyTo({
+        center: [${location.longitude}, ${location.latitude}],
+        zoom: 15
+      });
+  
+      if (!window.destinationMarker) {
+  
+        window.destinationMarker = new goongjs.Marker({
+          color: "red"
+        }).addTo(map);
+  
+      }
+  
+      window.destinationMarker.setLngLat([
+        ${location.longitude},
+        ${location.latitude}
+      ]);
+  
       true;
     `);
   };
