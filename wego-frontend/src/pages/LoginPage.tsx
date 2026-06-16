@@ -45,7 +45,17 @@ export default function LoginPage({ setUser }) {
       }
 
       if (data.role?.name === "ADMIN") navigate("/admin");
-      else navigate("/home");
+      else {
+        // Xóa dữ liệu đăng nhập
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        setUser(null);
+
+        setError("Bạn không có quyền truy cập vào trang quản trị.");
+
+        navigate("/");
+      }
     } catch (err) {
       console.error(err);
       setError("Đăng nhập Google thất bại");
