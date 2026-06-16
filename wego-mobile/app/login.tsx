@@ -1,13 +1,13 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useEffect } from 'react';
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
-import { auth } from '../firebase';
 import { router } from 'expo-router';
+import { auth } from '../firebase';
 
 export default function LoginScreen() {
 
@@ -16,7 +16,7 @@ export default function LoginScreen() {
     GoogleSignin.configure({
       webClientId:
         `${process.env.EXPO_PUBLIC_WEB_CLIENT_ID}`,
-        offlineAccess: true,
+      offlineAccess: true,
     });
   }, []);
 
@@ -31,7 +31,7 @@ export default function LoginScreen() {
 
       console.log('USER INFO:', userInfo);
 
-       const idToken = userInfo.data?.idToken;
+      const idToken = userInfo.data?.idToken;
 
 
       if (!idToken) {
@@ -110,6 +110,14 @@ export default function LoginScreen() {
               </TouchableOpacity>
 
             </View>
+
+            {/* Terms */}
+            <Text style={styles.terms}>
+              By signing in, you agree to our{'\n'}
+              <Text style={styles.termsLink}>Terms of Service</Text>
+              <Text style={styles.termsGray}> and </Text>
+              <Text style={styles.termsLink}>Privacy Policy</Text>
+            </Text>
 
           </BlurView>
         </View>
@@ -192,5 +200,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
     marginRight: 28,
+  },
+
+  // Terms
+  terms: {
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  termsGray: {
+    color: '#6b7280',
+  },
+  termsLink: {
+    color: '#16a34a',
+    fontWeight: '600',
   },
 });
