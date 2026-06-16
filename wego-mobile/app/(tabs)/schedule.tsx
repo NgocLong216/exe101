@@ -1,11 +1,11 @@
 import { ScheduleResponse, getMySchedules, completeSchedule } from '@/apis/scheduleAPI';
 import { PlaceDetail } from '@/components/mapTab/bottomSheet';
+import LoadingIcon from '../../components/loadingScreen/LoadingIcon';
 import { LatLng } from '@/types/location';
 import { useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   Dimensions,
   Image,
   SafeAreaView,
@@ -283,7 +283,7 @@ export default function ScheduleScreen() {
       >
         {loading ? (
           <View style={styles.emptyState}>
-            <ActivityIndicator size="large" color="#22c55e" />
+            <LoadingIcon size={40} />
           </View>
         ) : Object.keys(grouped).length === 0 ? (
           <View style={styles.emptyState}>
@@ -340,7 +340,7 @@ async function GetInfo(place: LatLng) {
   }
 };
 
-// ─── Styles (unchanged) ───────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -537,7 +537,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
   },
-
   doneBtnText: {
     fontSize: 14,
     fontWeight: '700',
