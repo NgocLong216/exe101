@@ -3,8 +3,12 @@ import { LocationResult } from "@/types/location";
 import { useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { WebView } from "react-native-webview";
+import GroupChoose from "./GroupChoose";
+
+// Import API lấy danh sách nhóm của bạn
+import { getUserGroups, GroupResponse } from "@/apis/groupAPI"; // Điều chỉnh đường dẫn cho đúng
 
 import {
   LatLng,
@@ -21,14 +25,7 @@ import PlaceBottomSheet, {
 } from "./bottomSheet";
 import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 
-const ROUTE_COLORS = [
-  "#2563EB",
-  "#EF4444",
-  "#22C55E",
-  "#F59E0B",
-  "#A855F7",
-  "#EC4899",
-];
+const ROUTE_COLORS = ["#2563EB", "#EF4444", "#22C55E", "#F59E0B", "#A855F7", "#EC4899"];
 
 type Props = {
   latitude: number;
@@ -48,44 +45,78 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   const [routeIds, setRouteIds] = useState<string[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
 
-  const { placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
+  // ─── Group Switcher States ──────────────────────────────────────────────────
+  const [groups, setGroups] = useState<GroupResponse[]>([]);
+  const [groupChooseVisible, setGroupChooseVisible] = useState(false);
+  const { groupId: initialGroupId, placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
     placeId?: string;
     placeName?: string;
     lat?: string;
     lng?: string;
     prevRoute?: string;
+    groupId?: string;
   }>();
-  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
+  
+  // Quản lý groupId chủ động bằng State để có thể switch ngay trên màn hình này
+  const [activeGroupId, setActiveGroupId] = useState<string | undefined>(initialGroupId);
+
+  // Lấy tên của group hiện tại để hiển thị lên nút bấm
+  const currentGroupName = useMemo(() => {
+    if (!activeGroupId) return "Chọn nhóm";
+    const found = groups.find(g => g.id === activeGroupId);
+    return found ? found.title : "Đang tải nhóm...";
+  }, [activeGroupId, groups]);
+
+  // Load danh sách nhóm của user khi vào map
+  useEffect(() => {
+    async function loadGroups() {
+      const userGroups = await getUserGroups();
+      setGroups(userGroups);
+      // Nếu params không truyền sang groupId nhưng user có group, tự chọn group đầu tiên làm mặc định
+      if (!activeGroupId && userGroups.length > 0) {
+        setActiveGroupId(userGroups[0].id);
+      }
+    }
+    loadGroups();
+  }, []);
 
   // ─── KEY FIX: html is memoized with initial coords only ─────────────────────
-  // Changing `members`, `route`, `destination`, etc. no longer causes a reload.
-  // Any map updates after init go through injectJavaScript.
   const html = useMemo(
     () => buildMapHtml(latitude, longitude),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [] // intentionally empty — we never want this to change after first render
+    [] 
   );
 
-  // ─── Subscribe to group members ──────────────────────────────────────────────
+  // ─── Subscribe thay đổi dựa vào activeGroupId thay vì groupId từ Param ──────
   useEffect(() => {
-    if (!groupId) {
+    if (!activeGroupId) {
       setMembers([]);
       return;
     }
 
+    console.log(`Bắt đầu realtime tracking cho Group ID: ${activeGroupId}`);
     const unsub = subscribeGroupMembers(
-      groupId,
-      (updated) => setMembers(updated),
+      activeGroupId,
+      (updated) => {
+        // Cập nhật vị trí các thành viên trong thời gian thực
+        setMembers(updated);
+      },
       (err) => console.log("LOAD MEMBERS ERROR", err)
     );
 
-    return unsub;
-  }, [groupId]);
+    // Cleanup: Khi switch sang group khác, hàm này tự động hủy lắng nghe group cũ
+    return () => {
+      unsub();
+    };
+  }, [activeGroupId]);
 
-  // ─── Auto-load place from navigation params ──────────────────────────────────
+  // Hàm xử lý khi ấn vào nút đổi nhóm
+  const handleSwitchGroup = () => {
+    setGroupChooseVisible(true);
+  };
+
+  // ─── Auto-load place từ params ──────────────────────────────────────────────
   useEffect(() => {
     if (prevRoute !== "/PlaceDetail" || !lat || !lng) return;
-
     const selectedLat = Number(lat);
     const selectedLng = Number(lng);
 
@@ -120,119 +151,101 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
   // ─── Re-fetch routes whenever destination or members change ─────────────────
   useEffect(() => {
+    let isMounted = true;
     setRoute([]);
-    fetchRoutes();
+
+    const runFetch = async () => {
+      if (!destination) return;
+      try {
+        setLoading(true);
+        // Xóa layer cũ
+        routeIds.forEach((id) => {
+          webRef.current?.injectJavaScript(`
+            if (map.getLayer("${id}")) map.removeLayer("${id}");
+            if (map.getSource("${id}")) map.removeSource("${id}");
+            true;
+          `);
+        });
+
+        const currentUid = getAuth().currentUser?.uid;
+        const origins = [
+          { latitude, longitude },
+          ...members
+            .filter((m) => m.firebaseUid !== currentUid)
+            .map((m) => ({ latitude: m.lat, longitude: m.lng })),
+        ];
+
+        const newRouteIds: string[] = [];
+        const routesResult: LatLng[][] = [];
+
+        for (let i = 0; i < origins.length; i++) {
+          const coords = await fetchDirection(origins[i], {
+            latitude: destination.latitude,
+            longitude: destination.longitude,
+          });
+          
+          if (!isMounted) return; // Guard chống race-condition khi switch group giữa chừng
+          if (!coords.length) continue;
+
+          routesResult.push(coords);
+          const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
+          const routeId = `route_${Math.random().toString(36).slice(2)}`;
+          newRouteIds.push(routeId);
+
+          webRef.current?.injectJavaScript(`
+            map.addSource("${routeId}", {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "LineString",
+                  coordinates: ${JSON.stringify(coords.map((c) => [c.longitude, c.latitude]))}
+                }
+              }
+            });
+            map.addLayer({
+              id: "${routeId}",
+              type: "line",
+              source: "${routeId}",
+              layout: { "line-join": "round", "line-cap": "round" },
+              paint: { "line-color": "${color}", "line-width": 4 }
+            });
+            true;
+          `);
+        }
+
+        setRoute(routesResult);
+        setRouteIds(newRouteIds);
+      } catch (err) {
+        console.log("Route error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    runFetch();
+    return () => { isMounted = false; };
   }, [destination, members]);
 
-  const fetchRoutes = async () => {
-    if (!destination) return;
-
-    try {
-      setLoading(true);
-
-      // Remove old route layers from map
-      routeIds.forEach((id) => {
-        webRef.current?.injectJavaScript(`
-          if (map.getLayer("${id}")) map.removeLayer("${id}");
-          if (map.getSource("${id}")) map.removeSource("${id}");
-          true;
-        `);
-      });
-
-      const currentUid = getAuth().currentUser?.uid;
-      const origins = [
-        { latitude, longitude },
-        ...members
-          .filter((m) => m.firebaseUid !== currentUid)
-          .map((m) => ({ latitude: m.lat, longitude: m.lng })),
-      ];
-
-      const newRouteIds: string[] = [];
-      const routesResult: LatLng[][] = [];
-
-      for (let i = 0; i < origins.length; i++) {
-        const coords = await fetchDirection(origins[i], {
-          latitude: destination.latitude,
-          longitude: destination.longitude,
-        });
-        if (!coords.length) continue;
-
-        routesResult.push(coords);
-
-        const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
-        const routeId = `route_${Math.random().toString(36).slice(2)}`;
-        newRouteIds.push(routeId);
-
-        webRef.current?.injectJavaScript(`
-          map.addSource("${routeId}", {
-            type: "geojson",
-            data: {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: ${JSON.stringify(coords.map((c) => [c.longitude, c.latitude]))}
-              }
-            }
-          });
-          map.addLayer({
-            id: "${routeId}",
-            type: "line",
-            source: "${routeId}",
-            layout: { "line-join": "round", "line-cap": "round" },
-            paint: { "line-color": "${color}", "line-width": 4 }
-          });
-          true;
-        `);
-      }
-
-      setRoute(routesResult);
-      setRouteIds(newRouteIds);
-    } catch (err) {
-      console.log("Route error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ─── Search bar handler ──────────────────────────────────────────────────────
   const handleSearch = (location: LocationResult) => {
     setDestination(location);
-  
     webRef.current?.injectJavaScript(`
-      map.flyTo({
-        center: [${location.longitude}, ${location.latitude}],
-        zoom: 15
-      });
-  
+      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
       if (!window.destinationMarker) {
-  
-        window.destinationMarker = new goongjs.Marker({
-          color: "red"
-        }).addTo(map);
-  
+        window.destinationMarker = new goongjs.Marker({ color: "red" }).addTo(map);
       }
-  
-      window.destinationMarker.setLngLat([
-        ${location.longitude},
-        ${location.latitude}
-      ]);
-  
+      window.destinationMarker.setLngLat([${location.longitude}, ${location.latitude}]);
       true;
     `);
   };
 
-  // ─── Map tap handler ─────────────────────────────────────────────────────────
   const handleSelectPlace = async (place: LatLng) => {
     try {
       const detail = await reverseGeocode(place.latitude, place.longitude);
       if (!detail) return;
-
-      // Ensure geometry.boundary exists to satisfy BottomSheet PlaceDetail type
       const detailForBottomSheet = {
         ...detail,
-        geometry: detail.geometry
-          ? { ...detail.geometry, boundary: detail.geometry.boundary ?? null }
-          : undefined,
+        geometry: detail.geometry ? { ...detail.geometry, boundary: detail.geometry.boundary ?? null } : undefined,
       } as any;
       bottomSheetRef.current?.open(detailForBottomSheet);
       setSelectedPlace(detailForBottomSheet);
@@ -242,7 +255,6 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     }
   };
 
-  // ─── Clear destination & routes ──────────────────────────────────────────────
   const clearDestinationAndRoute = () => {
     routeIds.forEach((id) => {
       webRef.current?.injectJavaScript(`
@@ -257,7 +269,6 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     setSelectedPlace(null);
   };
 
-  // ─── Overlay marker points ───────────────────────────────────────────────────
   const currentUid = getAuth().currentUser?.uid;
   const pointsData = useMemo(
     () => [
@@ -279,7 +290,6 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     [members, latitude, longitude, user?.picture]
   );
 
-  // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <View style={styles.container}>
       <WebView
@@ -293,10 +303,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
           try {
             const data = JSON.parse(event.nativeEvent.data);
             if (data.type === "MAP_CLICK") {
-              handleSelectPlace({
-                latitude: data.latitude,
-                longitude: data.longitude,
-              });
+              handleSelectPlace({ latitude: data.latitude, longitude: data.longitude });
             }
             (MarkersOverlay as any)._onMessage?.(data);
           } catch (err) {
@@ -305,6 +312,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         }}
       />
 
+      {/* Lớp hiển thị Marker các thành viên của Group đang Active */}
       <MarkersOverlay
         points={pointsData}
         mapRef={webRef}
@@ -318,12 +326,30 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         </View>
       )}
 
+      {/* UI Nút chuyển Group nổi trên map */}
       <SearchBar onSelectLocation={handleSearch} />
 
-      <PlaceBottomSheet
-        ref={bottomSheetRef}
-        onClose={clearDestinationAndRoute}
+      <View style={styles.topBarContainer}>
+        <TouchableOpacity style={styles.groupSwitcherBtn} onPress={handleSwitchGroup}>
+          <Text style={styles.groupSwitcherText} numberOfLines={1}>
+            👥 {currentGroupName} ▾
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
+      <GroupChoose
+        visible={groupChooseVisible}
+        onClose={() => setGroupChooseVisible(false)}
+        groups={groups}
+        activeGroupId={activeGroupId}
+        onSelectGroup={(groupId) => {
+          clearDestinationAndRoute();
+          setActiveGroupId(groupId);
+        }}
       />
+
+      <PlaceBottomSheet ref={bottomSheetRef} onClose={clearDestinationAndRoute} />
     </View>
   );
 }
@@ -332,13 +358,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  topBarContainer: {
+    position: "absolute",
+    top: 110, // Cân chỉnh lại tùy thuộc vào vùng Tai thỏ (SafeArea)
+    left: 16,
+    right: 16,
+    gap: 10,
+  },
+  groupSwitcherBtn: {
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+    alignSelf: "flex-end",
+    maxWidth: "80%",
+  },
+  groupSwitcherText: {
+    fontWeight: "600",
+    color: "#1F2937",
+    fontSize: 14,
+  },
   loading: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    top: 0, left: 0, right: 0, bottom: 0,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.4)",
+    zIndex: 10,
   },
 });

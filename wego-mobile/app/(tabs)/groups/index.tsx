@@ -13,6 +13,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import LoadingIcon from '../../../components/loadingScreen/LoadingIcon';
 
 const GREEN = process.env.EXPO_PUBLIC_GREEN_MAIN
 
@@ -196,30 +197,42 @@ export default function GroupsScreen() {
                 </View>
             </View>
 
-            {/* List */}
-            <FlatList
-                data={filtered}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <GroupItem
-                        item={item}
-                        onPress={() =>
-                            router.push({
-                                pathname: '/(tabs)/groups/GroupMembers',
-                                params: {
-                                    groupId: item.id,
-                                    groupName: item.name,
-                                    memberCount: item.members,
-                                    activeCount: item.members,
-                                },
-                            })
-                        }
-                    />
-                )}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
+            {/* Loading State */}
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <LoadingIcon size={40} />
+                </View>
+            ) : (
+                /* List */
+                <FlatList
+                    data={filtered}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <GroupItem
+                            item={item}
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/(tabs)/groups/GroupMembers',
+                                    params: {
+                                        groupId: item.id,
+                                        groupName: item.name,
+                                        memberCount: item.members,
+                                        activeCount: item.members,
+                                    },
+                                })
+                            }
+                        />
+                    )}
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>No groups found</Text>
+                        </View>
+                    }
+                />
+            )}
         </SafeAreaView>
     );
 }
@@ -307,6 +320,24 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 15,
         color: '#1e293b',
+        fontWeight: '400',
+    },
+
+    // Loading
+    loadingContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // Empty
+    emptyContainer: {
+        alignItems: 'center',
+        paddingTop: 60,
+    },
+    emptyText: {
+        fontSize: 15,
+        color: '#94a3b8',
         fontWeight: '400',
     },
 
