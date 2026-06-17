@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>WeGo - Kết nối hành trình</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f6fafe",
+                        "outline-variant": "#bacbb6",
+                        "on-background": "#171c1f",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1af364",
+                        "surface-variant": "#dfe3e7",
+                        "primary": "#006e28",
+                        "inverse-primary": "#00e55b",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#00531c",
+                        "surface-bright": "#f6fafe",
+                        "surface-tint": "#006e28",
+                        "on-surface": "#171c1f",
+                        "secondary": "#5d5f5f",
+                        "background": "#f6fafe",
+                        "on-tertiary-container": "#535b71",
+                        "surface-container-low": "#f0f4f8",
+                        "on-surface-variant": "#3b4b3a",
+                        "inverse-on-surface": "#edf1f5",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "on-primary-fixed": "#002107",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "on-tertiary-fixed": "#131b2e",
+                        "outline": "#6b7b69",
+                        "surface-container-high": "#e4e9ed",
+                        "inverse-surface": "#2c3134",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#454747",
+                        "on-primary-container": "#006a26",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d6dade",
+                        "tertiary": "#565e74",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#6bff84",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container": "#eaeef2",
+                        "surface-container-highest": "#dfe3e7",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#616363",
+                        "secondary-container": "#dfe0e0",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#dae2fd",
+                        "tertiary-container": "#cbd3ed",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "primary-fixed-dim": "#00e55b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "gutter": "16px",
+                        "xl": "40px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .pulse-shadow:hover {
+            box-shadow: 0 0 20px rgba(26, 243, 100, 0.4);
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body-md text-on-surface antialiased overflow-x-hidden">
+    <!-- TopAppBar -->
+    <header class="bg-surface/90 dark:bg-on-background/90 backdrop-blur-md shadow-sm fixed top-0 w-full z-50">
+        <div
+            class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-2">
+                <img alt="WeGo Logo" class="h-8 md:h-10"
+                    src="WeGo.png" />
+                <span class="font-headline-md text-headline-md tracking-tighter text-primary">WeGo</span>
+            </div>
+            <nav class="hidden md:flex gap-lg items-center">
+                <a class="text-primary font-bold transition-colors duration-300" href="#">Features</a>
+                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+                    href="#">About</a>
+                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+                    href="#">Safety</a>
+                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+                    href="#">Contact</a>
+            </nav>
+            <div class="flex items-center gap-md">
+                <span
+                    class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform cursor-pointer">explore</span>
+                <button
+                    class="bg-primary-container text-on-primary-container font-label-lg px-6 py-2 rounded-full scale-95 active:scale-90 transition-all hover:shadow-lg">Download</button>
+            </div>
+        </div>
+    </header>
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section
+            class="relative px-margin-mobile md:px-margin-desktop py-xl md:py-24 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-xl">
+            <div class="flex-1 text-center md:text-left space-y-md">
+                <h1 class="font-headline-xl text-headline-xl text-on-background leading-tight">
+                    Chốt kèo ? Quá dễ với <span
+                        class="text-primary-container bg-on-background px-2 rounded-lg">WeGo</span>
+                </h1>
+                <p class="font-body-lg text-body-lg text-secondary max-w-lg mx-auto md:mx-0">
+                    WeGo giúp bạn theo dõi vị trí thời gian thực của bạn bè và cùng nhau khám phá những địa điểm tuyệt
+                    vời nhất trong thành phố.
+                </p>
+                <div class="pt-md">
+                    <button
+                        class="bg-primary-container text-on-primary-container font-headline-md px-10 py-4 rounded-xl shadow-xl hover:scale-105 transition-transform pulse-shadow">
+                        Tải app ngay
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 relative w-full flex justify-center">
+                <!-- Float elements for visual depth -->
+                <div
+                    class="absolute -top-10 -right-5 bg-white p-4 rounded-2xl shadow-xl animate-bounce z-10 glass-card">
+                    <span class="material-symbols-outlined text-primary text-4xl"
+                        style="font-variation-settings: 'FILL' 1;">location_on</span>
+                </div>
+                <div
+                    class="w-full max-w-xs rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500 border-8 border-white">
+                    <img alt="App interface visualization" class="w-full h-auto object-cover"
+                        data-alt="A high-fidelity mobile application interface showcased on a modern smartphone screen. The app displays a vibrant, minimalist map with stylized 3D avatars of friends connected by colorful glowing paths. The overall aesthetic is clean and high-contrast, utilizing a professional white background with striking Pulse Green accents. The lighting is soft and global, emphasizing a user-friendly and energetic social navigation experience."
+                        src="map.jpg" />
+                </div>
+            </div>
+        </section>
+        <!-- Features Section -->
+        <section class="bg-surface-container-low py-xl px-margin-mobile md:px-margin-desktop">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-4">Tại
+                        sao chọn WeGo?</h2>
+                    <div class="w-20 h-1.5 bg-primary-container mx-auto rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                    <!-- Feature 1: Map Tracking -->
+                    <div
+                        class="glass-card p-md rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center group">
+                        <div
+                            class="w-full h-64 rounded-2xl mb-md overflow-hidden relative bg-white flex items-center justify-center">
+                            <!-- Visualizing map tracking with CSS/Icons -->
+                            <div class="absolute inset-0 bg-[#E8F5E9] opacity-30"></div>
+                            <div
+                                class="relative w-48 h-48 border-4 border-dashed border-primary-container/40 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                            </div>
+                            <div class="absolute flex flex-col items-center">
+                                <span
+                                    class="material-symbols-outlined text-primary text-6xl group-hover:scale-110 transition-transform"
+                                    style="font-variation-settings: 'FILL' 1;">person_pin_circle</span>
+                                <div
+                                    class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-lg mt-2 shadow-lg">
+                                    Đang di chuyển</div>
+                            </div>
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">Đi cùng nhau, thấy nhau</h3>
+                        <p class="font-body-md text-on-surface-variant">Xem vị trí thực tế của bạn bè trong nhóm ngay
+                            trên bản đồ một cách mượt mà và chính xác.</p>
+                    </div>
+                    <!-- Feature 2: AI Suggestions -->
+                    <div
+                        class="glass-card p-md rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center group">
+                        <div
+                            class="w-full h-64 rounded-2xl mb-md overflow-hidden flex items-center justify-center bg-white">
+                            <img alt="AI Smart Recommendations"
+                                class="h-4/5 object-contain group-hover:rotate-3 transition-transform"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyz4Tg1or0DW-nNFG_jgTSvZtdbJ6LVpbp4eb-Yuzz25VXdk3HQHBvC8KjqLpD6PEfbmajlbsZkFbFDheu6GCEQX9bO51Ep588ndBlGb6zE600swbae-RDUAVeI3VbZ6VXmJNQUUD73dmf7ejatnEHUxioJZ7ht5NmPCd2nxsWLZDZOPXXTYvG0yiKqo2aYdvHRtba_FIcc2j3Sn3RqFTk9WWdRm6Keqmv2EAn4fJnC57E8FpBu8GhZrQdAs51M5N6q_RNdy7Fc8nL" />
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">AI Gợi ý thông minh</h3>
+                        <p class="font-body-md text-on-surface-variant">Khám phá những địa điểm ăn uống, vui chơi phù
+                            hợp nhất với sở thích của cả nhóm dựa trên AI.</p>
+                    </div>
+                    <!-- Feature 3: Scheduling -->
+                    <div
+                        class="glass-card p-md rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center group">
+                        <div
+                            class="w-full h-64 rounded-2xl mb-md overflow-hidden flex items-center justify-center bg-white">
+                            <img alt="On-time scheduling"
+                                class="h-4/5 object-contain group-hover:scale-105 transition-transform"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmRR3mSVVej-cNb5RgFDkVnR0iLd0uBHyggghslGOGsb2QXKHl_whPTSUufSiYsdd4M8NZ_Y8BcNiCmaG9xOgJefrO3ozvfKwLFU9QI-uVzZiB1wPe2QiI-Kl_gzhE8ZknPKW6PPc7tP0MkieGS8WqzEjtPyzeOIJ5bYM-E1AKzT4-at_RWgwjh0E0EvAJfA2sxSvxkbHdWP9E2fsbj6lv-HMSX6HuBhoRzbP_jFZYDYUkXJa6aeOOhVM-zFSghjWTSm9Wnpkjrsoa" />
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">Lịch hẹn đúng giờ</h3>
+                        <p class="font-body-md text-on-surface-variant">Đặt lịch và nhận thông báo nhắc nhở tự động cho
+                            cả nhóm, đảm bảo không ai bị bỏ lại phía sau.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Download Section -->
+        <section class="py-24 px-margin-mobile md:px-margin-desktop text-center overflow-hidden">
+            <div class="max-w-4xl mx-auto bg-on-background text-on-primary p-xl rounded-[3rem] relative">
+                <!-- Background visual effect -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-container/20 blur-[60px] rounded-full">
+                </div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/20 blur-[60px] rounded-full"></div>
+                <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-4">Sẵn sàng trải nghiệm?</h2>
+                <p class="font-body-lg mb-10 opacity-80 max-w-xl mx-auto">Gia nhập cộng đồng WeGo ngay hôm nay để mọi
+                    cuộc gặp gỡ trở nên dễ dàng và thú vị hơn.</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-md items-center">
+                    <!-- <button
+                        class="bg-white text-on-background px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-surface-variant transition-all w-full sm:w-auto justify-center">
+                        <span class="material-symbols-outlined text-3xl">apps</span>
+                        <div class="text-left">
+                            <div class="text-[10px] leading-none uppercase opacity-60">Download on the</div>
+                            <div class="text-lg font-bold leading-none">App Store</div>
+                        </div>
+                    </button> -->
+                    <button
+                        class="bg-white text-on-background px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-surface-variant transition-all w-full sm:w-auto justify-center">
+                        <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                        <div class="text-left">
+                            <div class="text-[10px] leading-none uppercase opacity-60">Get it on</div>
+                            <div class="text-lg font-bold leading-none">Google Play</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer
+        class="bg-surface-container-lowest dark:bg-inverse-surface w-full px-margin-mobile md:px-margin-desktop py-xl flex flex-col md:flex-row justify-between items-center gap-lg">
+        <div class="flex flex-col items-center md:items-start gap-sm">
+            <div class="flex items-center gap-2">
+                <img alt="WeGo Logo" class="h-6"
+                    src="WeGo.png" />
+                <span class="font-headline-md text-headline-md text-on-surface">WeGo</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant opacity-80">© 2024 WeGo. All rights reserved.
+            </p>
+        </div>
+        <div class="flex gap-lg flex-wrap justify-center">
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+                href="#">Features</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+                href="#">About</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+                href="#">Safety</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+                href="#">Contact</a>
+        </div>
+        <div class="flex gap-md">
+            <button
+                class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
+                <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">share</span>
+            </button>
+            <button
+                class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
+                <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">language</span>
+            </button>
+        </div>
+    </footer>
+    <script>
+        // Micro-interactions for scrolling
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.glass-card').forEach(card => {
+                card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+
+</html>
