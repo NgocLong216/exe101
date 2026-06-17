@@ -31,6 +31,8 @@ public class GroupService {
     private final AiPlaceService aiPlaceService;
     private final ScheduleHistoryRepository scheduleHistoryRepository;
     private final AiQueryHistoryRepository aiQueryHistoryRepository;
+    private final FirebaseRealtimeService firebaseRealtimeService;
+    private final GroupAiChecklistRepository groupAiChecklistRepository;
 
     public Group createGroup(
             String title,
@@ -88,6 +90,11 @@ public class GroupService {
 
         groupMemberRepository.save(hostMember);
 
+        firebaseRealtimeService.addMember(
+                group.getId(),
+                hostUid
+        );
+
         // Invite members
         if (memberFirebaseUids != null) {
             for (String firebaseUid : memberFirebaseUids) {
@@ -107,6 +114,11 @@ public class GroupService {
                 member.setJoinedAt(LocalDateTime.now());
 
                 groupMemberRepository.save(member);
+
+                firebaseRealtimeService.addMember(
+                        group.getId(),
+                        user.getFirebaseUid()
+                );
             }
         }
 
@@ -272,8 +284,15 @@ public class GroupService {
         }
 
         if (accept) {
+
             member.setStatus(GroupMemberStatus.ACCEPTED);
+
             member.setJoinedAt(LocalDateTime.now());
+
+            firebaseRealtimeService.addMember(
+                    member.getGroup().getId(),
+                    firebaseUid
+            );
         } else {
             member.setStatus(GroupMemberStatus.REJECTED);
         }
@@ -305,9 +324,13 @@ public class GroupService {
                 .child(groupId.toString())
                 .removeValueAsync();
 
+        groupAiChecklistRepository.deleteByGroupId(groupId);
+
         groupMemberRepository.deleteByGroup_Id(groupId);
 
         groupRepository.delete(group);
+
+        firebaseRealtimeService.deleteGroup(groupId);
     }
 
     public List<GroupMemberResponse> getGroupMembers(UUID groupId, String currentUid) {
@@ -390,6 +413,11 @@ public class GroupService {
         // Soft delete
          targetMember.setStatus(GroupMemberStatus.KICKED);
          groupMemberRepository.save(targetMember);
+
+        firebaseRealtimeService.removeMember(
+                groupId,
+                targetUid
+        );
     }
 
     public void leaveGroup(UUID groupId, String currentUid) {
@@ -420,6 +448,11 @@ public class GroupService {
 
         member.setStatus(GroupMemberStatus.LEFT);
         groupMemberRepository.save(member);
+
+        firebaseRealtimeService.removeMember(
+                groupId,
+                currentUid
+        );
     }
 
     public void scheduleMeet(
