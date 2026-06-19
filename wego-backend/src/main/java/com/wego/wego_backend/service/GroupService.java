@@ -25,7 +25,6 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
-    private final NotificationService notificationService;
     private final FirebaseDatabase firebaseDatabase;
     private final GroupAiChecklistRepository aiChecklistRepository;
     private final AiPlaceService aiPlaceService;
@@ -477,6 +476,7 @@ public class GroupService {
         group.setPlaceId(placeId);
 
         group.setStatus(GroupStatus.ON_GOING);
+        group.setMeetNotificationSent(false);
 
         groupRepository.save(group);
 

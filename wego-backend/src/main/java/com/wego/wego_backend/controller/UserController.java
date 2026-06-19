@@ -1,5 +1,6 @@
 package com.wego.wego_backend.controller;
 
+import com.wego.wego_backend.dto.PushTokenRequest;
 import com.wego.wego_backend.dto.SuggestPlaceRequest;
 import com.wego.wego_backend.dto.UpdateProfileRequest;
 import com.wego.wego_backend.repository.UserRepository;
@@ -84,5 +85,21 @@ public class UserController {
                         request.getKeyword()
                 )
         );
+    }
+
+    @PutMapping("/push-token")
+    public ResponseEntity<?> updatePushToken(
+            Authentication authentication,
+            @RequestBody PushTokenRequest request
+    ){
+
+        String firebaseUid = authentication.getName();
+
+        userService.updatePushToken(
+                firebaseUid,
+                request.getExpoPushToken()
+        );
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -172,4 +172,18 @@ public class UserService {
                 lng / points.size()
         );
     }
+
+    public void updatePushToken(
+            String uid,
+            String token
+    ){
+
+        User user = userRepository
+                .findById(uid)
+                .orElseThrow();
+
+        user.setExpoPushToken(token);
+
+        userRepository.save(user);
+    }
 }

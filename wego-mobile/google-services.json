@@ -1,0 +1,101 @@
+{
+  "project_info": {
+    "project_number": "604419916756",
+    "firebase_url": "https://crested-drive-483712-e5-default-rtdb.firebaseio.com",
+    "project_id": "crested-drive-483712-e5",
+    "storage_bucket": "crested-drive-483712-e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604419916756:android:556132139776d987a70c41",
+        "android_client_info": {
+          "package_name": "com.company.WeGo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604419916756-aivv5cpjrahkibt95bl3nbvo3umng3n9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.WeGo",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "604419916756-fuemhacrp470sqa7nvheopa5np775rtu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.WeGo",
+            "certificate_hash": "fa9edbb5aa0016b84fcfa2dfcdbffc6866c8fb21"
+          }
+        },
+        {
+          "client_id": "604419916756-phmh2cpfm25pem95k9cispfrglkhvrph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgZZpdEO2R0-E5NpdZ2uTA0HUMpdCzJMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604419916756-dq8c9n1t8lslgaq9sg8o0corn84mcnmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604419916756:android:98a2c6f6db29f3f8a70c41",
+        "android_client_info": {
+          "package_name": "com.longnguyen216.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604419916756-37redi5pt4jijefj6uubvme69btidkq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.longnguyen216.myapp",
+            "certificate_hash": "9ddb844e48f91af5621b06d09e9d9573ee89df80"
+          }
+        },
+        {
+          "client_id": "604419916756-5creab514pk4b3k8leuvihi41c09plta.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.longnguyen216.myapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "604419916756-phmh2cpfm25pem95k9cispfrglkhvrph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgZZpdEO2R0-E5NpdZ2uTA0HUMpdCzJMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604419916756-dq8c9n1t8lslgaq9sg8o0corn84mcnmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

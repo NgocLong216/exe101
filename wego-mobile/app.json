@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.longnguyen216.myapp"
+      "package": "com.longnguyen216.myapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -43,7 +44,8 @@
       "expo-web-browser",
       "expo-secure-store",
       "@react-native-google-signin/google-signin",
-      "expo-font"
+      "expo-font",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,

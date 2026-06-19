@@ -27,6 +27,8 @@ public class User {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    private String expoPushToken;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
