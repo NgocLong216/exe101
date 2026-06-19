@@ -29,13 +29,11 @@ export default function LoginScreen() {
 
       const userInfo = await GoogleSignin.signIn();
 
-      console.log('USER INFO:', userInfo);
 
       const idToken = userInfo.data?.idToken;
 
 
       if (!idToken) {
-        console.log('No ID Token returned');
         return;
       }
 
@@ -49,7 +47,6 @@ export default function LoginScreen() {
       // Firebase token
       const firebaseIdToken = await firebaseUser.getIdToken();
 
-      console.log('Firebase Token:', firebaseIdToken);
 
       // SEND TO BACKEND
       const res = await fetch(
@@ -66,7 +63,6 @@ export default function LoginScreen() {
       );
 
       const data = await res.json();
-      console.log('Backend response:', data);
 
       router.replace('/(tabs)');
     } catch (error) {

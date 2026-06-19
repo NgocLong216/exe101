@@ -1,6 +1,6 @@
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { app } from "../firebase";
 import toast from "react-hot-toast";
+import { app } from "../firebase";
 
 const messaging = getMessaging(app);
 
@@ -10,14 +10,12 @@ const messaging = getMessaging(app);
 export const requestFcmToken = async () => {
   try {
     if (Notification.permission === "denied") {
-      console.log("Notification bị block, cần user reset trong browser");
       return null;
     }
 
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
-      console.log("User không cấp quyền");
       return null;
     }
 
@@ -31,8 +29,6 @@ export const requestFcmToken = async () => {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
       serviceWorkerRegistration: registration,
     });
-
-    console.log("FCM Token:", token);
 
     return token;
   } catch (error) {

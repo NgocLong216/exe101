@@ -141,8 +141,6 @@ export default function GroupsScreen() {
 
             setGroups(mapped);
 
-            console.log("GROUP DATA:", mapped);
-
         } catch (error) {
             console.log("FETCH GROUP ERROR:", error);
         } finally {

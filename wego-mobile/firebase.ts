@@ -11,6 +11,7 @@ import { getDatabase } from "firebase/database";
 const firebaseConfig = {
   apiKey: 'AIzaSyCY95z91jd_OLCc9K-2wdRr2mHxqlunxZ8',
   authDomain: 'crested-drive-483712-e5.firebaseapp.com',
+  databaseURL: "https://crested-drive-483712-e5-default-rtdb.firebaseio.com",
   projectId: 'crested-drive-483712-e5',
   storageBucket: 'crested-drive-483712-e5.firebasestorage.app',
   messagingSenderId: '604419916756',

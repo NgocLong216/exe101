@@ -3,7 +3,7 @@ import { LocationResult } from "@/types/location";
 import { useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { WebView } from "react-native-webview";
 import GroupChoose from "./GroupChoose";
 
@@ -11,19 +11,19 @@ import GroupChoose from "./GroupChoose";
 import { getUserGroups, GroupResponse } from "@/apis/groupAPI"; // Điều chỉnh đường dẫn cho đúng
 
 import {
-  LatLng,
-  Member,
   buildMapHtml,
   fetchDirection,
+  LatLng,
+  Member,
   reverseGeocode,
   subscribeGroupMembers,
 } from "@/apis/goongAPI";
-import SearchBar from "./SearchBar";
 import PlaceBottomSheet, {
   PlaceBottomSheetRef,
   PlaceDetail,
 } from "./bottomSheet";
 import MarkersOverlay from "./overlayMarker/MarkersOverlay";
+import SearchBar from "./SearchBar";
 
 const ROUTE_COLORS = ["#2563EB", "#EF4444", "#22C55E", "#F59E0B", "#A855F7", "#EC4899"];
 
@@ -92,8 +92,6 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       setMembers([]);
       return;
     }
-
-    console.log(`Bắt đầu realtime tracking cho Group ID: ${activeGroupId}`);
     const unsub = subscribeGroupMembers(
       activeGroupId,
       (updated) => {

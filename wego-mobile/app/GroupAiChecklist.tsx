@@ -3,15 +3,15 @@ import { getAuth } from "firebase/auth";
 import { ArrowLeft } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 
@@ -60,7 +60,6 @@ export default function GroupAiChecklist() {
 
             setItems(data);
         } catch (err) {
-            console.log("LOAD CHECKLIST ERROR", err);
         } finally {
             setLoading(false);
         }

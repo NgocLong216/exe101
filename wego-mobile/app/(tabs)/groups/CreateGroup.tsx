@@ -76,8 +76,6 @@ export default function CreateGroupScreen() {
             // formData.append("lng", "106.123");
             // formData.append("placeId", "abcxyz");
 
-            console.log("API_URL =", API_URL);
-            console.log("REQUEST =", `${API_URL}/api/groups`);
             const response = await fetch(
                 `${API_URL}/api/groups`,
                 {
@@ -91,8 +89,6 @@ export default function CreateGroupScreen() {
 
             const data = await response.json();
 
-            console.log("CREATE GROUP SUCCESS:", data);
-
             alert("Create group success");
 
             router.push({
@@ -100,8 +96,6 @@ export default function CreateGroupScreen() {
             });
 
         } catch (error) {
-
-            console.log("CREATE GROUP ERROR:", error);
 
             alert("Create group failed");
 
