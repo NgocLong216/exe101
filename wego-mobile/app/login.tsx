@@ -8,6 +8,7 @@ import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
 import { router } from 'expo-router';
 import { auth } from '../firebase';
+import { registerForPushNotifications } from '../utils/notification';
 
 export default function LoginScreen() {
 
@@ -23,50 +24,122 @@ export default function LoginScreen() {
   // LOGIN FUNCTION
   const onGoogleLogin = async () => {
     try {
+  
+      // Kiểm tra Google Play Services
       await GoogleSignin.hasPlayServices();
-
+  
+      // Đăng xuất tài khoản cũ
       await GoogleSignin.signOut();
-
+  
+      // Mở Google Sign In
       const userInfo = await GoogleSignin.signIn();
-
-
+  
+      // Lấy Google idToken
       const idToken = userInfo.data?.idToken;
-
-
+  
       if (!idToken) {
+        console.log('Không lấy được Google idToken');
         return;
       }
-
+  
+      // ==========================
       // Firebase login
-      const credential = GoogleAuthProvider.credential(idToken);
-
-      const result = await signInWithCredential(auth, credential);
-
+      // ==========================
+  
+      const credential =
+        GoogleAuthProvider.credential(idToken);
+  
+      const result =
+        await signInWithCredential(auth, credential);
+  
       const firebaseUser = result.user;
-
-      // Firebase token
-      const firebaseIdToken = await firebaseUser.getIdToken();
-
-
-      // SEND TO BACKEND
-      const res = await fetch(
+  
+      // Firebase JWT token
+      const firebaseIdToken =
+        await firebaseUser.getIdToken();
+  
+      // ==========================
+      // Login backend
+      // ==========================
+  
+      const loginRes = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/auth/firebase`,
         {
           method: 'POST',
+  
           headers: {
             'Content-Type': 'application/json',
           },
+  
           body: JSON.stringify({
             token: firebaseIdToken,
           }),
         }
       );
-
-      const data = await res.json();
-
+  
+      if (!loginRes.ok) {
+        throw new Error('Backend login failed');
+      }
+  
+      const loginData = await loginRes.json();
+  
+      console.log('Backend login:', loginData);
+  
+      // ==========================
+      // Lấy Expo Push Token
+      // ==========================
+  
+      const expoPushToken =
+        await registerForPushNotifications();
+  
+      console.log('Expo Push Token:', expoPushToken);
+  
+      // ==========================
+      // Lưu Push Token lên backend
+      // ==========================
+  
+      if (expoPushToken) {
+  
+        const pushRes = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/users/push-token`,
+          {
+            method: 'PUT',
+  
+            headers: {
+              'Content-Type': 'application/json',
+  
+              Authorization: `Bearer ${firebaseIdToken}`,
+            },
+  
+            body: JSON.stringify({
+              expoPushToken,
+            }),
+          }
+        );
+  
+        if (!pushRes.ok) {
+  
+          const errorText = await pushRes.text();
+  
+          console.log(
+            'Lỗi lưu Push Token:',
+            errorText
+          );
+        }
+      }
+  
+      // ==========================
+      // Chuyển sang trang chính
+      // ==========================
+  
       router.replace('/(tabs)');
+  
     } catch (error) {
-      console.log('Google Sign-In Error:', error);
+  
+      console.log(
+        'Google Sign-In Error:',
+        error
+      );
     }
   };
 
