@@ -1,6 +1,7 @@
+import { auth, db } from '@/firebase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { getAuth } from 'firebase/auth';
-import { ArrowLeft, Bot, ChevronRight, MapPin, Navigation, Search, UserPlus } from 'lucide-react-native';
+import { off, onValue, ref } from "firebase/database";
+import { ArrowLeft, Bot, ChevronRight, Navigation, Search, UserPlus } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -99,7 +100,7 @@ function MemberRow({
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function GroupMembersScreen() {
-  
+
   const router = useRouter()
 
   const [memberUids, setMemberUids] = useState<string[]>([]);
@@ -115,9 +116,46 @@ export default function GroupMembersScreen() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const [isHost, setIsHost] = useState(false);
+  const [presence, setPresence] = useState<Record<string, any>>({});
+
+  const membersWithPresence: GroupMember[] = members.map(member => {
+    const p = presence[member.firebaseUid];
+  
+    let status: 'green' | 'orange' | 'gray' = 'gray';
+  
+    if (p?.online) {
+      status = 'green';
+    }
+  
+    return {
+      ...member,
+      statusDot: status,
+    };
+  });
 
   useEffect(() => {
-    const currentUser = getAuth().currentUser;
+    const presenceRef = ref(db, "presence");
+  
+    onValue(
+      presenceRef,
+      (snapshot) => {
+  
+        setPresence(snapshot.val() || {});
+      },
+      (error) => {
+        console.log(
+          "PRESENCE ERROR:",
+          error
+        );
+      }
+    );
+  
+    return () => off(presenceRef);
+  
+  }, []);
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
 
     if (!currentUser) return;
 
@@ -133,7 +171,7 @@ export default function GroupMembersScreen() {
   const leaveGroup = async () => {
     try {
 
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
 
       if (!user) return;
 
@@ -202,7 +240,7 @@ export default function GroupMembersScreen() {
   ) => {
     try {
 
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
 
       if (!user) return;
 
@@ -274,7 +312,7 @@ export default function GroupMembersScreen() {
 
       setSearchLoading(true);
 
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
       if (!user) return;
 
       const token = await user.getIdToken();
@@ -302,7 +340,7 @@ export default function GroupMembersScreen() {
   const inviteMember = async (firebaseUid: string) => {
     try {
 
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
 
       if (!user) return;
 
@@ -371,7 +409,7 @@ export default function GroupMembersScreen() {
   const deleteGroup = async () => {
     try {
 
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
 
       if (!user) {
         Alert.alert('Error', 'User not logged in');
@@ -426,7 +464,7 @@ export default function GroupMembersScreen() {
 
   const fetchMembers = async () => {
     try {
-      const user = getAuth().currentUser;
+      const user = auth.currentUser;
       if (!user) return;
 
       const token = await user.getIdToken();
@@ -595,7 +633,7 @@ export default function GroupMembersScreen() {
 
         {/* Members List */}
         <View style={styles.membersList}>
-          {members.map((member, index) => (
+          {membersWithPresence.map((member, index) => (
             <View key={member.firebaseUid}>
               <MemberRow
                 item={member}

@@ -86,12 +86,6 @@ export default function PlaceDetailScreen() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("placeName =", placeName);
-        console.log("lat =", lat);
-        console.log("lng =", lng);
-    }, []);
-
-    useEffect(() => {
         if (!placeName || !lat || !lng) return;
 
         const fetchPlaceData = async () => {
@@ -100,12 +94,9 @@ export default function PlaceDetailScreen() {
                 // Replace spaces with + for the query
                 const formattedName = placeName.replace(/\s+/g, '+');
                 const url = `https://serpapi.com/search.json?engine=google_maps&q=${formattedName}&ll=@${lat},${lng},14z&api_key=${SERPAPI_KEY}`;
-                console.log("Fetching SerpAPI with URL:", url);
 
                 const response = await fetch(url);
                 const data = await response.json();
-
-                //console.log("SerpAPI response:", data.local_results);
 
                 // SerpAPI google_maps returns results in `local_results` array
                 if (data.local_results && data.local_results.length > 0) {

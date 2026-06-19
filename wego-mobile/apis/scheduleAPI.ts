@@ -46,10 +46,6 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
     if (!res.ok) {
         const errorText = await res.text();
-
-        console.log("Status:", res.status);
-        console.log("Response:", errorText);
-
         throw new Error(errorText);
     }
 

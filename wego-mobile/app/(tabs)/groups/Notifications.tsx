@@ -1,8 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
-import { ArrowLeft, UserPlus, XCircle, MapPin, Clock } from 'lucide-react-native';
-import { useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
+import { ArrowLeft, Clock, MapPin, UserPlus, XCircle } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // Định nghĩa kiểu dữ liệu cho Notification
 type NotificationItem = {
@@ -37,8 +36,6 @@ export default function NotificationsScreen() {
       );
 
       const data = await response.json();
-
-      console.log("INVITATIONS:", data);
 
       setNotifications(data);
 

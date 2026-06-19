@@ -21,7 +21,6 @@ export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [locationSharing, setLocationSharing] = useState(true);
   const { user, logout, loading } = useAuth()
-  //console.log('user: ', user)
 
   const SectionLabel = ({ title }: { title: string }) => (
     <Text style={styles.sectionLabel}>{title}</Text>
