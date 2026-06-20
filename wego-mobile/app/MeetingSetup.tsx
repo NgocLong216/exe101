@@ -1,19 +1,18 @@
+import { GroupResponse, getUserGroups } from "@/apis/groupAPI";
+import { scheduleMeet } from "@/apis/scheduleAPI";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { ChevronDown, ChevronLeft, ChevronRight, Clock } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Image,
+  Alert,
   Platform,
+  ScrollView,
   StatusBar,
-  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { ChevronLeft, ChevronDown, MapPin, Clock } from "lucide-react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { getUserGroups, GroupResponse } from "@/apis/groupAPI";
-import { scheduleMeet } from "@/apis/scheduleAPI";
 
 const COLORS = {
   primary: "#22C55E",
@@ -183,12 +182,12 @@ export default function MeetingSetup() {
   const handleConfirm = async () => {
     try {
       if (!selectedDate) {
-        alert("Please select a date");
+        Alert.alert("Set Meeting Failed", "Please select a date");
         return;
       }
 
       if (!selectedGroupId) {
-        alert("Please select a group");
+        Alert.alert("Set Meeting Failed", "Please select a group");
         return;
       }
 
@@ -212,7 +211,7 @@ export default function MeetingSetup() {
       });
     } catch (error) {
       console.error("Schedule meeting failed", error);
-      alert("Failed to schedule meeting");
+      Alert.alert("Set Meeting Failed", "Failed to schedule meeting");
     }
   };
 
@@ -236,7 +235,9 @@ export default function MeetingSetup() {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}>
           <ChevronLeft size={22} color={COLORS.text} strokeWidth={2.5} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Set Meeting Details</Text>
@@ -340,7 +341,7 @@ export default function MeetingSetup() {
               style={styles.navButton}
               onPress={handleNextMonth}
             >
-              <ChevronLeft size={20} color={COLORS.primary} strokeWidth={2.5} style={{ transform: [{ rotate: '180deg' }] }} />
+              <ChevronRight size={20} color={COLORS.primary} strokeWidth={2.5} />
             </TouchableOpacity>
           </View>
 
@@ -430,7 +431,7 @@ export default function MeetingSetup() {
           >
             <Text style={styles.confirmText}>Confirm Meeting</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton}>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>

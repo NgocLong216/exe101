@@ -72,6 +72,9 @@ export default function PlaceDetailScreen() {
         lng,
         prevRoute,
         groupId,
+        groupName,
+        groupMembers,
+        groupPhoto
     } = useLocalSearchParams<{
         placeId: string;
         placeName: string;
@@ -79,6 +82,9 @@ export default function PlaceDetailScreen() {
         lng: string;
         prevRoute: string;
         groupId: string;
+        groupName: string;
+        groupMembers: string;
+        groupPhoto: string;
     }>();
 
     const [placeData, setPlaceData] = useState<PlaceData | null>(null);
@@ -186,13 +192,7 @@ export default function PlaceDetailScreen() {
                                 onPress={() => {
 
                                     if (prevRoute === "/GroupChat") {
-
-                                        router.push({
-                                            pathname: "/GroupChat",
-                                            params: {
-                                                groupId,
-                                            },
-                                        });
+                                        router.back();
 
                                         return;
                                     }

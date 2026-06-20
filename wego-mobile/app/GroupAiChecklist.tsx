@@ -76,6 +76,7 @@ export default function GroupAiChecklist() {
         groupId,
         groupName,
         groupMembers,
+        groupPhoto,
         runChecklistAi: "true",
       },
     });
@@ -109,15 +110,7 @@ export default function GroupAiChecklist() {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() =>
-              router.replace({
-                pathname: "/GroupChat",
-                params: {
-                  groupId,
-                  groupName,
-                  groupMembers,
-                  groupPhoto
-                },
-              })
+              router.back()
             }
           >
             <ArrowLeft size={24} color="#1E293B" />
