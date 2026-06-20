@@ -216,6 +216,7 @@ export default function GroupsScreen() {
                                         groupName: item.name,
                                         memberCount: item.members,
                                         activeCount: item.members,
+                                        groupPhoto: item.avatar
                                     },
                                 })
                             }

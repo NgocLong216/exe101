@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { ArrowLeft, Clock, MapPin, UserPlus, XCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ type NotificationItem = {
 export default function NotificationsScreen() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     fetchInvitations();
@@ -161,7 +163,14 @@ export default function NotificationsScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={
+          styles.backButton}
+          onPress={() =>
+            router.push({
+              pathname: '/(tabs)/groups'
+            })
+          }
+          activeOpacity={0.7}>
           <ArrowLeft size={24} color="#1E293B" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
@@ -210,7 +219,7 @@ export default function NotificationsScreen() {
                 <Text style={styles.descText}>
                   You have been invited to join{" "}
                   <Text style={styles.highlightText}>
-                    {item.groupName}
+                    {item.groupTitle}
                   </Text>
                 </Text>
 

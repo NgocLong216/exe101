@@ -69,11 +69,13 @@ export default function GroupChatScreen() {
     groupName,
     groupMembers,
     runChecklistAi,
+    groupPhoto
   } = useLocalSearchParams<{
     groupId: string;
     groupName?: string;
     groupMembers?: string;
     runChecklistAi?: string;
+    groupPhoto?: string;
   }>();
 
   const [aiLoading, setAiLoading] =
@@ -524,6 +526,7 @@ export default function GroupChatScreen() {
               params: {
                 groupId: String(groupId),
                 groupName: String(groupName),
+                groupPhoto: String(groupPhoto),
               },
             })}
           >
@@ -532,7 +535,7 @@ export default function GroupChatScreen() {
 
           <View style={styles.avatarWrapper}>
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=120&auto=format&fit=crop' }}
+              source={{ uri: `${groupPhoto}?q=80&w=120&auto=format&fit=crop` }}
               style={styles.groupAvatar}
             />
             <View style={styles.onlineBadge} />
@@ -556,6 +559,7 @@ export default function GroupChatScreen() {
                     String(groupId),
                   groupName: String(groupName),
                   groupMembers: String(groupMembers),
+                  groupPhoto: String(groupPhoto),
                 },
               })
             }
@@ -851,7 +855,17 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   headerBtn: {
-    padding: 6,
+    width: 42,
+  
+    height: 42,
+  
+    borderRadius: 21,
+  
+    backgroundColor: "#EFF6FF",
+  
+    justifyContent: "center",
+  
+    alignItems: "center",
   },
 
   // Content Chat Container

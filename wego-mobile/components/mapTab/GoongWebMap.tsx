@@ -3,7 +3,7 @@ import { LocationResult } from "@/types/location";
 import { useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { WebView } from "react-native-webview";
 import GroupChoose from "./GroupChoose";
 
@@ -47,6 +47,9 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
   // ─── Group Switcher States ──────────────────────────────────────────────────
   const [groups, setGroups] = useState<GroupResponse[]>([]);
+  const currentGroup = groups.find(
+    g => String(g.id) === String(activeGroupId)
+  );
   const [groupChooseVisible, setGroupChooseVisible] = useState(false);
   const { groupId: initialGroupId, placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
     placeId?: string;
@@ -56,7 +59,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     prevRoute?: string;
     groupId?: string;
   }>();
-  
+
   // Quản lý groupId chủ động bằng State để có thể switch ngay trên màn hình này
   const [activeGroupId, setActiveGroupId] = useState<string | undefined>(initialGroupId);
 
@@ -83,7 +86,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   // ─── KEY FIX: html is memoized with initial coords only ─────────────────────
   const html = useMemo(
     () => buildMapHtml(latitude, longitude),
-    [] 
+    []
   );
 
   // ─── Subscribe thay đổi dựa vào activeGroupId thay vì groupId từ Param ──────
@@ -181,7 +184,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
             latitude: destination.latitude,
             longitude: destination.longitude,
           });
-          
+
           if (!isMounted) return; // Guard chống race-condition khi switch group giữa chừng
           if (!coords.length) continue;
 
@@ -328,11 +331,36 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       <SearchBar onSelectLocation={handleSearch} />
 
       <View style={styles.topBarContainer}>
-        <TouchableOpacity style={styles.groupSwitcherBtn} onPress={handleSwitchGroup}>
-          <Text style={styles.groupSwitcherText} numberOfLines={1}>
-            👥 {currentGroupName} ▾
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.topBarContainer}>
+
+          <TouchableOpacity
+            style={styles.groupSwitcherBtn}
+            onPress={handleSwitchGroup}
+          >
+
+            <Image
+              source={{
+                uri:
+                  currentGroup?.groupPhoto ||
+                  `https://ui-avatars.com/api/?name=${currentGroupName}`,
+              }}
+              style={styles.groupSwitcherAvatar}
+            />
+
+            <Text
+              style={styles.groupSwitcherText}
+              numberOfLines={1}
+            >
+              {currentGroupName}
+            </Text>
+
+            <Text style={styles.dropdownIcon}>
+              ▾
+            </Text>
+
+          </TouchableOpacity>
+
+        </View>
       </View>
 
       {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
@@ -358,12 +386,14 @@ const styles = StyleSheet.create({
   },
   topBarContainer: {
     position: "absolute",
-    top: 110, // Cân chỉnh lại tùy thuộc vào vùng Tai thỏ (SafeArea)
+    top: 70, // Cân chỉnh lại tùy thuộc vào vùng Tai thỏ (SafeArea)
     left: 16,
     right: 16,
     gap: 10,
   },
   groupSwitcherBtn: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -388,5 +418,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.4)",
     zIndex: 10,
+  },
+  
+  groupSwitcherAvatar: {
+    width: 28,
+  
+    height: 28,
+  
+    borderRadius: 14,
+  
+    marginRight: 10,
+  
+    backgroundColor: "#E2E8F0",
+  },
+  
+  dropdownIcon: {
+    fontSize: 16,
+  
+    color: "#64748B",
+  
+    marginLeft: 6,
   },
 });
