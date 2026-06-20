@@ -20,21 +20,19 @@ import {
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
-    const router = useRouter()
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const handleCreateGroup = async () => {
         try {
-
             if (!groupName.trim()) {
                 alert("Please enter group name");
                 return;
             }
 
             setLoading(true);
-
             const user = getAuth().currentUser;
 
             if (!user) {
@@ -43,22 +41,15 @@ export default function CreateGroupScreen() {
             }
 
             const token = await user.getIdToken();
-
             const formData = new FormData();
 
             formData.append("title", groupName);
             formData.append("description", groupDescription);
 
             if (selectedImage) {
-
-                const filename =
-                    selectedImage.split('/').pop() || 'group.jpg';
-
+                const filename = selectedImage.split('/').pop() || 'group.jpg';
                 const match = /\.(\w+)$/.exec(filename);
-
-                const type = match
-                    ? `image/${match[1]}`
-                    : 'image/jpeg';
+                const type = match ? `image/${match[1]}` : 'image/jpeg';
 
                 formData.append(
                     "groupPhoto",
@@ -69,12 +60,6 @@ export default function CreateGroupScreen() {
                     } as any
                 );
             }
-
-            // optional fields
-            // formData.append("meetingTime", "2026-05-27T20:00:00");
-            // formData.append("lat", "10.123");
-            // formData.append("lng", "106.123");
-            // formData.append("placeId", "abcxyz");
 
             const response = await fetch(
                 `${API_URL}/api/groups`,
@@ -88,7 +73,6 @@ export default function CreateGroupScreen() {
             );
 
             const data = await response.json();
-
             alert("Create group success");
 
             router.push({
@@ -96,9 +80,7 @@ export default function CreateGroupScreen() {
             });
 
         } catch (error) {
-
             alert("Create group failed");
-
         } finally {
             setLoading(false);
         }
@@ -133,8 +115,11 @@ export default function CreateGroupScreen() {
                     >
                         <ArrowLeft size={24} color="#1E293B" />
                     </TouchableOpacity>
+                    
                     <Text style={styles.headerTitle}>Create New Group</Text>
-                    <View style={{ width: 32 }} /> {/* View đệm để giữ chữ Title ở giữa */}
+                    
+                    {/* View đệm để giữ chữ Title ở giữa */}
+                    <View style={{ width: 32 }} /> 
                 </View>
 
                 {/* Content */}
@@ -201,7 +186,7 @@ export default function CreateGroupScreen() {
                                 placeholderTextColor="#94A3B8"
                                 multiline={true}
                                 numberOfLines={5}
-                                textAlignVertical="top" // Căn chữ lên đầu dòng cho Android
+                                textAlignVertical="top"
                                 value={groupDescription}
                                 onChangeText={setGroupDescription}
                             />
@@ -254,7 +239,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignItems: 'center',
     },
-    // Avatar Styles
     avatarSection: {
         alignItems: 'center',
         marginTop: 30,
@@ -268,10 +252,10 @@ const styles = StyleSheet.create({
         width: 130,
         height: 130,
         borderRadius: 65,
-        backgroundColor: '#E2B97B', // Màu be sữa chuẩn theo ảnh
+        backgroundColor: '#E2B97B', 
         borderWidth: 2,
         borderColor: '#E2B97B',
-        borderStyle: 'dashed', // Tạo hiệu ứng viền đứt nét nhẹ quanh avatar
+        borderStyle: 'dashed', 
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
@@ -279,13 +263,13 @@ const styles = StyleSheet.create({
     groupDefaultIcon: {
         width: 80,
         height: 80,
-        tintColor: '#FFFFFF', // Đổi icon sang màu trắng tinh
+        tintColor: '#FFFFFF', 
     },
     editBadge: {
         position: 'absolute',
         bottom: 4,
         right: 4,
-        backgroundColor: '#00E676', // Màu xanh neon của nút Edit
+        backgroundColor: '#00E676', 
         width: 32,
         height: 32,
         borderRadius: 16,
@@ -304,7 +288,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#00E676',
     },
-    // Form Styles
     form: {
         width: '100%',
     },
@@ -320,7 +303,7 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         height: 52,
-        backgroundColor: '#F8FAFC', // Màu nền input xám cực nhạt
+        backgroundColor: '#F8FAFC', 
         borderWidth: 1,
         borderColor: '#E2E8F0',
         borderRadius: 12,
@@ -333,7 +316,6 @@ const styles = StyleSheet.create({
         paddingTop: 16,
         paddingBottom: 16,
     },
-    // Button Styles
     bottomContainer: {
         paddingHorizontal: 20,
         paddingBottom: Platform.OS === 'ios' ? 86 : 108,
@@ -342,11 +324,10 @@ const styles = StyleSheet.create({
     createButton: {
         width: '100%',
         height: 54,
-        backgroundColor: '#17F367', // Màu xanh lá neon chuẩn UI
+        backgroundColor: '#17F367', 
         borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        // Đổ bóng nhẹ cho nút bấm giống ảnh gốc
         shadowColor: '#17F367',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
