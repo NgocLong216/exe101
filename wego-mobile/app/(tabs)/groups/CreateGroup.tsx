@@ -4,6 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { ArrowLeft, Pencil } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
+    Alert,
     Image,
     KeyboardAvoidingView,
     Platform,
@@ -29,7 +30,7 @@ export default function CreateGroupScreen() {
         try {
 
             if (!groupName.trim()) {
-                alert("Please enter group name");
+                Alert.alert("Create Failed", "Please enter group name");
                 return;
             }
 
@@ -38,7 +39,7 @@ export default function CreateGroupScreen() {
             const user = getAuth().currentUser;
 
             if (!user) {
-                alert("User not logged in");
+                Alert.alert("Error", "User not logged in");
                 return;
             }
 
@@ -89,7 +90,7 @@ export default function CreateGroupScreen() {
 
             const data = await response.json();
 
-            alert("Create group success");
+            Alert.alert("Success", "Create group success");
 
             router.push({
                 pathname: '/(tabs)/groups',
@@ -97,7 +98,7 @@ export default function CreateGroupScreen() {
 
         } catch (error) {
 
-            alert("Create group failed");
+            Alert.alert("Error", "Create group failed");
 
         } finally {
             setLoading(false);

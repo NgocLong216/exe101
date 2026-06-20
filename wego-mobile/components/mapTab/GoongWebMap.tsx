@@ -47,9 +47,6 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
   // ─── Group Switcher States ──────────────────────────────────────────────────
   const [groups, setGroups] = useState<GroupResponse[]>([]);
-  const currentGroup = groups.find(
-    g => String(g.id) === String(activeGroupId)
-  );
   const [groupChooseVisible, setGroupChooseVisible] = useState(false);
   const { groupId: initialGroupId, placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
     placeId?: string;
@@ -68,6 +65,19 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     if (!activeGroupId) return "Chọn nhóm";
     const found = groups.find(g => g.id === activeGroupId);
     return found ? found.title : "Đang tải nhóm...";
+  }, [activeGroupId, groups]);
+
+  const currentGroupPhoto = useMemo(() => {
+    if (!activeGroupId) return null;
+
+    const found = groups.find(
+      g => String(g.id) === String(activeGroupId)
+    );
+
+    console.log("Current Group:", found);
+
+    return found?.groupPhoto ?? null;
+
   }, [activeGroupId, groups]);
 
   // Load danh sách nhóm của user khi vào map
@@ -331,36 +341,27 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       <SearchBar onSelectLocation={handleSearch} />
 
       <View style={styles.topBarContainer}>
-        <View style={styles.topBarContainer}>
 
-          <TouchableOpacity
-            style={styles.groupSwitcherBtn}
-            onPress={handleSwitchGroup}
-          >
+        <TouchableOpacity
+          style={styles.groupSwitcherBtn}
+          onPress={handleSwitchGroup}
+        >
 
-            <Image
-              source={{
-                uri:
-                  currentGroup?.groupPhoto ||
-                  `https://ui-avatars.com/api/?name=${currentGroupName}`,
-              }}
-              style={styles.groupSwitcherAvatar}
-            />
+          <Image
+            source={{
+              uri:
+                currentGroupPhoto ||
+                `https://ui-avatars.com/api/?name=${currentGroupName}`,
+            }}
+            style={styles.groupSwitcherAvatar}
+          />
 
-            <Text
-              style={styles.groupSwitcherText}
-              numberOfLines={1}
-            >
-              {currentGroupName}
-            </Text>
+          <View style={styles.avatarOverlay}>
+            <Text style={styles.dropdownIcon}>▾</Text>
+          </View>
 
-            <Text style={styles.dropdownIcon}>
-              ▾
-            </Text>
+        </TouchableOpacity>
 
-          </TouchableOpacity>
-
-        </View>
       </View>
 
       {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
@@ -386,25 +387,79 @@ const styles = StyleSheet.create({
   },
   topBarContainer: {
     position: "absolute",
-    top: 70, // Cân chỉnh lại tùy thuộc vào vùng Tai thỏ (SafeArea)
-    left: 16,
+
+    top: 120,
+
     right: 16,
-    gap: 10,
+
+    zIndex: 1000,
   },
-  groupSwitcherBtn: {
-    flexDirection: "row",
+
+  avatarOverlay: {
+    position: "absolute",
+  
+    bottom: 0,
+  
+    width: "100%",
+  
+    height: "50%",
+  
+    backgroundColor: "rgba(0,0,0,0.35)",
+  
+    borderBottomLeftRadius: 32,
+  
+    borderBottomRightRadius: 32,
+  
+    justifyContent: "center",
+  
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 25,
+  },
+  
+  dropdownIcon: {
+    color: "#FFFFFF",
+  
+    fontSize: 18,
+  
+    fontWeight: "700",
+  
+    marginTop: 6, 
+  },
+
+  groupSwitcherBtn: {
+    width: 60,
+
+    height: 60,
+
+    borderRadius: 30,
+
+    backgroundColor: "#fff",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+
+    shadowOpacity: 0.18,
+
+    shadowRadius: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+
     elevation: 5,
-    alignSelf: "flex-end",
-    maxWidth: "80%",
+  },
+
+  groupSwitcherAvatar: {
+    width: 52,
+
+    height: 52,
+
+    borderRadius: 26,
+
+    backgroundColor: "#E2E8F0",
   },
   groupSwitcherText: {
     fontWeight: "600",
@@ -418,25 +473,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.4)",
     zIndex: 10,
-  },
-  
-  groupSwitcherAvatar: {
-    width: 28,
-  
-    height: 28,
-  
-    borderRadius: 14,
-  
-    marginRight: 10,
-  
-    backgroundColor: "#E2E8F0",
-  },
-  
-  dropdownIcon: {
-    fontSize: 16,
-  
-    color: "#64748B",
-  
-    marginLeft: 6,
   },
 });
