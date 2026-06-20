@@ -1,14 +1,15 @@
+import { GroupResponse } from "@/apis/groupAPI";
 import React from "react";
 import {
+  FlatList,
+  Image,
   Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  FlatList,
   TouchableWithoutFeedback,
+  View
 } from "react-native";
-import { GroupResponse } from "@/apis/groupAPI";
 
 type GroupChooseProps = {
   visible: boolean;
@@ -25,7 +26,7 @@ export default function GroupChoose({
   activeGroupId,
   onSelectGroup,
 }: GroupChooseProps) {
-  
+
   const renderItem = ({ item }: { item: GroupResponse }) => {
     const isSelected = item.id === activeGroupId;
 
@@ -38,7 +39,16 @@ export default function GroupChoose({
         }}
       >
         <View style={styles.avatarPlaceholder}>
-          <Text style={styles.avatarText}>👥</Text>
+
+          <Image
+            source={{
+              uri:
+                item.groupPhoto ||
+                `https://ui-avatars.com/api/?name=${item.title}`,
+            }}
+            style={styles.groupAvatar}
+          />
+
         </View>
         <View style={styles.itemInfo}>
           <Text style={[styles.itemTitle, isSelected && styles.itemTitleSelected]}>
@@ -134,8 +144,8 @@ const styles = StyleSheet.create({
     borderColor: "#F3F4F6",
   },
   itemCardSelected: {
-    backgroundColor: "#EFF6FF",
-    borderColor: "#3B82F6",
+    backgroundColor: "#ddfde7",
+    borderColor: "#1AF364",
   },
   avatarPlaceholder: {
     width: 44,
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   itemTitleSelected: {
-    color: "#1D4ED8",
+    color: "#1AF364",
   },
   itemSubtitle: {
     fontSize: 13,
@@ -168,7 +178,7 @@ const styles = StyleSheet.create({
   checkmark: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#3B82F6",
+    color: "#1AF364",
     marginLeft: 8,
   },
   emptyContainer: {
@@ -178,5 +188,16 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#6B7280",
     fontSize: 14,
+  },
+  groupAvatar: {
+    width: 48,
+  
+    height: 48,
+  
+    borderRadius: 14,
+  
+    marginRight: 14,
+  
+    backgroundColor: "#E2E8F0",
   },
 });

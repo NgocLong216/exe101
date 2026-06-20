@@ -106,9 +106,10 @@ export default function GroupMembersScreen() {
   const [memberUids, setMemberUids] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [members, setMembers] = useState<GroupMember[]>([]);
-  const { groupId, groupName } = useLocalSearchParams<{
+  const { groupId, groupName, groupPhoto } = useLocalSearchParams<{
     groupId: string;
     groupName: string;
+    groupPhoto: string;
   }>();
 
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -517,6 +518,7 @@ export default function GroupMembersScreen() {
 
           <TextInput
             placeholder="Search users..."
+            placeholderTextColor="#94A3B8"
             value={searchKeyword}
             onChangeText={(text) => {
               setSearchKeyword(text);
@@ -615,7 +617,8 @@ export default function GroupMembersScreen() {
             params: {
               groupId: groupId,
               groupName: groupName,
-              groupMembers: members.length
+              groupMembers: members.length,
+              groupPhoto: groupPhoto,
             },
           })}
         >
