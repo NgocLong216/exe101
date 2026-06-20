@@ -12,6 +12,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
@@ -144,20 +148,23 @@
                     src="WeGo.png" />
                 <span class="font-headline-md text-headline-md tracking-tighter text-primary">WeGo</span>
             </div>
-            <nav class="hidden md:flex gap-lg items-center">
-                <a class="text-primary font-bold transition-colors duration-300" href="#">Features</a>
-                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
-                    href="#">About</a>
-                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
-                    href="#">Safety</a>
-                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
-                    href="#">Contact</a>
-            </nav>
+<!--            <nav class="hidden md:flex gap-lg items-center">-->
+<!--                <a class="text-primary font-bold transition-colors duration-300" href="#">Features</a>-->
+<!--                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"-->
+<!--                    href="#">About</a>-->
+<!--                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"-->
+<!--                    href="#">Safety</a>-->
+<!--                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"-->
+<!--                    href="#">Contact</a>-->
+<!--            </nav>-->
             <div class="flex items-center gap-md">
                 <span
                     class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform cursor-pointer">explore</span>
-                <button
-                    class="bg-primary-container text-on-primary-container font-label-lg px-6 py-2 rounded-full scale-95 active:scale-90 transition-all hover:shadow-lg">Download</button>
+                <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/a0c480a1-86b2-431d-a948-97ea14f1ca2c" target="_blank">
+                    <button
+                        class="bg-primary-container text-on-primary-container font-label-lg px-6 py-2 rounded-full scale-95 active:scale-90 transition-all hover:shadow-lg">Download
+                    </button>
+                </a>
             </div>
         </div>
     </header>
@@ -175,10 +182,12 @@
                     vời nhất trong thành phố.
                 </p>
                 <div class="pt-md">
-                    <button
-                        class="bg-primary-container text-on-primary-container font-headline-md px-10 py-4 rounded-xl shadow-xl hover:scale-105 transition-transform pulse-shadow">
-                        Tải app ngay
-                    </button>
+                    <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/a0c480a1-86b2-431d-a948-97ea14f1ca2c" target="_blank">
+                        <button
+                            class="bg-primary-container text-on-primary-container font-headline-md px-10 py-4 rounded-xl shadow-xl hover:scale-105 transition-transform pulse-shadow">
+                            Tải app ngay
+                        </button>
+                    </a>
                 </div>
             </div>
             <div class="flex-1 relative w-full flex justify-center">
@@ -300,25 +309,28 @@
             <p class="font-body-sm text-body-sm text-on-surface-variant opacity-80">© 2024 WeGo. All rights reserved.
             </p>
         </div>
-        <div class="flex gap-lg flex-wrap justify-center">
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="#">Features</a>
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="#">About</a>
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="#">Safety</a>
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="#">Contact</a>
-        </div>
+<!--        <div class="flex gap-lg flex-wrap justify-center">-->
+<!--            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"-->
+<!--                href="#">Features</a>-->
+<!--            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"-->
+<!--                href="#">About</a>-->
+<!--            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"-->
+<!--                href="#">Safety</a>-->
+<!--            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"-->
+<!--                href="#">Contact</a>-->
+<!--        </div>-->
         <div class="flex gap-md">
-            <button
+            <button onclick="navigator.clipboard.writeText('https://wego-ten.vercel.app')"
                 class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
                 <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">share</span>
             </button>
-            <button
-                class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
-                <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">language</span>
-            </button>
+
+            <a href="https://www.facebook.com/profile.php?id=61590827939537" target="_blank">
+                <button
+                    class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
+                    <i class="fa-brands fa-facebook-f text-md group-hover:text-on-primary-container"></i>
+                </button>
+            </a>
         </div>
     </footer>
     <script>
