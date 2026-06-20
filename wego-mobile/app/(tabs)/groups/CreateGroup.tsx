@@ -21,7 +21,7 @@ import {
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
     const [groupDescription, setGroupDescription] = useState('');
-    const router = useRouter()
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -52,14 +52,11 @@ export default function CreateGroupScreen() {
 
             if (selectedImage) {
 
-                const filename =
-                    selectedImage.split('/').pop() || 'group.jpg';
+                const filename = selectedImage.split('/').pop() || 'group.jpg';
 
                 const match = /\.(\w+)$/.exec(filename);
 
-                const type = match
-                    ? `image/${match[1]}`
-                    : 'image/jpeg';
+                const type = match ? `image/${match[1]}` : 'image/jpeg';
 
                 formData.append(
                     "groupPhoto",
@@ -70,12 +67,6 @@ export default function CreateGroupScreen() {
                     } as any
                 );
             }
-
-            // optional fields
-            // formData.append("meetingTime", "2026-05-27T20:00:00");
-            // formData.append("lat", "10.123");
-            // formData.append("lng", "106.123");
-            // formData.append("placeId", "abcxyz");
 
             const response = await fetch(
                 `${API_URL}/api/groups`,
@@ -134,8 +125,9 @@ export default function CreateGroupScreen() {
                     >
                         <ArrowLeft size={24} color="#1E293B" />
                     </TouchableOpacity>
+
                     <Text style={styles.headerTitle}>Create New Group</Text>
-                    <View style={{ width: 32 }} /> {/* View đệm để giữ chữ Title ở giữa */}
+                    <View style={{ width: 32 }} />
                 </View>
 
                 {/* Content */}
