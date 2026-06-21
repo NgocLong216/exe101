@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
-import { ArrowLeft, Bot } from "lucide-react-native";
+import { ArrowLeft, Bot, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Markdown from "react-native-markdown-display";
 
 type ChecklistItem = {
   id: string;
@@ -83,23 +82,40 @@ export default function GroupAiChecklist() {
 
   };
 
-  const renderItem = ({
-    item,
-  }: {
-    item: ChecklistItem;
-  }) => (
-    <View style={styles.card}>
-      <View style={styles.card}>
-        <Markdown>
-          {item.content}
-        </Markdown>
+  const deleteChecklist = async (checklistId: string) => {
 
-        <Text style={styles.time}>
-          {new Date(item.createdAt).toLocaleString()}
-        </Text>
-      </View>
-    </View>
-  );
+    try {
+
+      const token =
+        await getAuth().currentUser?.getIdToken();
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/ai-checklist/${checklistId}`,
+        {
+          method: "DELETE",
+
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      // cập nhật UI luôn
+      setItems(prev =>
+        prev.filter(item => item.id !== checklistId)
+      );
+
+    } catch (e) {
+
+      console.log(e);
+
+    }
+
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,31 +211,43 @@ export default function GroupAiChecklist() {
                   Suggested itinerary
                 </Text>
 
-                <Markdown
-                  style={{
-                    body: {
-                      fontSize: 16,
-                      lineHeight: 28,
-                      color: "#334155",
-                    },
+                <View style={{ marginTop: 10 }}>
 
-                    bullet_list: {
-                      marginTop: 12,
-                    },
+                  {items.map(item => (
 
-                    list_item: {
-                      marginBottom: 10,
-                    },
+                    <View
+                      key={item.id}
+                      style={styles.checklistItem}
+                    >
 
-                    bullet_list_icon: {
-                      color: "#1AF364",
-                    },
-                  }}
-                >
-                  {items
-                    .map(item => `- ${item.content}`)
-                    .join("\n")}
-                </Markdown>
+                      <View style={styles.leftContent}>
+
+                        <View style={styles.bullet} />
+
+                        <Text style={styles.itemText}>
+                          {item.content}
+                        </Text>
+
+                      </View>
+
+                      <TouchableOpacity
+                        onPress={() =>
+                          deleteChecklist(item.id)
+                        }
+                      >
+
+                        <X
+                          size={18}
+                          color="#EF4444"
+                        />
+
+                      </TouchableOpacity>
+
+                    </View>
+
+                  ))}
+
+                </View>
 
               </View>
 
@@ -317,204 +345,282 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  
+
     paddingHorizontal: 16,
     paddingVertical: 14,
-  
+
     backgroundColor: "#fff",
-  
+
     borderBottomWidth: 1,
     borderBottomColor: "#E2E8F0",
   },
-  
+
   headerLeft: {
     flexDirection: "row",
     alignItems: "center",
-  
+
     flex: 1,
   },
-  
+
   backButton: {
     marginRight: 12,
   },
-  
+
   avatarWrapper: {
     marginRight: 12,
   },
-  
+
   groupAvatar: {
     width: 40,
     height: 40,
     borderRadius: 12,
     backgroundColor: '#E2E8F0',
   },
-  
+
   groupInfo: {
     flex: 1,
   },
-  
+
   groupName: {
     fontSize: 18,
     fontWeight: "700",
-  
+
     color: "#0F172A",
   },
-  
+
   groupSub: {
     fontSize: 13,
-  
+
     color: "#64748B",
-  
+
     marginTop: 2,
   },
-  
+
   headerActions: {
     flexDirection: "row",
   },
-  
+
   headerBtn: {
     width: 42,
-  
+
     height: 42,
-  
+
     borderRadius: 21,
-  
+
     backgroundColor: "#EFF6FF",
-  
+
     justifyContent: "center",
-  
+
     alignItems: "center",
   },
-  
+
   body: {
     flex: 1,
   },
-  
+
   dateTagContainer: {
     alignItems: "center",
-  
+
     marginBottom: 18,
   },
-  
+
   dateTag: {
     backgroundColor: "#E2E8F0",
-  
+
     borderRadius: 16,
-  
+
     paddingHorizontal: 14,
-  
+
     paddingVertical: 6,
   },
-  
+
   dateTagText: {
     fontSize: 11,
-  
+
     fontWeight: "700",
-  
+
     color: "#475569",
   },
-  
+
   checklistCard: {
     backgroundColor: "#fff",
-  
+
     borderRadius: 22,
-  
+
     padding: 20,
-  
+
     shadowColor: "#000",
-  
+
     shadowOpacity: 0.05,
-  
+
     shadowRadius: 10,
-  
+
     shadowOffset: {
       width: 0,
       height: 4,
     },
-  
+
     elevation: 3,
   },
-  
+
   metaRow: {
+    flexDirection: "row",
+
+    justifyContent: "space-between",
+
+    alignItems: "center",
+
+    marginBottom: 14,
+  },
+
+  tag: {
+    backgroundColor: "#ddfde7",
+
+    paddingHorizontal: 10,
+
+    paddingVertical: 5,
+
+    borderRadius: 10,
+  },
+
+  tagText: {
+    color: "#1AF364",
+
+    fontWeight: "700",
+
+    fontSize: 12,
+  },
+
+  requestText: {
+    color: "#64748B",
+
+    fontSize: 13,
+  },
+
+  title: {
+    fontSize: 24,
+
+    fontWeight: "700",
+
+    color: "#0F172A",
+
+    marginBottom: 16,
+  },
+
+  bottomContainer: {
+    position: "absolute",
+
+    bottom: 44,
+
+    left: 20,
+
+    right: 20,
+  },
+
+  sendAllBtn: {
+    height: 56,
+
+    borderRadius: 28,
+
+    backgroundColor: "#1AF364",
+
+    flexDirection: "row",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    gap: 8,
+  },
+
+  sendBtnText: {
+    color: "#fff",
+
+    fontSize: 16,
+
+    fontWeight: "700",
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+
+    borderRadius: 20,
+
+    padding: 18,
+
+    marginBottom: 16,
+
+    borderWidth: 1,
+
+    borderColor: "#E2E8F0",
+
+    shadowColor: "#000",
+
+    shadowOpacity: 0.06,
+
+    shadowRadius: 10,
+
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+
+    elevation: 3,
+  },
+  checklistItem: {
+
     flexDirection: "row",
   
     justifyContent: "space-between",
   
-    alignItems: "center",
+    alignItems: "flex-start",
   
-    marginBottom: 14,
+    marginBottom: 18,
+  
   },
   
-  tag: {
-    backgroundColor: "#ddfde7",
+  leftContent: {
   
-    paddingHorizontal: 10,
-  
-    paddingVertical: 5,
-  
-    borderRadius: 10,
-  },
-  
-  tagText: {
-    color: "#1AF364",
-  
-    fontWeight: "700",
-  
-    fontSize: 12,
-  },
-  
-  requestText: {
-    color: "#64748B",
-  
-    fontSize: 13,
-  },
-  
-  title: {
-    fontSize: 24,
-  
-    fontWeight: "700",
-  
-    color: "#0F172A",
-  
-    marginBottom: 16,
-  },
-  
-  bottomContainer: {
-    position: "absolute",
-  
-    bottom: 44,
-  
-    left: 20,
-  
-    right: 20,
-  },
-  
-  sendAllBtn: {
-    height: 56,
-  
-    borderRadius: 28,
-  
-    backgroundColor: "#1AF364",
+    flex: 1,
   
     flexDirection: "row",
   
-    justifyContent: "center",
+    alignItems: "flex-start",
   
-    alignItems: "center",
+    marginRight: 12,
   
-    gap: 8,
   },
   
-  sendBtnText: {
-    color: "#fff",
+  bullet: {
+  
+    width: 8,
+  
+    height: 8,
+  
+    borderRadius: 4,
+  
+    backgroundColor: "#1AF364",
+  
+    marginTop: 8,
+  
+    marginRight: 12,
+  
+  },
+  
+  itemText: {
+  
+    flex: 1,
   
     fontSize: 16,
   
-    fontWeight: "700",
+    lineHeight: 26,
+  
+    color: "#334155",
+  
   },
 });

@@ -604,6 +604,31 @@ public class GroupService {
     }
 
     @Transactional
+    public void deleteAiChecklist(
+            UUID groupId,
+            UUID checklistId,
+            String firebaseUid
+    ) {
+
+        GroupAiChecklist checklist = aiChecklistRepository
+                .findById(checklistId)
+                .orElseThrow(() ->
+                        new RuntimeException("Checklist not found"));
+
+        // Kiểm tra checklist có thuộc group này không
+        if (!checklist.getGroup().getId().equals(groupId)) {
+            throw new RuntimeException("Checklist does not belong to this group");
+        }
+
+        // Chỉ người tạo mới được xoá
+        if (!checklist.getSenderFirebaseUid().equals(firebaseUid)) {
+            throw new RuntimeException("You don't have permission to delete this checklist");
+        }
+
+        aiChecklistRepository.delete(checklist);
+    }
+
+    @Transactional
     public AiChatResponse sendChecklistToAi(UUID groupId) {
 
         List<GroupAiChecklist> checklist =

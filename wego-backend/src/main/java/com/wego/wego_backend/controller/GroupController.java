@@ -257,17 +257,17 @@ public class GroupController {
         );
     }
 
-    @PostMapping("/{groupId}/ai-checklist")
-    public ResponseEntity<?> createAiChecklist(
+    @DeleteMapping("/{groupId}/ai-checklist/{checklistId}")
+    public ResponseEntity<?> deleteAiChecklist(
             @PathVariable UUID groupId,
-            @RequestBody CreateAiChecklistRequest request,
+            @PathVariable UUID checklistId,
             Authentication authentication
     ) {
 
-        groupService.createAiChecklist(
+        groupService.deleteAiChecklist(
                 groupId,
-                authentication.getName(),
-                request
+                checklistId,
+                authentication.getName()
         );
 
         return ResponseEntity.ok().build();
