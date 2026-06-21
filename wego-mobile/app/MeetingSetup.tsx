@@ -111,7 +111,7 @@ function TimeScroll({ value, onChange, options }: TimeScrollProps) {
         decelerationRate="fast"
         snapToInterval={36}
       >
-        <View style={{ height: 36 }} />
+        <View style={{ height: 72 }} />
         {options.map((item, index) => (
           <View key={item} style={styles.timeItem}>
             <Text
@@ -124,7 +124,7 @@ function TimeScroll({ value, onChange, options }: TimeScrollProps) {
             </Text>
           </View>
         ))}
-        <View style={{ height: 36 }} />
+        <View style={{ height: 72 }} />
       </ScrollView>
     </View>
   );
@@ -787,7 +787,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: COLORS.textMuted,
     marginHorizontal: 4,
-    marginTop: -70,
   },
   timezoneRow: {
     flexDirection: "row",
