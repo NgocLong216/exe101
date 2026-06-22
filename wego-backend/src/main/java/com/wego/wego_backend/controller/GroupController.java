@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -254,6 +255,45 @@ public class GroupController {
 
         return ResponseEntity.ok(
                 groupService.getAiChecklist(groupId)
+        );
+    }
+
+    @PostMapping("/{groupId}/ai-checklist")
+    public ResponseEntity<?> createAiChecklist(
+            @PathVariable UUID groupId,
+            @RequestBody CreateAiChecklistRequest request,
+            Authentication authentication
+    ) {
+
+        groupService.createAiChecklist(
+                groupId,
+                authentication.getName(),
+                request
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{groupId}/ai-checklist/count")
+    public ResponseEntity<?> getAiChecklistCount(
+
+            @PathVariable UUID groupId,
+
+            Authentication authentication
+
+    ) {
+
+        long count = groupService
+                .getAiChecklistCount(
+                        groupId,
+                        authentication.getName()
+                );
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "count",
+                        count
+                )
         );
     }
 

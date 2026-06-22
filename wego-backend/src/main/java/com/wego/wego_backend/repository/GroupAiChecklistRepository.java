@@ -17,4 +17,5 @@ public interface GroupAiChecklistRepository
 
     void deleteByGroupId(UUID groupId);
     long countBySentToAiTrue();
+    long countByGroup_IdAndSentToAiFalse(UUID groupId);
 }

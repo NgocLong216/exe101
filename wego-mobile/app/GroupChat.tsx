@@ -10,6 +10,8 @@ import {
 import { ArrowLeft, Bot, Plus, Send } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -20,7 +22,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import { db } from "@/firebase";
@@ -92,6 +94,138 @@ export default function GroupChatScreen() {
 
   const hasRunChecklistRef = useRef(false);
 
+  const [checklistCount, setChecklistCount] =
+    useState(0);
+
+  const botRef = useRef<View>(null);
+
+  const [botPosition, setBotPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const flyRef = useRef<View>(null);
+
+  const [flyPosition, setFlyPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const flyAnim = useRef(
+    new Animated.ValueXY({
+      x: 0,
+      y: 0,
+    })
+  ).current;
+
+  const flyScale = useRef(
+    new Animated.Value(1)
+  ).current;
+
+  const flyOpacity = useRef(
+    new Animated.Value(0)
+  ).current;
+
+  const botScale = useRef(
+    new Animated.Value(1)
+  ).current;
+
+  const triggerBotPulse = () => {
+
+    Animated.sequence([
+
+      Animated.timing(
+        botScale,
+        {
+          toValue: 1.25,
+
+          duration: 150,
+
+          useNativeDriver: true,
+        }
+      ),
+
+      Animated.timing(
+        botScale,
+        {
+          toValue: 1,
+
+          duration: 150,
+
+          useNativeDriver: true,
+        }
+      ),
+
+    ]).start();
+  };
+
+  const animateToBot = () => {
+
+    flyOpacity.setValue(1);
+
+    flyScale.setValue(1);
+
+    flyAnim.setValue({
+      x: 0,
+      y: 0,
+    });
+
+    const dx =
+      botPosition.x -
+      flyPosition.x;
+
+    const dy =
+      botPosition.y -
+      flyPosition.y;
+
+    Animated.parallel([
+
+      Animated.timing(
+        flyAnim,
+        {
+
+          toValue: {
+
+            x: dx,
+
+            y: dy,
+
+          },
+
+          duration: 800,
+
+          easing: Easing.out(
+            Easing.cubic
+          ),
+
+          useNativeDriver: true,
+
+        }
+      ),
+
+      Animated.timing(
+        flyScale,
+        {
+
+          toValue: 0.15,
+
+          duration: 800,
+
+          useNativeDriver: true,
+
+        }
+      ),
+
+    ]).start(() => {
+
+      flyOpacity.setValue(0);
+
+      triggerBotPulse();
+
+    });
+
+  };
+
   useEffect(() => {
 
     setTimeout(() => {
@@ -103,6 +237,52 @@ export default function GroupChatScreen() {
     }, 200);
 
   }, [messages]);
+
+  const loadChecklistCount =
+    async () => {
+
+      try {
+
+        const token =
+          await getAuth()
+            .currentUser
+            ?.getIdToken();
+
+        const response =
+          await fetch(
+            `${API_URL}/api/groups/${groupId}/ai-checklist/count`,
+            {
+              headers: {
+                Authorization:
+                  `Bearer ${token}`,
+              },
+            }
+          );
+
+        const data =
+          await response.json();
+
+        setChecklistCount(
+          data.count
+        );
+
+      } catch (e) {
+
+        console.log(e);
+
+      }
+
+    };
+
+  useEffect(() => {
+
+    if (groupId) {
+
+      loadChecklistCount();
+
+    }
+
+  }, [groupId]);
 
   const handleSend = async () => {
 
@@ -146,6 +326,8 @@ export default function GroupChatScreen() {
       text.startsWith("@bot")
     ) {
 
+      animateToBot();
+
       const question =
         text.replace("@bot", "")
           .trim();
@@ -157,6 +339,8 @@ export default function GroupChatScreen() {
       await sendNormalMessage(text);
 
       await saveAiChecklist(question);
+
+      await loadChecklistCount();
 
       setSelectedMention(null);
 
@@ -408,44 +592,44 @@ export default function GroupChatScreen() {
       const aiResponse =
         await response.json();
 
-        const messagesRef =
+      const messagesRef =
         ref(db, `group_chats/${groupId}`);
-      
+
       // lưu text AI
       const aiRef =
         push(messagesRef);
-      
+
       await set(aiRef, {
         senderUid: "wego_ai",
         senderName: "WeGo AI",
         senderAvatar:
           "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
-      
+
         type: "ai-text",
-      
+
         text:
           aiResponse.message ??
           "No response",
-      
+
         timestamp: Date.now(),
       });
-      
+
       // lưu place cards
       for (const place of aiResponse.places || []) {
-      
+
         const placeRef =
           push(messagesRef);
-      
+
         await set(placeRef, {
           senderUid: "wego_ai",
-      
+
           senderName: "WeGo AI",
-      
+
           senderAvatar:
             "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
-      
+
           type: "map",
-      
+
           mapData: {
             title: place.name,
             description: place.address,
@@ -453,7 +637,7 @@ export default function GroupChatScreen() {
             lat: place.lat,
             lng: place.lng,
           },
-      
+
           timestamp: Date.now(),
         });
       }
@@ -564,10 +748,62 @@ export default function GroupChatScreen() {
               })
             }
           >
-            <Bot
-              size={22}
-              color="#2563EB"
-            />
+            <Animated.View
+
+              ref={botRef}
+
+              onLayout={() => {
+
+                botRef.current?.measureInWindow(
+                  (x, y, width, height) => {
+
+                    setBotPosition({
+
+                      x: x + width / 2,
+
+                      y: y + height / 2,
+
+                    });
+
+                  }
+                );
+
+              }}
+
+              style={[
+                styles.botIcon,
+
+                {
+                  transform: [
+                    {
+                      scale: botScale,
+                    },
+                  ],
+                },
+              ]}
+            >
+
+              <Bot
+                size={22}
+                color="#2563EB"
+              />
+              {checklistCount > 0 && (
+
+                <View style={styles.badge}>
+
+                  <Text
+                    style={styles.badgeText}
+                  >
+
+                    {checklistCount}
+
+                  </Text>
+
+                </View>
+
+              )}
+
+            </Animated.View>
           </TouchableOpacity>
 
         </View>
@@ -785,6 +1021,69 @@ export default function GroupChatScreen() {
             <Send size={20} color="#FFFFFF" style={{ marginLeft: 2 }} />
           </TouchableOpacity>
         </View>
+        <Animated.View
+
+          ref={flyRef}
+
+          onLayout={() => {
+
+            flyRef.current?.measureInWindow(
+
+              (x, y, width, height) => {
+
+                setFlyPosition({
+
+                  x,
+
+                  y,
+
+                });
+
+              }
+
+            );
+
+          }}
+
+          pointerEvents="none"
+
+          style={[
+
+            styles.flyingTag,
+
+            {
+
+              opacity: flyOpacity,
+
+              transform: [
+
+                {
+                  translateX: flyAnim.x,
+                },
+
+                {
+                  translateY: flyAnim.y,
+                },
+
+                {
+                  scale: flyScale,
+                },
+
+              ],
+
+            },
+
+          ]}
+
+        >
+
+          <Text style={styles.flyText}>
+
+            @bot
+
+          </Text>
+
+        </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -856,15 +1155,15 @@ const styles = StyleSheet.create({
   },
   headerBtn: {
     width: 42,
-  
+
     height: 42,
-  
+
     borderRadius: 21,
-  
+
     backgroundColor: "#EFF6FF",
-  
+
     justifyContent: "center",
-  
+
     alignItems: "center",
   },
 
@@ -1074,5 +1373,79 @@ const styles = StyleSheet.create({
     fontSize: 15,
 
     fontWeight: "600",
+  },
+  flyingTag: {
+
+    position: "absolute",
+
+    bottom: 90,
+
+    left: 40,
+
+    zIndex: 9999,
+
+    backgroundColor: "#2563EB",
+
+    paddingHorizontal: 14,
+
+    paddingVertical: 8,
+
+    borderRadius: 20,
+  },
+
+  flyText: {
+
+    color: "#fff",
+
+    fontWeight: "700",
+
+    fontSize: 15,
+  },
+
+  botIcon: {
+
+    width: 42,
+
+    height: 42,
+
+    borderRadius: 21,
+
+    justifyContent: "center",
+
+    alignItems: "center",
+  },
+
+  badge: {
+
+    position: "absolute",
+  
+    top: -6,
+  
+    right: -6,
+  
+    minWidth: 18,
+  
+    height: 18,
+  
+    borderRadius: 9,
+  
+    backgroundColor: "#EF4444",
+  
+    justifyContent: "center",
+  
+    alignItems: "center",
+  
+    paddingHorizontal: 4,
+  
+  },
+  
+  badgeText: {
+  
+    color: "#FFF",
+  
+    fontSize: 11,
+  
+    fontWeight: "700",
+  
   },
 });
