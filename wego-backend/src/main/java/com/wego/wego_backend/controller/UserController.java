@@ -1,8 +1,6 @@
 package com.wego.wego_backend.controller;
 
-import com.wego.wego_backend.dto.PushTokenRequest;
-import com.wego.wego_backend.dto.SuggestPlaceRequest;
-import com.wego.wego_backend.dto.UpdateProfileRequest;
+import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.repository.UserRepository;
 import com.wego.wego_backend.service.UserService;
 import jakarta.validation.Valid;
@@ -98,6 +96,38 @@ public class UserController {
         userService.updatePushToken(
                 firebaseUid,
                 request.getExpoPushToken()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/notification-setting")
+    public ResponseEntity<?> updateNotificationSetting(
+            @RequestBody UpdateNotificationSettingRequest request,
+            Authentication authentication
+    ) {
+
+        userService.updateNotificationSetting(
+                authentication.getName(),
+                request.getEnabled()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/location-sharing")
+    public ResponseEntity<?> updateLocationSharing(
+
+            @RequestBody UpdateLocationSharingRequest request,
+
+            Authentication authentication
+    ) {
+
+        userService.updateLocationSharing(
+
+                authentication.getName(),
+
+                request.getEnabled()
         );
 
         return ResponseEntity.ok().build();

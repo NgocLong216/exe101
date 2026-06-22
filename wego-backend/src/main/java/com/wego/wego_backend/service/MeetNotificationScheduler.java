@@ -62,26 +62,35 @@ public class MeetNotificationScheduler {
                         .findById(
                                 member.getUserFirebaseUid()
                         )
-                        .ifPresent(user->{
+                        .ifPresent(user -> {
 
-                            if(user.getExpoPushToken()!=null){
-
-                                System.out.println(
-                                        "Sending to "
-                                                + user.getExpoPushToken()
-                                );
-
-                                expoNotificationService.send(
-
-                                        user.getExpoPushToken(),
-
-                                        "Đến giờ gặp mặt",
-
-                                        group.getTitle()
-                                                + " bắt đầu ngay bây giờ"
-
-                                );
+                            // Người dùng đã tắt notification
+                            if (!Boolean.TRUE.equals(
+                                    user.getNotificationsEnabled()
+                            )) {
+                                return;
                             }
+
+                            // Chưa có Expo token
+                            if (user.getExpoPushToken() == null) {
+                                return;
+                            }
+
+                            System.out.println(
+                                    "Sending to "
+                                            + user.getExpoPushToken()
+                            );
+
+                            expoNotificationService.send(
+
+                                    user.getExpoPushToken(),
+
+                                    "Đến giờ gặp mặt",
+
+                                    group.getTitle()
+                                            + " bắt đầu ngay bây giờ"
+
+                            );
 
                         });
             }

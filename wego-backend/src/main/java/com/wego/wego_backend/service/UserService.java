@@ -8,6 +8,7 @@ import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -183,6 +184,38 @@ public class UserService {
                 .orElseThrow();
 
         user.setExpoPushToken(token);
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateNotificationSetting(
+            String firebaseUid,
+            Boolean enabled
+    ) {
+
+        User user = userRepository.findById(firebaseUid)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found")
+                );
+
+        user.setNotificationsEnabled(enabled);
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateLocationSharing(
+            String firebaseUid,
+            Boolean enabled
+    ) {
+
+        User user = userRepository.findById(firebaseUid)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found")
+                );
+
+        user.setLocationSharingEnabled(enabled);
 
         userRepository.save(user);
     }
