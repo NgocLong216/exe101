@@ -7,7 +7,7 @@ import com.wego.wego_backend.constant.GroupStatus;
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.*;
 import com.wego.wego_backend.repository.*;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -684,6 +684,35 @@ public class GroupService {
         aiChecklistRepository.saveAll(checklist);
 
         return response;
+    }
+
+    @Transactional
+    public long getAiChecklistCount(
+            UUID groupId,
+            String firebaseUid
+    ) {
+
+        groupRepository.findById(groupId)
+                .orElseThrow(() ->
+                        new RuntimeException("Group not found"));
+
+        boolean isMember =
+                groupMemberRepository
+                        .findByGroup_IdAndUserFirebaseUid(
+                                groupId,
+                                firebaseUid
+                        )
+                        .isPresent();
+
+        if (!isMember) {
+
+            throw new RuntimeException(
+                    "You are not a member of this group"
+            );
+        }
+
+        return aiChecklistRepository
+                .countByGroup_IdAndSentToAiFalse(groupId);
     }
 
     @Transactional
