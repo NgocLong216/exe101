@@ -34,4 +34,10 @@ public class User {
     private Role role;
 
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private Boolean notificationsEnabled = true;
+
+    @Column(nullable = false)
+    private Boolean locationSharingEnabled = true;
 }

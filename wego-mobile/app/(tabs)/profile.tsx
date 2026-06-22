@@ -1,6 +1,12 @@
+import { updateLocationSharing } from '@/apis/locationAPI';
+import { updateNotificationSetting } from '@/apis/notificationAPI';
 import { useAuth } from '@/auth0/AuthContext';
+import { auth } from '@/firebase';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -9,7 +15,7 @@ import {
   Switch,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 const GREEN = '#22c55e';
@@ -21,6 +27,122 @@ export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [locationSharing, setLocationSharing] = useState(true);
   const { user, logout, loading } = useAuth()
+
+  const registerForPushNotifications = async () => {
+    if (!Device.isDevice) return false;
+
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+      const { status } =
+        await Notifications.requestPermissionsAsync();
+
+      finalStatus = status;
+    }
+
+    if (finalStatus !== 'granted') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const toggleNotifications = async (
+    value: boolean
+  ) => {
+  
+    try {
+  
+      setPushNotifications(value);
+  
+      await AsyncStorage.setItem(
+        'pushNotifications',
+        JSON.stringify(value)
+      );
+  
+      const token =
+        await auth
+          .currentUser
+          ?.getIdToken();
+  
+      if (!token) return;
+  
+      await updateNotificationSetting(
+        value,
+        token
+      );
+  
+    } catch (error) {
+  
+      console.log(error);
+  
+      setPushNotifications(!value);
+    }
+  };
+
+  useEffect(() => {
+    const loadSetting = async () => {
+      const value = await AsyncStorage.getItem(
+        'pushNotifications'
+      );
+
+      if (value !== null) {
+        setPushNotifications(JSON.parse(value));
+      }
+    };
+
+    loadSetting();
+  }, []);
+
+  const toggleLocationSharing = async (
+    value: boolean
+  ) => {
+  
+    try {
+  
+      setLocationSharing(value);
+  
+      await AsyncStorage.setItem(
+        'locationSharing',
+        JSON.stringify(value)
+      );
+
+      const token =
+        await auth
+          .currentUser
+          ?.getIdToken();
+  
+      if (!token) return;
+  
+      await updateLocationSharing(
+        value,
+        token
+      );
+  
+    } catch (error) {
+  
+      console.log(error);
+  
+      setLocationSharing(!value);
+    }
+  };
+
+  useEffect(() => {
+    const loadSetting = async () => {
+      const value = await AsyncStorage.getItem('locationSharing');
+  
+      if (value !== null) {
+        setLocationSharing(JSON.parse(value));
+      } else {
+        setLocationSharing(false); // hoặc default bạn muốn
+      }
+    };
+  
+    loadSetting();
+  }, []);
 
   const SectionLabel = ({ title }: { title: string }) => (
     <Text style={styles.sectionLabel}>{title}</Text>
@@ -92,7 +214,7 @@ export default function SettingsScreen() {
             rightElement={
               <Switch
                 value={pushNotifications}
-                onValueChange={setPushNotifications}
+                onValueChange={toggleNotifications}
                 trackColor={{ false: '#d1d5db', true: GREEN }}
                 thumbColor="#fff"
               />
@@ -105,7 +227,7 @@ export default function SettingsScreen() {
             rightElement={
               <Switch
                 value={locationSharing}
-                onValueChange={setLocationSharing}
+                onValueChange={toggleLocationSharing}
                 trackColor={{ false: '#d1d5db', true: GREEN }}
                 thumbColor="#fff"
               />
@@ -121,7 +243,7 @@ export default function SettingsScreen() {
             label="Map Style"
             subtitle="Standard"
             rightElement={<Ionicons name="chevron-forward" size={18} color="#d1d5db" />}
-            onPress={() => {}}
+            onPress={() => { }}
           />
           <View style={styles.divider} />
           <RowItem
@@ -129,7 +251,7 @@ export default function SettingsScreen() {
             label="Unit System"
             subtitle="Metric (km)"
             rightElement={<Ionicons name="chevron-forward" size={18} color="#d1d5db" />}
-            onPress={() => {}}
+            onPress={() => { }}
           />
         </View>
 
@@ -140,14 +262,14 @@ export default function SettingsScreen() {
             icon="lock-closed-outline"
             label="Privacy Policy"
             rightElement={<Ionicons name="open-outline" size={18} color="#d1d5db" />}
-            onPress={() => {}}
+            onPress={() => { }}
           />
           <View style={styles.divider} />
           <RowItem
             icon="document-text-outline"
             label="Terms of Service"
             rightElement={<Ionicons name="open-outline" size={18} color="#d1d5db" />}
-            onPress={() => {}}
+            onPress={() => { }}
           />
         </View>
 
