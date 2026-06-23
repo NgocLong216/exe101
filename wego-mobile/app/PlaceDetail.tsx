@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, Coffee, Heart, Navigation, Share2, Star, Wifi } from 'lucide-react-native';
+import { ArrowLeft, Coffee, Navigation, Star, Wifi } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -206,14 +206,14 @@ export default function PlaceDetailScreen() {
                             >
                                 <ArrowLeft size={22} color="#FFFFFF" />
                             </TouchableOpacity>
-                            <View style={styles.rightHeaderActions}>
+                            {/* <View style={styles.rightHeaderActions}>
                                 <TouchableOpacity style={styles.circleHeaderBtn}>
                                     <Heart size={22} color="#FFFFFF" />
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.circleHeaderBtn}>
                                     <Share2 size={22} color="#FFFFFF" />
                                 </TouchableOpacity>
-                            </View>
+                            </View> */}
                         </View>
                     </SafeAreaView>
                 </View>

@@ -76,6 +76,7 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
                 <Search />
                 <TextInput
                     placeholder="Search location..."
+                    placeholderTextColor="#94A3B8"
                     value={query}
                     onChangeText={setQuery}
                     style={styles.input}
