@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="vi"><head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Điều khoản dịch vụ | WeGo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#cbd3ed",
+                      "surface": "#f6fafe",
+                      "on-secondary-fixed-variant": "#454747",
+                      "surface-container-low": "#f0f4f8",
+                      "surface-bright": "#f6fafe",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#616363",
+                      "on-surface": "#171c1f",
+                      "surface-variant": "#dfe3e7",
+                      "outline-variant": "#bacbb6",
+                      "on-tertiary-container": "#535b71",
+                      "primary-fixed-dim": "#00e55b",
+                      "on-surface-variant": "#3b4b3a",
+                      "primary-fixed": "#6bff84",
+                      "secondary-container": "#dfe0e0",
+                      "on-primary-container": "#006a26",
+                      "tertiary-fixed-dim": "#bec6e0",
+                      "surface-dim": "#d6dade",
+                      "on-tertiary-fixed": "#131b2e",
+                      "surface-container-highest": "#dfe3e7",
+                      "inverse-on-surface": "#edf1f5",
+                      "tertiary": "#565e74",
+                      "on-primary-fixed-variant": "#00531c",
+                      "surface-container": "#eaeef2",
+                      "secondary": "#5d5f5f",
+                      "inverse-primary": "#00e55b",
+                      "surface-tint": "#006e28",
+                      "outline": "#6b7b69",
+                      "on-tertiary-fixed-variant": "#3f465c",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "background": "#f6fafe",
+                      "primary": "#006e28",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#e2e2e2",
+                      "on-background": "#171c1f",
+                      "on-primary-fixed": "#002107",
+                      "inverse-surface": "#2c3134",
+                      "secondary-fixed-dim": "#c6c6c7",
+                      "primary-container": "#1af364",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-container-high": "#e4e9ed",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#dae2fd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "xl": "40px",
+                      "md": "16px",
+                      "unit": "4px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Hanken Grotesk"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-sm": ["Inter"],
+                      "headline-xl": ["Hanken Grotesk"],
+                      "label-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 110, 40, 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .pulse-accent {
+            box-shadow: 0 0 0 0 rgba(26, 243, 100, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 243, 100, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(26, 243, 100, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 243, 100, 0); }
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface/90 dark:bg-on-background/90 backdrop-blur-md shadow-sm fixed top-0 w-full z-50">
+    <div
+            class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+        <div class="flex items-center gap-2">
+            <img alt="WeGo Logo" class="h-8 md:h-10"
+                 src="WeGo.png" />
+            <span class="font-headline-md text-headline-md tracking-tighter text-primary">WeGo</span>
+        </div>
+        <nav class="hidden md:flex gap-lg items-center">
+            <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300" href="index.html">Features</a>
+            <a class="text-primary font-bold transition-colors duration-300"
+               href="term.html">Term of Service</a>
+            <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+               href="policy.html">Privacy Policy</a>
+        </nav>
+        <div class="flex items-center gap-md">
+                <span
+                        class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform cursor-pointer">explore</span>
+            <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/a0c480a1-86b2-431d-a948-97ea14f1ca2c" target="_blank">
+                <button
+                        class="bg-primary-container text-on-primary-container font-label-lg px-6 py-2 rounded-full scale-95 active:scale-90 transition-all hover:shadow-lg">Download
+                </button>
+            </a>
+        </div>
+    </div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-5xl mx-auto">
+    <!-- Hero Title Section -->
+    <header class="mb-12 text-center md:text-left">
+        <h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface mb-4">
+            Điều khoản <span class="text-primary">dịch vụ</span>
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+            Chào mừng bạn đến với WeGo. Vui lòng đọc kỹ các điều khoản này trước khi bắt đầu hành trình khám phá và kết nối cùng chúng tôi.
+        </p>
+    </header>
+    <!-- Dynamic Bento Grid of Content -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- Section 1: Introduction -->
+        <section class="md:col-span-12 glass-card rounded-[1.5rem] p-8 relative overflow-hidden group" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out;">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+            <div class="flex items-start gap-4">
+                <div class="bg-primary-container p-3 rounded-xl text-on-primary-container">
+                    <span class="material-symbols-outlined" data-icon="article">article</span>
+                </div>
+                <div>
+                    <h2 class="font-headline-md text-headline-md mb-4">1. Giới thiệu chung</h2>
+                    <p class="text-on-surface-variant leading-relaxed">
+                        Bằng cách truy cập hoặc sử dụng ứng dụng WeGo, bạn đồng ý chịu sự ràng buộc bởi các Điều khoản dịch vụ này. WeGo là một nền tảng bản đồ xã hội cho phép người dùng chia sẻ vị trí, tạo nhóm khám phá và tương tác trực tiếp trên bản đồ số. Mục tiêu của chúng tôi là tạo ra một cộng đồng năng động, an toàn và gắn kết.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- Section 2: User Responsibilities -->
+        <section class="md:col-span-7 glass-card rounded-[1.5rem] p-8" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out 0.1s;">
+            <div class="bg-primary-container/20 w-fit p-3 rounded-xl text-primary mb-6">
+                <span class="material-symbols-outlined" data-icon="person_check">person_check</span>
+            </div>
+            <h2 class="font-headline-md text-headline-md mb-4">2. Trách nhiệm người dùng</h2>
+            <ul class="space-y-4 text-on-surface-variant">
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+                    <span class="">Cung cấp thông tin chính xác khi đăng ký tài khoản và cập nhật kịp thời khi có thay đổi.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+                    <span class="">Sử dụng các tính năng bản đồ và nhóm một cách văn minh, tôn trọng quyền riêng tư của người khác.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+                    <span class="">Tự bảo mật thông tin tài khoản và mật khẩu, chịu trách nhiệm cho mọi hoạt động dưới tên người dùng của bạn.</span>
+                </li>
+            </ul>
+        </section>
+        <!-- Section 3: Prohibited Activities -->
+        <section class="md:col-span-5 glass-card rounded-[1.5rem] p-8 bg-on-error-container/[0.02] border-error/10" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out 0.2s;">
+            <div class="bg-error-container p-3 rounded-xl text-on-error-container w-fit mb-6">
+                <span class="material-symbols-outlined" data-icon="block">block</span>
+            </div>
+            <h2 class="font-headline-md text-headline-md mb-4">3. Hành vi bị cấm</h2>
+            <div class="space-y-4 text-on-surface-variant text-body-sm">
+                <p class="">• Sử dụng dữ liệu vị trí của người dùng khác cho mục đích theo dõi hoặc quấy rối trái phép.</p>
+                <p class="">• Giả mạo vị trí GPS hoặc tạo các điểm nóng (hotspots) giả để đánh lừa cộng đồng.</p>
+                <p class="">• Đăng tải nội dung độc hại, xúc phạm hoặc vi phạm tiêu chuẩn cộng đồng của WeGo.</p>
+            </div>
+        </section>
+        <!-- Section 4: Intellectual Property -->
+        <section class="md:col-span-5 glass-card rounded-[1.5rem] p-8 border-l-4 border-l-primary" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out 0.3s;">
+            <h2 class="font-headline-md text-headline-md mb-4">4. Sở hữu trí tuệ</h2>
+            <p class="text-on-surface-variant leading-relaxed mb-4">
+                Tất cả logo, nhãn hiệu "WeGo", thiết kế giao diện và mã nguồn đều thuộc sở hữu độc quyền của chúng tôi.
+            </p>
+            <div class="bg-surface-container rounded-lg p-4 font-label-sm italic">
+                "WeGo và biểu tượng Pulse Green là nhãn hiệu đã được bảo hộ."
+            </div>
+        </section>
+        <!-- Section 5: Limitation of Liability -->
+        <section class="md:col-span-7 glass-card rounded-[1.5rem] p-8 bg-primary-container/[0.03]" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out 0.4s;">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="material-symbols-outlined text-primary" data-icon="gpp_maybe">gpp_maybe</span>
+                <h2 class="font-headline-md text-headline-md">5. Giới hạn trách nhiệm</h2>
+            </div>
+            <p class="text-on-surface-variant mb-4">
+                WeGo cung cấp dịch vụ dựa trên dữ liệu GPS và bản đồ bên thứ ba. Chúng tôi không đảm bảo độ chính xác tuyệt đối 100% của vị trí trong mọi điều kiện thời tiết hoặc địa hình.
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/50 p-3 rounded-xl border border-outline-variant">
+                    <p class="font-bold text-primary text-sm">An toàn cá nhân</p>
+                    <p class="text-[12px] opacity-70">Người dùng tự chịu trách nhiệm khi gặp gỡ trực tiếp.</p>
+                </div>
+                <div class="bg-white/50 p-3 rounded-xl border border-outline-variant">
+                    <p class="font-bold text-primary text-sm">Dữ liệu mạng</p>
+                    <p class="text-[12px] opacity-70">Phụ thuộc vào kết nối internet của nhà mạng.</p>
+                </div>
+            </div>
+        </section>
+        <!-- Section 6: Changes to Terms -->
+        <section class="md:col-span-12 glass-card rounded-[1.5rem] p-8 flex flex-col md:flex-row items-center gap-8" style="opacity: 1; transform: translateY(0px); transition: 0.6s ease-out 0.5s;">
+            <div class="md:w-1/3">
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg">
+                    <div class="w-full h-full bg-cover bg-center" data-alt="A futuristic notification interface showing a green pulse animation over a clean white map background. The visual style is modern, minimal, and high-tech, reflecting the Kinetic Path design system with soft glassmorphism effects and sharp typography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCs4fnvld_kHu4H_WCjxJ4EXIENXAjMgDWnZIaqQ2EtJIQWr8AQzV-SjqTRZlBQ658-gfUwh11Hwtm2Qm_5WHDOiDsH2fMg33Z1eGsrOqxdimBKkPmusGVN3_azSKJrdWhMKqQBBrvWSFqbfnGeDhWPNcbw8w5vZGFTvzlAV0-rNXCU4Pc3SNK6BkAmYuvhL-D57j4EMbnyahziedX3GYEh5X4Dl0ZI9dz3EeYkuxXIbMWawV3q1AJvZMKVzaqE1dpzC4mwuMTc4Wix')"></div>
+                </div>
+            </div>
+            <div class="md:w-2/3">
+                <h2 class="font-headline-md text-headline-md mb-4">6. Thay đổi điều khoản</h2>
+                <p class="text-on-surface-variant leading-relaxed">
+                    WeGo có quyền cập nhật các điều khoản này bất kỳ lúc nào để phù hợp với các tính năng mới hoặc quy định pháp luật. Khi có thay đổi quan trọng, chúng tôi sẽ thông báo trực tiếp qua ứng dụng hoặc email đăng ký của bạn. Việc tiếp tục sử dụng ứng dụng sau khi cập nhật đồng nghĩa với việc bạn chấp nhận các điều khoản mới.
+                </p>
+                <button class="mt-6 flex items-center gap-2 text-primary font-bold hover:underline">
+                    Tìm hiểu thêm về quy trình cập nhật
+                    <span class="material-symbols-outlined">trending_flat</span>
+                </button>
+            </div>
+        </section>
+    </div>
+    <!-- Contact Support Floating Card -->
+    <div class="mt-12 bg-inverse-surface text-inverse-on-surface p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+            <h3 class="font-headline-md text-headline-md mb-2">Bạn có thắc mắc?</h3>
+            <p class="opacity-80">Đội ngũ hỗ trợ của WeGo luôn sẵn sàng giải đáp các vấn đề về pháp lý và bảo mật.</p>
+        </div>
+        <a class="bg-primary-container text-on-primary-container px-8 py-4 rounded-full font-bold pulse-accent transition-transform hover:scale-105 active:scale-95" href="mailto:support@wego.com">
+            Liên hệ ngay
+        </a>
+    </div>
+</main>
+<!-- Footer Area -->
+<footer
+        class="bg-surface-container-lowest dark:bg-inverse-surface w-full px-margin-mobile md:px-margin-desktop py-xl flex flex-col md:flex-row justify-between items-center gap-lg">
+    <div class="flex flex-col items-center md:items-start gap-sm">
+        <div class="flex items-center gap-2">
+            <img alt="WeGo Logo" class="h-6"
+                 src="WeGo.png" />
+            <span class="font-headline-md text-headline-md text-on-surface">WeGo</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant opacity-80">© 2024 WeGo. All rights reserved.
+        </p>
+    </div>
+    <div class="flex gap-lg flex-wrap justify-center">
+        <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+           href="index.html">Features</a>
+        <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+           href="term.html">Term of Service</a>
+        <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
+           href="policy.html">Privacy Policy</a>
+    </div>
+    <div class="flex gap-md">
+        <button onclick="navigator.clipboard.writeText('https://wego-ten.vercel.app')"
+                class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
+            <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">share</span>
+        </button>
+
+        <a href="https://www.facebook.com/profile.php?id=61590827939537" target="_blank">
+            <button
+                    class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
+                <i class="fa-brands fa-facebook-f text-md group-hover:text-on-primary-container"></i>
+            </button>
+        </a>
+    </div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-container-low border-t border-outline-variant/30 px-4 py-2 flex justify-around items-center rounded-t-xl shadow-lg">
+    <a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+        <span class="material-symbols-outlined" data-icon="star">star</span>
+        <span class="font-label-sm text-[10px] mt-1">Tính năng</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+        <span class="material-symbols-outlined" data-icon="info">info</span>
+        <span class="font-label-sm text-[10px] mt-1">Giới thiệu</span>
+    </a>
+    <a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 px-4 shadow-md" href="#">
+        <span class="material-symbols-outlined" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+        <span class="font-label-sm text-[10px] mt-1">An toàn</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+        <span class="material-symbols-outlined" data-icon="mail">mail</span>
+        <span class="font-label-sm text-[10px] mt-1">Liên hệ</span>
+    </a>
+</nav>
+<script>
+    // Micro-interactions for scrolling
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(card);
+        });
+    });
+</script>
+
+
+</body></html>
