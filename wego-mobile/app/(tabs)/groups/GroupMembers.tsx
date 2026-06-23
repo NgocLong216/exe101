@@ -1,4 +1,6 @@
+import { getInviteLink } from '@/apis/groupAPI';
 import { auth, db } from '@/firebase';
+import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { off, onValue, ref } from "firebase/database";
 import { ArrowLeft, Bot, ChevronRight, Navigation, Search, UserPlus } from 'lucide-react-native';
@@ -385,8 +387,39 @@ export default function GroupMembersScreen() {
     }
   };
 
-  const handleCopyLink = () => {
-    Alert.alert('Link Copied', 'Invite link has been copied to clipboard.');
+  const handleCopyInvite = async () => {
+
+    try {
+  
+      const res =
+        await getInviteLink(groupId);
+  
+      await Clipboard.setStringAsync(
+  
+        res.data.inviteLink
+  
+      );
+  
+      Alert.alert(
+  
+        "Success",
+  
+        "Invite link copied"
+  
+      );
+  
+    } catch {
+  
+      Alert.alert(
+  
+        "Error",
+  
+        "Cannot copy invite link"
+  
+      );
+  
+    }
+  
   };
 
   const handleDeleteGroup = () => {

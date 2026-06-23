@@ -58,6 +58,13 @@ public class GroupService {
         group.setHostFirebaseUid(hostUid);
         group.setStatus(GroupStatus.WAITING);
         group.setCreatedAt(LocalDateTime.now());
+        group.setInviteCode(
+                UUID.randomUUID()
+                        .toString()
+                        .replace("-", "")
+                        .substring(0, 8)
+                        .toUpperCase()
+        );
 
         // parse meetingTime nếu có
         if (meetingTime != null) {
@@ -122,6 +129,86 @@ public class GroupService {
         }
 
         return group;
+    }
+
+    public InviteLinkResponse getInviteLink(
+            UUID groupId
+    ){
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() ->
+                        new RuntimeException("Group not found"));
+
+        String inviteLink =
+                "https://wego-git-main-wegoteam.vercel.app/invite/"
+                        + group.getInviteCode();
+
+        return new InviteLinkResponse(
+
+                group.getInviteCode(),
+
+                inviteLink
+        );
+    }
+
+    @Transactional
+    public void joinByInviteCode(
+
+            String inviteCode,
+
+            String firebaseUid
+
+    ){
+
+        Group group = groupRepository
+                .findByInviteCode(inviteCode)
+
+                .orElseThrow(() ->
+
+                        new RuntimeException(
+                                "Invalid invite code"
+                        )
+                );
+
+        boolean exists =
+                groupMemberRepository
+                        .existsByGroupIdAndUserFirebaseUid(
+
+                                group.getId(),
+
+                                firebaseUid
+                        );
+
+        if(exists){
+
+            throw new RuntimeException(
+                    "Already in group"
+            );
+        }
+
+        GroupMember member =
+                new GroupMember();
+
+        member.setGroup(group);
+
+        member.setUserFirebaseUid(
+                firebaseUid
+        );
+
+        member.setRole(
+                GroupRole.MEMBER
+        );
+
+        member.setStatus(
+                GroupMemberStatus.ACCEPTED
+        );
+
+        member.setJoinedAt(
+                LocalDateTime.now()
+        );
+
+        groupMemberRepository
+                .save(member);
     }
 
     public List<MyGroupResponse> getMyGroups(String firebaseUid) {

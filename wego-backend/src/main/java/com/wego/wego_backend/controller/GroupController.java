@@ -124,6 +124,38 @@ public class GroupController {
         return ResponseEntity.ok("Invite rejected");
     }
 
+    @GetMapping("/{groupId}/invite-link")
+    public ResponseEntity<?> getInviteLink(
+            @PathVariable UUID groupId
+    ){
+
+        return ResponseEntity.ok(
+                groupService.getInviteLink(groupId)
+        );
+    }
+
+    @PostMapping("/join/{inviteCode}")
+    public ResponseEntity<?> joinByInviteCode(
+
+            @PathVariable String inviteCode,
+
+            Authentication authentication
+
+    ){
+
+        groupService.joinByInviteCode(
+
+                inviteCode,
+
+                authentication.getName()
+
+        );
+
+        return ResponseEntity.ok(
+                "Joined successfully"
+        );
+    }
+
     @GetMapping("/{groupId}/members/uids")
     public ResponseEntity<?> getGroupMemberUids(
             @PathVariable UUID groupId

@@ -1,0 +1,22 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+
+    "target": {
+
+      "namespace": "android_app",
+
+      "package_name": "com.longnguyen216.myapp",
+
+      "sha256_cert_fingerprints": [
+
+        "0A:88:1B:95:82:34:CE:0D:AA:37:E2:29:E2:27:71:1F:E6:1E:8C:E5:22:B2:70:A9:46:0F:5C:06:2D:0B:BB:5F"
+
+      ]
+
+    }
+
+  }
+]
