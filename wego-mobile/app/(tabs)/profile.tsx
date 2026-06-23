@@ -9,6 +9,7 @@ import * as Notifications from 'expo-notifications';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
+  Linking,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -22,6 +23,8 @@ const GREEN = '#22c55e';
 const LIGHT_GREEN_BG = '#f0fdf4';
 const GRAY_TEXT = '#6b7280';
 const BORDER = '#f0f0f0';
+const PRIVACY_POLICY_URL = "https://wego-ten.vercel.app/policy.html";
+const TERMS_OF_SERVICE_URL = "https://wego-ten.vercel.app/term.html";
 
 export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -262,14 +265,18 @@ export default function SettingsScreen() {
             icon="lock-closed-outline"
             label="Privacy Policy"
             rightElement={<Ionicons name="open-outline" size={18} color="#d1d5db" />}
-            onPress={() => { }}
+            onPress={() =>
+              Linking.openURL(PRIVACY_POLICY_URL)
+            }
           />
           <View style={styles.divider} />
           <RowItem
             icon="document-text-outline"
             label="Terms of Service"
             rightElement={<Ionicons name="open-outline" size={18} color="#d1d5db" />}
-            onPress={() => { }}
+            onPress={() =>
+              Linking.openURL(TERMS_OF_SERVICE_URL)
+            }
           />
         </View>
 
