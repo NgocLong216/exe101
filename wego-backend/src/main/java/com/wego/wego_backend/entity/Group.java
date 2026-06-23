@@ -40,5 +40,8 @@ public class Group {
     private LocalDateTime createdAt;
 
     private String groupPhoto;
+
+    @Column(unique = true)
+    private String inviteCode;
 }
 

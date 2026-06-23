@@ -21,6 +21,11 @@ export type GroupMember = {
     host: boolean,
 }
 
+export type InviteLinkResponse = {
+    inviteCode: string;
+    inviteLink: string;
+};
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 async function getToken(): Promise<string> {
@@ -134,4 +139,29 @@ export async function createGroup(
 
     if (!res.ok) throw new Error(await res.text());
     return await res.json() as GroupResponse;
+}
+
+export async function getInviteLink(
+    groupId: string
+): Promise<InviteLinkResponse> {
+
+    const res = await apiFetch(
+        `/api/groups/${groupId}/invite-link`
+    );
+
+    return await res.json();
+
+}
+
+export async function joinGroup(
+    inviteCode: string
+): Promise<void> {
+
+    await apiFetch(
+        `/api/groups/join/${inviteCode}`,
+        {
+            method: "POST",
+        }
+    );
+
 }
