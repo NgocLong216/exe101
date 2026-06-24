@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -10,15 +9,24 @@
 
 <body>
 
-<h2>Download WeGo</h2>
+<h2>Opening WeGo...</h2>
 
-<p>Install the app to join this group.</p>
+<script>
 
-<a href="https://wego-ten.vercel.app">
+    const inviteCode =
+    window.location.pathname.split("/").pop();
 
-    Download Android
+    window.location.href =
+    `myapp://invite/${inviteCode}`;
 
-</a>
+    setTimeout(() => {
+
+    window.location.href =
+    "/";
+
+    },2000);
+
+</script>
 
 </body>
 
