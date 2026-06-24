@@ -140,7 +140,7 @@ public class GroupService {
                         new RuntimeException("Group not found"));
 
         String inviteLink =
-                "https://wego-git-main-wegoteam.vercel.app/invite/"
+                "https://wego-ten.vercel.app/invite/"
                         + group.getInviteCode();
 
         return new InviteLinkResponse(

@@ -391,31 +391,25 @@ export default function GroupMembersScreen() {
 
     try {
   
-      const res =
+      const data =
         await getInviteLink(groupId);
   
       await Clipboard.setStringAsync(
-  
-        res.data.inviteLink
-  
+        data.inviteLink
       );
   
       Alert.alert(
-  
         "Success",
-  
         "Invite link copied"
-  
       );
   
-    } catch {
+    } catch (error) {
+  
+      console.log(error);
   
       Alert.alert(
-  
         "Error",
-  
-        "Cannot copy invite link"
-  
+        "Cannot copy link"
       );
   
     }
@@ -694,7 +688,7 @@ export default function GroupMembersScreen() {
           <TouchableOpacity
             style={styles.copyLinkBtn}
             activeOpacity={0.8}
-            onPress={handleCopyLink}
+            onPress={handleCopyInvite}
           >
             <Text style={styles.copyLinkText}>Copy Invite Link</Text>
           </TouchableOpacity>

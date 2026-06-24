@@ -27,7 +27,7 @@ export default function RootLayout() {
         await setupPresence();
       }
     });
-  
+
     return unsubscribe;
   }, []);
 
@@ -36,14 +36,14 @@ export default function RootLayout() {
       "change",
       async (state) => {
         const user = auth.currentUser;
-  
+
         if (!user) return;
-  
+
         const statusRef = ref(
           db,
           `presence/${user.uid}`
         );
-  
+
         if (state === "active") {
           await update(statusRef, {
             online: true,
@@ -57,7 +57,7 @@ export default function RootLayout() {
         }
       }
     );
-  
+
     return () => sub.remove();
   }, []);
 
@@ -70,7 +70,10 @@ export default function RootLayout() {
             screenOptions={{ headerShown: false }}
           >
             <Stack.Screen name="login" />
-            <Stack.Screen name="(tabs)"/>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="invite/[inviteCode]"
+            />
             <Stack.Screen
               name="modal"
               options={{ presentation: 'modal', title: 'Modal' }}
