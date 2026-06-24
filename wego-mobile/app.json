@@ -62,7 +62,24 @@
       "expo-secure-store",
       "@react-native-google-signin/google-signin",
       "expo-font",
-      "expo-notifications"
+      "expo-notifications",
+      "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Hello",
+              "label": "My Hello Widget",
+              "description": "Simple Widget",
+              "previewImage": "./assets/widget-preview.png",
+              "minWidth": "320dp",
+              "minHeight": "120dp",
+              "targetCellWidth": 3,
+              "targetCellHeight": 2,
+              "updatePeriodMillis": 1800000,
+              "taskHandlerPath": "./widgets/widget-task-handler"
+            }
+          ]
+        }
     ],
     "experiments": {
       "typedRoutes": true,
