@@ -29,7 +29,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "wego-git-main-wegoteam.vercel.app",
+              "host": "wego-ten.vercel.app",
               "pathPrefix": "/invite"
             }
           ],
