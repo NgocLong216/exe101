@@ -2,10 +2,7 @@ package com.wego.wego_backend.controller;
 
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.entity.Group;
-import com.wego.wego_backend.service.AiPlaceService;
-import com.wego.wego_backend.service.GroupPlaceSuggestionService;
-import com.wego.wego_backend.service.GroupService;
-import com.wego.wego_backend.service.SerpApiPlacesService;
+import com.wego.wego_backend.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -27,6 +24,7 @@ public class GroupController {
     private final GroupPlaceSuggestionService groupPlaceSuggestionService;
     private final SerpApiPlacesService serpApiPlacesService;
     private final AiPlaceService aiPlaceService;
+    private final CloudinaryService cloudinaryService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createGroup(
@@ -359,5 +357,28 @@ public class GroupController {
         );
 
         return ResponseEntity.ok("Meeting completed");
+    }
+
+    @PostMapping(
+            value = "/{groupId}/chat-image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<?> uploadChatImage(
+
+            @PathVariable UUID groupId,
+
+            @RequestParam MultipartFile image
+
+    ) {
+
+        String imageUrl =
+                cloudinaryService.uploadFile(image);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "imageUrl",
+                        imageUrl
+                )
+        );
     }
 }

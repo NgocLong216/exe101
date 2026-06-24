@@ -153,41 +153,62 @@ public class GroupService {
 
     @Transactional
     public void joinByInviteCode(
-
             String inviteCode,
-
             String firebaseUid
-
-    ){
+    ) {
 
         Group group = groupRepository
                 .findByInviteCode(inviteCode)
-
                 .orElseThrow(() ->
-
-                        new RuntimeException(
-                                "Invalid invite code"
-                        )
+                        new RuntimeException("Invalid invite code")
                 );
 
-        boolean exists =
-                groupMemberRepository
-                        .existsByGroupIdAndUserFirebaseUid(
+        Optional<GroupMember> existingMember =
+                groupMemberRepository.findByGroup_IdAndUserFirebaseUid(
+                        group.getId(),
+                        firebaseUid
+                );
 
-                                group.getId(),
+        if (existingMember.isPresent()) {
 
-                                firebaseUid
-                        );
+            GroupMember member = existingMember.get();
 
-        if(exists){
+            // Nếu đã là thành viên
+            if (member.getStatus() == GroupMemberStatus.ACCEPTED) {
 
-            throw new RuntimeException(
-                    "Already in group"
-            );
+                throw new RuntimeException(
+                        "Already in group"
+                );
+            }
+
+            // Nếu đã rời nhóm thì cho vào lại
+            if (member.getStatus() == GroupMemberStatus.LEFT) {
+
+                member.setStatus(
+                        GroupMemberStatus.ACCEPTED
+                );
+
+                member.setJoinedAt(
+                        LocalDateTime.now()
+                );
+
+                member.setRole(
+                        GroupRole.MEMBER
+                );
+
+                firebaseRealtimeService.addMember(
+                        group.getId(),
+                        firebaseUid
+                );
+
+                groupMemberRepository.save(member);
+
+                return;
+            }
         }
 
-        GroupMember member =
-                new GroupMember();
+        // Chưa từng tham gia nhóm
+        GroupMember member = new GroupMember();
 
         member.setGroup(group);
 
@@ -207,8 +228,12 @@ public class GroupService {
                 LocalDateTime.now()
         );
 
-        groupMemberRepository
-                .save(member);
+        firebaseRealtimeService.addMember(
+                group.getId(),
+                firebaseUid
+        );
+
+        groupMemberRepository.save(member);
     }
 
     public List<MyGroupResponse> getMyGroups(String firebaseUid) {
