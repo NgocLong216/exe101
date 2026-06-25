@@ -8,7 +8,11 @@ async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
   switch (props.widgetAction) {
     case 'WIDGET_ADDED':
     case 'WIDGET_UPDATE':
-      props.renderWidget(<HelloWidget />);
+      props.renderWidget(<HelloWidget username="Bạn" count={5} />);
+      break;
+
+    case 'WIDGET_DELETED':
+      // Handle delete để tránh crash
       break;
     default:
       break;

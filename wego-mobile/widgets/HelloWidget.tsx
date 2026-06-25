@@ -1,7 +1,13 @@
-// widgets/HelloWidget.tsx
+"use no memo";
+
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 
-export function HelloWidget() {
+interface Props {
+  username: string;
+  count: number;
+}
+
+export function HelloWidget({ username, count }: Props) {
   return (
     <FlexWidget
       style={{
@@ -14,9 +20,10 @@ export function HelloWidget() {
       }}
     >
       <TextWidget
-        text="Xin chào!"
-        style={{ fontSize: 24, color: '#333333', fontFamily: 'Inter' }}
+        text={username}
+        style={{ fontSize: 24, color: '#333333' }}
       />
+      <TextWidget text={`${count} thông báo`} />
     </FlexWidget>
   );
 }
