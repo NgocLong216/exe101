@@ -17,7 +17,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-
 export default function CreateGroupScreen() {
     const [groupName, setGroupName] = useState('');
     const [groupDescription, setGroupDescription] = useState('');

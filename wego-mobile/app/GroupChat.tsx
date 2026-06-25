@@ -26,6 +26,7 @@ import {
 } from 'react-native';
 
 import { db } from "@/firebase";
+import * as ImagePicker from "expo-image-picker";
 
 // Định nghĩa kiểu dữ liệu tin nhắn đa dạng (text, map, image)
 type Message = {
@@ -34,6 +35,7 @@ type Message = {
   senderUid?: string;
   senderName?: string;
   senderAvatar?: string;
+  imageUri?: string;
 
   isMe: boolean;
 
@@ -237,6 +239,147 @@ export default function GroupChatScreen() {
     }, 200);
 
   }, [messages]);
+
+  const handlePickImage = async () => {
+    try {
+
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+
+          mediaTypes:
+            ImagePicker.MediaTypeOptions.Images,
+
+          allowsEditing: true,
+
+          quality: 0.8,
+        });
+
+      if (result.canceled) return;
+
+      const imageUri =
+        result.assets[0].uri;
+
+      await uploadChatImage(imageUri);
+
+    } catch (e) {
+
+      console.log(e);
+
+    }
+  };
+
+  const uploadChatImage = async (
+    imageUri: string
+  ) => {
+
+    try {
+
+      const user =
+        getAuth().currentUser;
+
+      if (!user) return;
+
+      const token =
+        await user.getIdToken();
+
+      const filename =
+        imageUri.split("/").pop()
+        || "chat.jpg";
+
+      const match =
+        /\.(\w+)$/.exec(filename);
+
+      const type =
+        match
+          ? `image/${match[1]}`
+          : "image/jpeg";
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "image",
+        {
+
+          uri: imageUri,
+
+          name: filename,
+
+          type,
+
+        } as any
+      );
+
+      const response =
+        await fetch(
+
+          `${API_URL}/api/groups/${groupId}/chat-image`,
+
+          {
+
+            method: "POST",
+
+            headers: {
+
+              Authorization:
+                `Bearer ${token}`,
+
+            },
+
+            body: formData,
+          }
+        );
+
+      const data =
+        await response.json();
+
+      await sendImageMessage(
+        data.imageUrl
+      );
+
+    } catch (e) {
+
+      console.log(
+        "Upload image error",
+        e
+      );
+
+    }
+  };
+
+  const sendImageMessage = async (
+    imageUrl: string
+  ) => {
+
+    const user =
+      getAuth().currentUser;
+
+    if (!user) return;
+
+    const messagesRef =
+      ref(
+        db,
+        `group_chats/${groupId}`
+      );
+
+    const newMessageRef =
+      push(messagesRef);
+
+    await set(newMessageRef, {
+
+      senderUid: user.uid,
+
+      senderName: user.displayName,
+
+      senderAvatar: user.photoURL,
+
+      type: "image",
+
+      imageUri: imageUrl,
+
+      timestamp: Date.now(),
+    });
+  };
 
   const loadChecklistCount =
     async () => {
@@ -916,9 +1059,9 @@ export default function GroupChatScreen() {
                   </TouchableOpacity>
                 )}
 
-                {/* {msg.type === 'image' && msg.imageUri && (
+                {msg.type === 'image' && msg.imageUri && (
                   <Image source={{ uri: msg.imageUri }} style={styles.sharedImage} />
-                )} */}
+                )}
 
                 {/* Thời gian gửi tin nhắn */}
                 <Text style={styles.timeText}>
@@ -991,8 +1134,17 @@ export default function GroupChatScreen() {
         )}
         {/* Bottom Input Message Bar */}
         <View style={styles.bottomBar}>
-          <TouchableOpacity style={styles.circleActionButton}>
-            <Plus size={22} color="#475569" />
+          <TouchableOpacity
+
+            style={styles.circleActionButton}
+
+            onPress={handlePickImage}
+
+          >
+            <Plus
+              size={22}
+              color="#475569"
+            />
           </TouchableOpacity>
 
           <TextInput
@@ -1418,34 +1570,34 @@ const styles = StyleSheet.create({
   badge: {
 
     position: "absolute",
-  
+
     top: -6,
-  
+
     right: -6,
-  
+
     minWidth: 18,
-  
+
     height: 18,
-  
+
     borderRadius: 9,
-  
+
     backgroundColor: "#EF4444",
-  
+
     justifyContent: "center",
-  
+
     alignItems: "center",
-  
+
     paddingHorizontal: 4,
-  
+
   },
-  
+
   badgeText: {
-  
+
     color: "#FFF",
-  
+
     fontSize: 11,
-  
+
     fontWeight: "700",
-  
+
   },
 });
