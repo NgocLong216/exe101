@@ -63,14 +63,15 @@
       "@react-native-google-signin/google-signin",
       "expo-font",
       "expo-notifications",
-      "react-native-android-widget",
+      [
+        "react-native-android-widget",
         {
           "widgets": [
             {
               "name": "Hello",
               "label": "My Hello Widget",
               "description": "Simple Widget",
-              "previewImage": "./assets/widget-preview.png",
+              "previewImage": "./assets/images/widget-preview.png",
               "minWidth": "320dp",
               "minHeight": "120dp",
               "targetCellWidth": 3,
@@ -80,6 +81,7 @@
             }
           ]
         }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
