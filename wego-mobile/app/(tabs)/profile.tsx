@@ -1,11 +1,12 @@
 import { updateLocationSharing } from '@/apis/locationAPI';
 import { updateNotificationSetting } from '@/apis/notificationAPI';
 import { useAuth } from '@/auth0/AuthContext';
-import { auth } from '@/firebase';
+import { auth, db } from '@/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { ref, remove } from "firebase/database";
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -113,6 +114,19 @@ export default function SettingsScreen() {
         JSON.stringify(value)
       );
 
+      if (!value) {
+        const user = auth.currentUser;
+  
+        if (user) {
+          await remove(
+            ref(
+              db,
+              `live_locations/${user.uid}`
+            )
+          );
+        }
+      }
+
       const token =
         await auth
           .currentUser
@@ -140,7 +154,7 @@ export default function SettingsScreen() {
       if (value !== null) {
         setLocationSharing(JSON.parse(value));
       } else {
-        setLocationSharing(false); // hoặc default bạn muốn
+        setLocationSharing(true); 
       }
     };
   

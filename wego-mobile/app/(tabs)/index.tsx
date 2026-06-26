@@ -1,16 +1,16 @@
 import GoongWebMap from "@/components/mapTab/GoongWebMap";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { LocationResult } from "@/types/location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useFocusEffect } from "expo-router";
 import {
-  getDatabase,
   onDisconnect,
   ref,
   set,
 } from "firebase/database";
 import { useCallback, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 
 const requestPermission = async () => {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -22,8 +22,9 @@ const requestPermission = async () => {
 };
 
 export default function HomeScreen() {
-  const [userLocation, setUserLocation] =
-    useState<LocationResult | null>(null);
+  const [userLocation, setUserLocation] = useState<LocationResult | null>(null);
+  const [initializing, setInitializing] = useState(true);
+    
 
   const startTracking = useCallback(async () => {
     let subscription: Location.LocationSubscription | null = null;
@@ -31,10 +32,9 @@ export default function HomeScreen() {
 
     const enabled = await AsyncStorage.getItem("locationSharing");
 
-    if (enabled !== "true") return;
-
-    const ok = await requestPermission();
-    if (!ok) return;
+    if (enabled === "false") {
+      return;
+    }
 
     subscription = await Location.watchPositionAsync(
       {
@@ -49,8 +49,7 @@ export default function HomeScreen() {
         try {
           const user = auth.currentUser;
           if (!user) return;
-
-          const db = getDatabase();
+          
           const locationRef = ref(
             db,
             `live_locations/${user.uid}`
@@ -60,6 +59,9 @@ export default function HomeScreen() {
             onDisconnect(locationRef).remove();
             disconnectSet = true;
           }
+
+          setUserLocation({ latitude, longitude });
+          setInitializing(false);
 
           await set(locationRef, {
             firebaseUid: user.uid,
@@ -80,25 +82,65 @@ export default function HomeScreen() {
     };
   }, []);
 
-  // ⭐ ĐÂY LÀ CHỖ BẠN CẦN THÊM useFocusEffect
   useFocusEffect(
     useCallback(() => {
-      let cleanupFn: any;
-
+      let cleanupFn: (() => void) | undefined;
+  
       const run = async () => {
+        setInitializing(true); // 👈 bắt đầu load
+  
+        const enabled = await AsyncStorage.getItem("locationSharing");
+  
+        if (enabled === "false") {
+          setUserLocation(null);
+          setInitializing(false);
+          return;
+        }
+  
+        const ok = await requestPermission();
+  
+        if (!ok) {
+          setUserLocation(null);
+          setInitializing(false);
+          return;
+        }
+  
         cleanupFn = await startTracking();
+        setInitializing(false);
       };
-
+  
       run();
-
+  
       return () => {
         cleanupFn?.();
       };
     }, [startTracking])
   );
 
-  if (!userLocation) return null;
-
+  if (initializing) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  
+  if (!userLocation) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <Text>Location sharing is disabled</Text>
+      </View>
+    );
+  }
+  
   return (
     <GoongWebMap
       latitude={userLocation.latitude}

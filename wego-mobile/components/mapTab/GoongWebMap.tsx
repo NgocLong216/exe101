@@ -1,6 +1,7 @@
 import { useAuth } from "@/auth0/AuthContext";
 import { LocationResult } from "@/types/location";
-import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -57,6 +58,11 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     groupId?: string;
   }>();
 
+  const isDirectionMode =
+    prevRoute === "/PlaceDetail" &&
+    !!lat &&
+    !!lng;
+
   // Quản lý groupId chủ động bằng State để có thể switch ngay trên màn hình này
   const [activeGroupId, setActiveGroupId] = useState<string | undefined>(initialGroupId);
 
@@ -95,7 +101,11 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
   // ─── KEY FIX: html is memoized with initial coords only ─────────────────────
   const html = useMemo(
-    () => buildMapHtml(latitude, longitude),
+    () => buildMapHtml(
+      latitude,
+      longitude,
+      isDirectionMode
+    ),
     []
   );
 
@@ -302,7 +312,9 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   );
 
   return (
+
     <View style={styles.container}>
+
       <WebView
         ref={webRef}
         source={{ html }}
@@ -314,7 +326,15 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
           try {
             const data = JSON.parse(event.nativeEvent.data);
             if (data.type === "MAP_CLICK") {
-              handleSelectPlace({ latitude: data.latitude, longitude: data.longitude });
+
+              if (isDirectionMode) {
+                return;
+              }
+
+              handleSelectPlace({
+                latitude: data.latitude,
+                longitude: data.longitude
+              });
             }
             (MarkersOverlay as any)._onMessage?.(data);
           } catch (err) {
@@ -322,6 +342,19 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
           }
         }}
       />
+
+      {isDirectionMode && (
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.back()}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="#000"
+          />
+        </TouchableOpacity>
+      )}
 
       {/* Lớp hiển thị Marker các thành viên của Group đang Active */}
       <MarkersOverlay
@@ -338,31 +371,35 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       )}
 
       {/* UI Nút chuyển Group nổi trên map */}
-      <SearchBar onSelectLocation={handleSearch} />
+      {!isDirectionMode && (
+        <SearchBar onSelectLocation={handleSearch} />
+      )}
 
-      <View style={styles.topBarContainer}>
+      {!isDirectionMode && (
+        <View style={styles.topBarContainer}>
 
-        <TouchableOpacity
-          style={styles.groupSwitcherBtn}
-          onPress={handleSwitchGroup}
-        >
+          <TouchableOpacity
+            style={styles.groupSwitcherBtn}
+            onPress={handleSwitchGroup}
+          >
 
-          <Image
-            source={{
-              uri:
-                currentGroupPhoto ||
-                `https://ui-avatars.com/api/?name=${currentGroupName}`,
-            }}
-            style={styles.groupSwitcherAvatar}
-          />
+            <Image
+              source={{
+                uri:
+                  currentGroupPhoto ||
+                  `https://ui-avatars.com/api/?name=${currentGroupName}`,
+              }}
+              style={styles.groupSwitcherAvatar}
+            />
 
-          <View style={styles.avatarOverlay}>
-            <Text style={styles.dropdownIcon}>▾</Text>
-          </View>
+            <View style={styles.avatarOverlay}>
+              <Text style={styles.dropdownIcon}>▾</Text>
+            </View>
 
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-      </View>
+        </View>
+      )}
 
       {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
       <GroupChoose
@@ -376,7 +413,12 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         }}
       />
 
-      <PlaceBottomSheet ref={bottomSheetRef} onClose={clearDestinationAndRoute} />
+      {!isDirectionMode && (
+        <PlaceBottomSheet
+          ref={bottomSheetRef}
+          onClose={clearDestinationAndRoute}
+        />
+      )}
     </View>
   );
 }
@@ -397,32 +439,32 @@ const styles = StyleSheet.create({
 
   avatarOverlay: {
     position: "absolute",
-  
+
     bottom: 0,
-  
+
     width: "100%",
-  
+
     height: "50%",
-  
+
     backgroundColor: "rgba(0,0,0,0.35)",
-  
+
     borderBottomLeftRadius: 32,
-  
+
     borderBottomRightRadius: 32,
-  
+
     justifyContent: "center",
-  
+
     alignItems: "center",
   },
-  
+
   dropdownIcon: {
     color: "#FFFFFF",
-  
+
     fontSize: 18,
-  
+
     fontWeight: "700",
-  
-    marginTop: 6, 
+
+    marginTop: 6,
   },
 
   groupSwitcherBtn: {
@@ -473,5 +515,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.4)",
     zIndex: 10,
+  },
+  backBtn: {
+    position: "absolute",
+
+    top: 60,
+
+    left: 16,
+
+    width: 48,
+
+    height: 48,
+
+    borderRadius: 24,
+
+    backgroundColor: "#FFFFFF",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    shadowColor: "#000",
+
+    shadowOpacity: 0.15,
+
+    shadowRadius: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+
+    elevation: 5,
+
+    zIndex: 2000,
   },
 });

@@ -159,7 +159,7 @@ export function subscribeGroupMembers(
 
 // ─── HTML string for WebView (stable, created once) ──────────────────────────
 
-export function buildMapHtml(latitude: number, longitude: number): string {
+export function buildMapHtml(latitude: number, longitude: number, readonly = false): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -187,19 +187,20 @@ export function buildMapHtml(latitude: number, longitude: number): string {
 
     map.on("click", (e) => {
 
-      // Xóa marker cũ
+      if (${readonly}) {
+        return;
+      }
+    
       if (window.destinationMarker) {
         window.destinationMarker.remove();
       }
-
-      // Tạo marker đỏ mới
+    
       window.destinationMarker = new goongjs.Marker({
         color: "red"
       })
         .setLngLat([e.lngLat.lng, e.lngLat.lat])
         .addTo(map);
-
-      // Gửi tọa độ về React Native
+    
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
           type: "MAP_CLICK",
