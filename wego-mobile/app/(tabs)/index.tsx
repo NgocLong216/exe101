@@ -10,7 +10,7 @@ import {
   set,
 } from "firebase/database";
 import { useCallback, useState } from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 const requestPermission = async () => {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -22,8 +22,8 @@ const requestPermission = async () => {
 };
 
 export default function HomeScreen() {
-  const [userLocation, setUserLocation] =
-    useState<LocationResult | null>(null);
+  const [userLocation, setUserLocation] = useState<LocationResult | null>(null);
+  const [initializing, setInitializing] = useState(true);
     
 
   const startTracking = useCallback(async () => {
@@ -60,6 +60,9 @@ export default function HomeScreen() {
             disconnectSet = true;
           }
 
+          setUserLocation({ latitude, longitude });
+          setInitializing(false);
+
           await set(locationRef, {
             firebaseUid: user.uid,
             name: user.displayName || "Anonymous",
@@ -84,13 +87,13 @@ export default function HomeScreen() {
       let cleanupFn: (() => void) | undefined;
   
       const run = async () => {
-        const enabled =
-          await AsyncStorage.getItem(
-            "locationSharing"
-          );
+        setInitializing(true); // 👈 bắt đầu load
+  
+        const enabled = await AsyncStorage.getItem("locationSharing");
   
         if (enabled === "false") {
           setUserLocation(null);
+          setInitializing(false);
           return;
         }
   
@@ -98,10 +101,12 @@ export default function HomeScreen() {
   
         if (!ok) {
           setUserLocation(null);
+          setInitializing(false);
           return;
         }
   
         cleanupFn = await startTracking();
+        setInitializing(false);
       };
   
       run();
@@ -112,22 +117,34 @@ export default function HomeScreen() {
     }, [startTracking])
   );
 
-  return userLocation ? (
+  if (initializing) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  
+  if (!userLocation) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <Text>Location sharing is disabled</Text>
+      </View>
+    );
+  }
+  
+  return (
     <GoongWebMap
       latitude={userLocation.latitude}
       longitude={userLocation.longitude}
     />
-  ) : (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>
-        Location sharing is disabled
-      </Text>
-    </View>
   );
 }
