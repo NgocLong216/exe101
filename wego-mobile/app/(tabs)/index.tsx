@@ -12,9 +12,10 @@ import {
 } from "firebase/database";
 import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
-import { ImageWidgetSource, requestWidgetUpdate } from 'react-native-android-widget';
+import { getWidgetInfo, ImageWidgetSource, requestWidgetUpdate } from 'react-native-android-widget';
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 || '';
+const WIDGET_NAME = "Map";
 
 const requestPermission = async () => {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -58,8 +59,14 @@ export default function HomeScreen() {
 
           const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude+offset},${longitude}&destination=${latitude},${longitude}&width=400&height=200&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource ;
 
+          const widgets = await getWidgetInfo(WIDGET_NAME);
+          if (!widgets.length) {
+            console.log('No widget instance found yet. Add the widget to the Android home screen first.');
+            return;
+          }
+
           await requestWidgetUpdate({
-            widgetName: 'Map',
+            widgetName: WIDGET_NAME,
             renderWidget: () => (
               <MapWidget
                 latitude={latitude}
@@ -67,7 +74,7 @@ export default function HomeScreen() {
                 Image={mapUrl}
               />
             ),
-            widgetNotFound: () => console.log('Widget not found!'),
+            widgetNotFound: () => console.log('Widget instance not found. Add the widget to the Android home screen and rebuild the app if needed.'),
           });
         } catch (err) {
           console.log('Widget update error:', err);

@@ -6,8 +6,12 @@ const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2;
 
 async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
   switch (props.widgetAction) {
-    case 'WIDGET_ADDED':
+    case 'WIDGET_ADDED': {
+      console.log('Widget Added')
+      // no break
+    }
     case 'WIDGET_UPDATE': {
+      console.log('Widget Updated')
       const offset = 0.0001
       const lat = await AsyncStorage.getItem('widget_lat');
       const lng = await AsyncStorage.getItem('widget_lng');
@@ -28,6 +32,7 @@ async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
     }
 
     case 'WIDGET_DELETED':
+      console.log('Widget Deleted')
       break;
 
     default:
