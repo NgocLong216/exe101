@@ -68,12 +68,12 @@
         {
           "widgets": [
             {
-              "name": "Hello",
-              "label": "My Hello Widget",
-              "description": "Simple Widget",
+              "name": "Map",
+              "label": "Vị trí của tôi",
+              "description": "Hiển thị vị trí hiện tại trên bản đồ",
               "previewImage": "./assets/images/widget-preview.png",
-              "minWidth": "320dp",
-              "minHeight": "120dp",
+              "minWidth": "250dp",
+              "minHeight": "180dp",
               "targetCellWidth": 3,
               "targetCellHeight": 2,
               "updatePeriodMillis": 1800000,
