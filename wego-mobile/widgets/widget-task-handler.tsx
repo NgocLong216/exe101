@@ -19,7 +19,7 @@ async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
       const latitude = lat ? parseFloat(lat) : 10.7769;
       const longitude = lng ? parseFloat(lng) : 106.7009;
 
-      const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude + offset},${longitude}&destination=${latitude},${longitude}&width=400&height=200&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource;
+      const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude + offset},${longitude}&destination=${latitude},${longitude}&width=600&height=300&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource;
 
       props.renderWidget(
         <MapWidget

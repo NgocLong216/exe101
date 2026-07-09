@@ -25,6 +25,7 @@ import PlaceBottomSheet, {
 } from "./bottomSheet";
 import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 import SearchBar from "./SearchBar";
+import { useTabBarVisibility } from "@/contexts/TabBarVisibility";
 
 const ROUTE_COLORS = ["#2563EB", "#EF4444", "#22C55E", "#F59E0B", "#A855F7", "#EC4899"];
 
@@ -38,6 +39,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   const isInteracting = useRef(false);
   const webRef = useRef<WebView>(null);
   const bottomSheetRef = useRef<PlaceBottomSheetRef>(null);
+  const { hide: hideTabBar, show: showTabBar } = useTabBarVisibility();
 
   const [route, setRoute] = useState<LatLng[][]>([]);
   const [loading, setLoading] = useState(false);
@@ -129,6 +131,20 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       unsub();
     };
   }, [activeGroupId]);
+
+  // ─── Tab bar visibility follows destination state ───────────────────────────
+  // Bottom sheet opens whenever destination is set (search, map tap, or
+  // auto-load from /PlaceDetail params), and clearDestinationAndRoute() is the
+  // single place that nulls it back out. Driving visibility off this one state
+  // means every "sheet open" path is covered without duplicating hide()/show()
+  // calls at each call site.
+  useEffect(() => {
+    if (destination) {
+      hideTabBar();
+    } else {
+      showTabBar();
+    }
+  }, [destination, hideTabBar, showTabBar]);
 
   // Hàm xử lý khi ấn vào nút đổi nhóm
   const handleSwitchGroup = () => {
@@ -346,7 +362,10 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       {isDirectionMode && (
         <TouchableOpacity
           style={styles.backBtn}
-          onPress={() => router.back()}
+          onPress={() => {
+            clearDestinationAndRoute();
+            router.back();
+          }}
         >
           <Ionicons
             name="arrow-back"
