@@ -57,7 +57,7 @@ export default function HomeScreen() {
           await AsyncStorage.setItem('widget_lat', latitude.toString());
           await AsyncStorage.setItem('widget_lng', longitude.toString());
 
-          const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude+offset},${longitude}&destination=${latitude},${longitude}&width=400&height=200&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource ;
+          const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude+offset},${longitude}&destination=${latitude},${longitude}&width=600&height=300&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource ;
 
           const widgets = await getWidgetInfo(WIDGET_NAME);
           if (!widgets.length) {

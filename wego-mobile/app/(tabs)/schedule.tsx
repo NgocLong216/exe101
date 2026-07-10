@@ -227,6 +227,7 @@ export default function ScheduleScreen() {
     try {
       setLoading(true);
       const data = await getMySchedules();
+      console.log('Schedule Log: ', data)
       setSchedules(data);
     } finally {
       setLoading(false);

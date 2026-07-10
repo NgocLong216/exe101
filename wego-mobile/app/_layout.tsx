@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { AppState } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { TabBarVisibilityProvider } from '@/contexts/TabBarVisibility';
 
 import { AuthProvider } from '@/auth0/AuthContext';
 import AuthGate from '@/auth0/AuthGate';
@@ -66,19 +67,21 @@ export default function RootLayout() {
       <AuthProvider>
         <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
           <AuthGate />
-          <Stack
-            screenOptions={{ headerShown: false }}
-          >
-            <Stack.Screen name="login" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen
-              name="invite/[inviteCode]"
-            />
-            <Stack.Screen
-              name="modal"
-              options={{ presentation: 'modal', title: 'Modal' }}
-            />
-          </Stack>
+          <TabBarVisibilityProvider>
+            <Stack
+              screenOptions={{ headerShown: false }}
+            >
+              <Stack.Screen name="login" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen
+                name="invite/[inviteCode]"
+              />
+              <Stack.Screen
+                name="modal"
+                options={{ presentation: 'modal', title: 'Modal' }}
+              />
+            </Stack>
+          </TabBarVisibilityProvider>
           <StatusBar style="auto" />
         </ThemeProvider>
       </AuthProvider>

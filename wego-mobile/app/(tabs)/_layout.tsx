@@ -4,9 +4,11 @@ import React from 'react';
 import { HapticTab } from '@/components/haptic-tab';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { CalendarDays, Compass, Settings, Users } from 'lucide-react-native';
+import { useTabBarVisibility } from '@/contexts/TabBarVisibility';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { translateY } = useTabBarVisibility();
   const GREEN = process.env.EXPO_PUBLIC_GREEN_MAIN
 
   return (
@@ -33,6 +35,7 @@ export default function TabLayout() {
           shadowOpacity: 0.12,
           shadowRadius: 16,
           elevation: 10,
+          transform: [{ translateY }], // ← animated slide
         },
         tabBarLabelStyle: {
           fontSize: 10,

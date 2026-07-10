@@ -28,8 +28,8 @@ export function MapWidget({ latitude, longitude, Image }: Props) {
       ) : (
         <FlexWidget
           style={{
-            width: 300,
-            height: 150,
+            width: 400,
+            height: 200,
             backgroundColor: '#E5E7EB',
             justifyContent: 'center',
             alignItems: 'center',
