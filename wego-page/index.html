@@ -140,32 +140,7 @@
 
 <body class="bg-surface font-body-md text-on-surface antialiased overflow-x-hidden">
     <!-- TopAppBar -->
-    <header class="bg-surface/90 dark:bg-on-background/90 backdrop-blur-md shadow-sm fixed top-0 w-full z-50">
-        <div
-            class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
-            <div class="flex items-center gap-2">
-                <img alt="WeGo Logo" class="h-8 md:h-10"
-                    src="WeGo.png" />
-                <span class="font-headline-md text-headline-md tracking-tighter text-primary">WeGo</span>
-            </div>
-            <nav class="hidden md:flex gap-lg items-center">
-                <a class="text-primary font-bold transition-colors duration-300" href="index.html">Features</a>
-                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
-                    href="term.html">Term of Service</a>
-                <a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
-                    href="policy.html">Privacy Policy</a>
-            </nav>
-            <div class="flex items-center gap-md">
-                <span
-                    class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform cursor-pointer">explore</span>
-                <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/a43b2b5e-1bea-4387-99d3-3f3647a23920" target="_blank">
-                    <button
-                        class="bg-primary-container text-on-primary-container font-label-lg px-6 py-2 rounded-full scale-95 active:scale-90 transition-all hover:shadow-lg">Download
-                    </button>
-                </a>
-            </div>
-        </div>
-    </header>
+    <div id="header"></div>
     <main class="pt-20">
         <!-- Hero Section -->
         <section
@@ -180,7 +155,7 @@
                     vời nhất trong thành phố.
                 </p>
                 <div class="pt-md">
-                    <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/a43b2b5e-1bea-4387-99d3-3f3647a23920" target="_blank">
+                    <a href="https://expo.dev/accounts/longnguyen216/projects/my-app/builds/0dd3bbb0-7c60-4fde-944d-dffc7a59bed3" target="_blank">
                         <button
                             class="bg-primary-container text-on-primary-container font-headline-md px-10 py-4 rounded-xl shadow-xl hover:scale-105 transition-transform pulse-shadow">
                             Tải app ngay
@@ -264,6 +239,31 @@
                 </div>
             </div>
         </section>
+        <!-- User Guide Section -->
+        <section class="py-20 px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+            <div class="max-w-5xl mx-auto text-center">
+
+                <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-4">
+                    Hướng dẫn sử dụng WeGo
+                </h2>
+
+                <p class="font-body-lg text-secondary max-w-3xl mx-auto mb-12">
+                    Chỉ với vài bước đơn giản, bạn đã có thể tạo nhóm, chia sẻ vị trí,
+                    tìm địa điểm phù hợp và lên lịch gặp mặt cùng bạn bè.
+                </p>
+
+                <div class="rounded-3xl overflow-hidden shadow-2xl border border-surface-variant">
+                    <iframe
+                            class="w-full aspect-video"
+                            src="https://www.youtube.com/embed/VIDEO_ID"
+                            title="Hướng dẫn sử dụng WeGo"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+
+            </div>
+        </section>
         <!-- Download Section -->
         <section class="py-24 px-margin-mobile md:px-margin-desktop text-center overflow-hidden">
             <div class="max-w-4xl mx-auto bg-on-background text-on-primary p-xl rounded-[3rem] relative">
@@ -296,39 +296,7 @@
         </section>
     </main>
     <!-- Footer -->
-    <footer
-        class="bg-surface-container-lowest dark:bg-inverse-surface w-full px-margin-mobile md:px-margin-desktop py-xl flex flex-col md:flex-row justify-between items-center gap-lg">
-        <div class="flex flex-col items-center md:items-start gap-sm">
-            <div class="flex items-center gap-2">
-                <img alt="WeGo Logo" class="h-6"
-                    src="WeGo.png" />
-                <span class="font-headline-md text-headline-md text-on-surface">WeGo</span>
-            </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant opacity-80">© 2024 WeGo. All rights reserved.
-            </p>
-        </div>
-        <div class="flex gap-lg flex-wrap justify-center">
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="index.html">Features</a>
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="term.html">Term of Service</a>
-            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity"
-                href="policy.html">Privacy Policy</a>
-        </div>
-        <div class="flex gap-md">
-            <button onclick="navigator.clipboard.writeText('https://wego-ten.vercel.app')"
-                class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
-                <span class="material-symbols-outlined text-lg group-hover:text-on-primary-container">share</span>
-            </button>
-
-            <a href="https://www.facebook.com/profile.php?id=61590827939537" target="_blank">
-                <button
-                    class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary-container transition-colors group">
-                    <i class="fa-brands fa-facebook-f text-md group-hover:text-on-primary-container"></i>
-                </button>
-            </a>
-        </div>
-    </footer>
+    <div id="footer"></div>
     <script>
         // Micro-interactions for scrolling
         document.addEventListener('DOMContentLoaded', () => {
@@ -351,6 +319,7 @@
             });
         });
     </script>
+    <script src="js/layout.js"></script>
 </body>
 
 </html>
