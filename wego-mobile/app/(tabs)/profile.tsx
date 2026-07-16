@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { Href, router } from 'expo-router';
 import { ref, remove } from "firebase/database";
 import React, { useEffect, useState } from 'react';
 import {
@@ -221,6 +222,18 @@ export default function SettingsScreen() {
           <Ionicons name="pencil" size={16} color="#fff" />
           <Text style={styles.editBtnText}>Edit Profile</Text>
         </TouchableOpacity> */}
+
+        {/* App Settings */}
+        <SectionLabel title="MEMBERSHIP" />
+        <View style={styles.card}>
+          <RowItem
+            icon="sparkles-outline"
+            label="Plan & Billing"
+            subtitle="Free plan"
+            rightElement={<Ionicons name="chevron-forward" size={18} color="#d1d5db" />}
+            onPress={() => router.push('/UpdatePlan' as Href)}
+          />
+        </View>
 
         {/* App Settings */}
         <SectionLabel title="APP SETTINGS" />

@@ -1,49 +1,47 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useRouter } from "expo-router";
+import { ChevronDown, MapPinPlus, Navigation } from "lucide-react-native";
 import React, {
     forwardRef,
-    useEffect,
     useImperativeHandle,
     useMemo,
     useRef,
     useState
 } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import { ChevronDown, MapPinPlus } from "lucide-react-native"; // Hoặc dùng Pencil/MapPin tùy ý bạn
-import { useRouter } from "expo-router";
-import { getUserGroups, GroupResponse } from "@/apis/groupAPI";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export type PlaceDetail = {
-  place_id: string;
-  reference?: string;
-  name?: string;
-  address?: string;
-  formatted_address?: string;
+    place_id: string;
+    reference?: string;
+    name?: string;
+    address?: string;
+    formatted_address?: string;
 
-  address_components?: {
-    long_name: string;
-    short_name: string;
-  }[];
+    address_components?: {
+        long_name: string;
+        short_name: string;
+    }[];
 
-  compound?: {
-    commune?: string;
-    district?: string;
-    province?: string;
-  };
-
-  geometry?: {
-    location: {
-      lat: number;
-      lng: number;
+    compound?: {
+        commune?: string;
+        district?: string;
+        province?: string;
     };
-    boundary: null | unknown;
-  };
 
-  plus_code?: {
-    compound_code: string;
-    global_code: string;
-  };
+    geometry?: {
+        location: {
+            lat: number;
+            lng: number;
+        };
+        boundary: null | unknown;
+    };
 
-  types?: string[];
+    plus_code?: {
+        compound_code: string;
+        global_code: string;
+    };
+
+    types?: string[];
 };
 
 export type PlaceBottomSheetRef = {
@@ -53,9 +51,13 @@ export type PlaceBottomSheetRef = {
 
 type PlaceBottomSheetProps = {
     onClose?: () => void;
+    isDirectionMode?: boolean;
+    lat?: string | number;
+    lng?: string | number;
+    placeName?: string;
 };
 
-const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(({ onClose }, ref) => {
+const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(({ onClose, isDirectionMode, lat, lng, placeName }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     const snapPoints = useMemo(() => ["30%"], []);
@@ -76,6 +78,21 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(
                 prevRoute: '/(tabs)'
             },
         })
+    }
+
+    const handleStart = () => {
+        const destLat = lat ?? place?.geometry?.location.lat;
+        const destLng = lng ?? place?.geometry?.location.lng;
+        const destName = placeName || place?.name || place?.formatted_address || 'Điểm đến';
+        if (!destLat || !destLng) return;
+        router.push({
+            pathname: '/NavigationScreen',
+            params: {
+                lat: String(destLat),
+                lng: String(destLng),
+                placeName: destName,
+            },
+        });
     }
 
     const handleSheetClose = React.useCallback(() => {
@@ -155,15 +172,26 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(
                             </View>
                         </View>
 
-                        {/* Nút bấm Set Meeting Point màu xanh neon */}
-                        <TouchableOpacity
-                            style={styles.actionButton}
-                            activeOpacity={0.9}
-                            onPress={handleSetMeetingPoint}
-                        >
-                            <MapPinPlus size={20} color="#FFFFFF" strokeWidth={2.5} style={styles.buttonIcon} />
-                            <Text style={styles.actionButtonText}>Set Meeting Point</Text>
-                        </TouchableOpacity>
+                        {/* Nút hành động: Start (direction mode) hoặc Set Meeting Point */}
+                        {isDirectionMode ? (
+                            <TouchableOpacity
+                                style={styles.startButton}
+                                activeOpacity={0.9}
+                                onPress={handleStart}
+                            >
+                                <Navigation size={20} color="#FFFFFF" strokeWidth={2.5} style={[styles.buttonIcon, { transform: [{ rotate: '45deg' }] }]} />
+                                <Text style={styles.actionButtonText}>Start</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                activeOpacity={0.9}
+                                onPress={handleSetMeetingPoint}
+                            >
+                                <MapPinPlus size={20} color="#FFFFFF" strokeWidth={2.5} style={styles.buttonIcon} />
+                                <Text style={styles.actionButtonText}>Set Meeting Point</Text>
+                            </TouchableOpacity>
+                        )}
                     </>
                 </BottomSheetView>
             )}
@@ -255,10 +283,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
-        // Đổ bóng mềm nhẹ xuống Map nền phía dưới
         shadowColor: '#17F367',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.25,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    // Start Navigation Button (blue)
+    startButton: {
+        backgroundColor: "#17F367",
+        height: 54,
+        borderRadius: 16,
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: '#17F367',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 4,
     },

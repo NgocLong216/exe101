@@ -420,6 +420,22 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         </View>
       )}
 
+      {!isDirectionMode && activeGroupId && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Open personal AI chat"
+          style={styles.aiChatButton}
+          onPress={() =>
+            router.push({
+              pathname: "/PersonalAiChat",
+              params: { groupId: activeGroupId },
+            })
+          }
+        >
+          <Ionicons name="sparkles" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      )}
+
       {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
       <GroupChoose
         visible={groupChooseVisible}
@@ -432,12 +448,14 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         }}
       />
 
-      {!isDirectionMode && (
-        <PlaceBottomSheet
-          ref={bottomSheetRef}
-          onClose={clearDestinationAndRoute}
-        />
-      )}
+      <PlaceBottomSheet
+        ref={bottomSheetRef}
+        onClose={clearDestinationAndRoute}
+        isDirectionMode={isDirectionMode}
+        lat={lat}
+        lng={lng}
+        placeName={placeName}
+      />
     </View>
   );
 }
@@ -534,6 +552,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.4)",
     zIndex: 10,
+  },
+  aiChatButton: {
+    position: "absolute",
+    left: 16,
+    bottom: 112,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: "#1AF364",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 6,
+    zIndex: 2000,
   },
   backBtn: {
     position: "absolute",

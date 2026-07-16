@@ -191,7 +191,7 @@ export default function PlaceDetailScreen() {
                                 style={styles.circleHeaderBtn}
                                 onPress={() => {
 
-                                    if (prevRoute === "/GroupChat") {
+                                    if (prevRoute === "/GroupChat" || prevRoute === "/PersonalAiChat") {
                                         router.back();
 
                                         return;
