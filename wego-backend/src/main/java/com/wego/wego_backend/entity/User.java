@@ -40,4 +40,9 @@ public class User {
 
     @Column(nullable = false)
     private Boolean locationSharingEnabled = true;
+
+    @Column
+    private String plan = "FREE";
+
+    private LocalDateTime planExpiresAt;
 }

@@ -214,6 +214,65 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
 </html>`;
 }
 
+// ─── Direction with Steps ─────────────────────────────────────────────────────
+
+export type DirectionStep = {
+  distance: number;       // metres
+  duration: number;       // seconds
+  instruction: string;    // plain text, e.g. "Rẽ phải vào Đường ABC"
+  maneuver: string;       // e.g. "turn-right", "turn-left", "straight"
+  startLocation: { lat: number; lng: number };
+  endLocation: { lat: number; lng: number };
+};
+
+export type DirectionResult = {
+  steps: DirectionStep[];
+  totalDistance: number;  // metres
+  totalDuration: number;  // seconds
+  polyline: LatLng[];
+};
+
+/** Strips HTML tags from a string */
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+}
+
+export async function fetchDirectionWithSteps(
+  origin: LatLng,
+  destination: LatLng
+): Promise<DirectionResult | null> {
+  const url =
+    `https://rsapi.goong.io/Direction` +
+    `?origin=${origin.latitude},${origin.longitude}` +
+    `&destination=${destination.latitude},${destination.longitude}` +
+    `&vehicle=bike&api_key=${GOONG_API_KEY_2}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.routes?.length) return null;
+
+  const route = data.routes[0];
+  const leg = route.legs?.[0];
+  if (!leg) return null;
+
+  const steps: DirectionStep[] = (leg.steps ?? []).map((s: any) => ({
+    distance: s.distance?.value ?? 0,
+    duration: s.duration?.value ?? 0,
+    instruction: stripHtml(s.html_instructions ?? s.maneuver ?? ''),
+    maneuver: s.maneuver ?? 'straight',
+    startLocation: { lat: s.start_location?.lat ?? 0, lng: s.start_location?.lng ?? 0 },
+    endLocation: { lat: s.end_location?.lat ?? 0, lng: s.end_location?.lng ?? 0 },
+  }));
+
+  return {
+    steps,
+    totalDistance: leg.distance?.value ?? 0,
+    totalDuration: leg.duration?.value ?? 0,
+    polyline: decodePolyline(route.overview_polyline.points),
+  };
+}
+
 // ─── Polyline decoder ─────────────────────────────────────────────────────────
 
 export function decodePolyline(encoded: string): LatLng[] {

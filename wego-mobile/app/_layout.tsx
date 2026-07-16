@@ -80,6 +80,11 @@ export default function RootLayout() {
                 name="modal"
                 options={{ presentation: 'modal', title: 'Modal' }}
               />
+              <Stack.Screen name="PlaceDetail" />
+              <Stack.Screen name="NavigationScreen" options={{ headerShown: false, animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="UpdatePlan" options={{ headerShown: false, animation: 'slide_from_right' }} />
+              <Stack.Screen name="Payment" options={{ headerShown: false, animation: 'slide_from_right' }} />
+              <Stack.Screen name="PersonalAiChat" options={{ headerShown: false, animation: 'slide_from_right' }} />
             </Stack>
           </TabBarVisibilityProvider>
           <StatusBar style="auto" />
