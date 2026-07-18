@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react-native";
+import type { LocationResult } from "@/types/location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     FlatList,
@@ -8,11 +9,16 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
+import type { PlaceDetail } from "./bottomSheet";
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2;
 // hoặc: import { GOONG_API_KEY } from "../config";
 
-export default function SearchBar({ onSelectLocation } : {onSelectLocation : any}) {
+type Props = {
+    onSelectLocation: (location: LocationResult, detail: PlaceDetail) => void;
+};
+
+export default function SearchBar({ onSelectLocation }: Props) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [lastSelect, setLastSelect] = useState("");
@@ -80,11 +86,25 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
             const location = json.result?.geometry?.location;
             if (!location) throw new Error("Place detail has no location");
 
-            onSelectLocation({
+            const selectedLocation: LocationResult = {
                 latitude: location.lat,
                 longitude: location.lng,
                 name: place.description
-            });
+            };
+            const detail: PlaceDetail = {
+                ...json.result,
+                place_id: json.result?.place_id || place.place_id,
+                name: json.result?.name || place.description,
+                geometry: {
+                    location: {
+                        lat: location.lat,
+                        lng: location.lng,
+                    },
+                    boundary: json.result?.geometry?.boundary ?? null,
+                },
+            };
+
+            onSelectLocation(selectedLocation, detail);
         } catch (err) {
             if (err instanceof Error && err.name === "AbortError") return;
             console.log("Place detail error:", err);

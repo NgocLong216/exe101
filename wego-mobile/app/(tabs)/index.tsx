@@ -10,12 +10,13 @@ import {
   ref,
   set,
 } from "firebase/database";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { ImageWidgetSource, getWidgetInfo, requestWidgetUpdate } from 'react-native-android-widget';
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 || '';
 const WIDGET_NAME = "Map";
+const WIDGET_UPDATE_INTERVAL_MS = 30_000;
 
 const requestPermission = async () => {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -31,6 +32,8 @@ export default function HomeScreen() {
   const [initializing, setInitializing] = useState(true);
   const [isLocationSharingEnabled, setIsLocationSharingEnabled] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const lastWidgetUpdateRef = useRef(0);
+  const widgetUpdateInFlightRef = useRef(false);
     
 
   const startTracking = useCallback(async () => {
@@ -53,34 +56,47 @@ export default function HomeScreen() {
         const { latitude, longitude } = loc.coords;
         setUserLocation(loc.coords);
         setInitializing(false);
+        void AsyncStorage.multiSet([
+          ['widget_lat', latitude.toString()],
+          ['widget_lng', longitude.toString()],
+        ]).catch((error) => console.log('Widget coordinate storage error:', error));
 
-         // Fetch base64 map image rồi mới update widget
-         try {
-          const offset = 0.0001
-          await AsyncStorage.setItem('widget_lat', latitude.toString());
-          await AsyncStorage.setItem('widget_lng', longitude.toString());
+        const now = Date.now();
+        if (
+          !widgetUpdateInFlightRef.current &&
+          now - lastWidgetUpdateRef.current >= WIDGET_UPDATE_INTERVAL_MS
+        ) {
+          widgetUpdateInFlightRef.current = true;
+          lastWidgetUpdateRef.current = now;
 
-          const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude+offset},${longitude}&destination=${latitude},${longitude}&width=600&height=300&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource ;
+          void (async () => {
+            try {
+              const offset = 0.0001;
+              const mapUrl = `https://rsapi.goong.io/staticmap/route?origin=${latitude + offset},${longitude}&destination=${latitude},${longitude}&width=600&height=300&vehicle=car&api_key=${GOONG_API_KEY}` as ImageWidgetSource;
+              const widgets = await getWidgetInfo(WIDGET_NAME);
 
-          const widgets = await getWidgetInfo(WIDGET_NAME);
-          if (!widgets.length) {
-            console.log('No widget instance found yet. Add the widget to the Android home screen first.');
-            return;
-          }
+              if (!widgets.length) {
+                console.log('No widget instance found yet. Add the widget to the Android home screen first.');
+                return;
+              }
 
-          await requestWidgetUpdate({
-            widgetName: WIDGET_NAME,
-            renderWidget: () => (
-              <MapWidget
-                latitude={latitude}
-                longitude={longitude}
-                Image={mapUrl}
-              />
-            ),
-            widgetNotFound: () => console.log('Widget instance not found. Add the widget to the Android home screen and rebuild the app if needed.'),
-          });
-        } catch (err) {
-          console.log('Widget update error:', err);
+              await requestWidgetUpdate({
+                widgetName: WIDGET_NAME,
+                renderWidget: () => (
+                  <MapWidget
+                    latitude={latitude}
+                    longitude={longitude}
+                    Image={mapUrl}
+                  />
+                ),
+                widgetNotFound: () => console.log('Widget instance not found. Add the widget to the Android home screen and rebuild the app if needed.'),
+              });
+            } catch (err) {
+              console.log('Widget update error:', err);
+            } finally {
+              widgetUpdateInFlightRef.current = false;
+            }
+          })();
         }
 
         // Firebase update
@@ -99,7 +115,6 @@ export default function HomeScreen() {
             disconnectSet = true;
           }
 
-          setUserLocation({ latitude, longitude });
           await set(locationRef, {
             firebaseUid: user.uid,
             name: user.displayName || "Anonymous",
@@ -122,12 +137,14 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       let cleanupFn: (() => void) | undefined;
+      let cancelled = false;
   
       const run = async () => {
         setInitializing(true); // 👈 bắt đầu load
   
         setLocationError(null);
         const enabled = await AsyncStorage.getItem("locationSharing");
+        if (cancelled) return;
   
         if (enabled === "false") {
           setIsLocationSharingEnabled(false);
@@ -138,6 +155,7 @@ export default function HomeScreen() {
   
         setIsLocationSharingEnabled(true);
         const ok = await requestPermission();
+        if (cancelled) return;
   
         if (!ok) {
           setUserLocation(null);
@@ -147,8 +165,14 @@ export default function HomeScreen() {
         }
   
         try {
-          cleanupFn = await startTracking();
+          const trackingCleanup = await startTracking();
+          if (cancelled) {
+            trackingCleanup?.();
+          } else {
+            cleanupFn = trackingCleanup;
+          }
         } catch (error) {
+          if (cancelled) return;
           console.log("Location tracking error:", error);
           setLocationError("Unable to get your current location");
           setInitializing(false);
@@ -158,6 +182,7 @@ export default function HomeScreen() {
       run();
   
       return () => {
+        cancelled = true;
         cleanupFn?.();
       };
     }, [startTracking])

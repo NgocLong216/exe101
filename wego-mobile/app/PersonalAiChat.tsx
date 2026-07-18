@@ -1,7 +1,8 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
+import { off, onValue, push, ref, set } from "firebase/database";
 import { ArrowLeft, Bot, Send, Sparkles } from "lucide-react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -17,10 +18,13 @@ import {
   StatusBar
 } from "react-native";
 
+import { db } from "@/firebase";
+
 type ChatMessage = {
   id: string;
   role: "user" | "ai";
   text: string;
+  timestamp: number;
   places?: {
     name: string;
     address?: string;
@@ -38,18 +42,69 @@ export default function PersonalAiChat() {
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
+  useEffect(() => {
+    const user = getAuth().currentUser;
+    if (!user || !groupId) {
+      setMessages([]);
+      return;
+    }
+
+    const messagesRef = ref(
+      db,
+      `personal_ai_chats/${user.uid}/${groupId}`
+    );
+
+    onValue(messagesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        setMessages([]);
+        return;
+      }
+
+      const loadedMessages = Object.entries(data)
+        .map(([id, value]) => ({
+          id,
+          ...(value as Omit<ChatMessage, "id">),
+        }))
+        .sort((a, b) => a.timestamp - b.timestamp);
+
+      setMessages(loadedMessages);
+    });
+
+    return () => off(messagesRef);
+  }, [groupId]);
+
+  const saveChatMessage = async (
+    message: Omit<ChatMessage, "id">
+  ) => {
+    const user = getAuth().currentUser;
+    if (!user || !groupId) throw new Error("User or group is missing");
+
+    const messagesRef = ref(
+      db,
+      `personal_ai_chats/${user.uid}/${groupId}`
+    );
+    const newMessageRef = push(messagesRef);
+
+    // Realtime Database does not accept undefined fields.
+    const firebaseMessage = JSON.parse(JSON.stringify(message));
+    await set(newMessageRef, firebaseMessage);
+  };
+
   const sendMessage = async () => {
     const question = input.trim();
     if (!question || thinking || !groupId) return;
 
     setInput("");
     setThinking(true);
-    setMessages((current) => [
-      ...current,
-      { id: `user-${Date.now()}`, role: "user", text: question },
-    ]);
 
     try {
+      await saveChatMessage({
+        role: "user",
+        text: question,
+        timestamp: Date.now(),
+      });
+
       const token = await getAuth().currentUser?.getIdToken();
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/chat`,
@@ -65,24 +120,23 @@ export default function PersonalAiChat() {
 
       if (!response.ok) throw new Error("AI request failed");
       const data = await response.json();
-      setMessages((current) => [
-        ...current,
-        {
-          id: `ai-${Date.now()}`,
-          role: "ai",
-          text: data.message || "I could not find an answer.",
-          places: data.places || [],
-        },
-      ]);
-    } catch {
-      setMessages((current) => [
-        ...current,
-        {
-          id: `error-${Date.now()}`,
+      await saveChatMessage({
+        role: "ai",
+        text: data.message || "I could not find an answer.",
+        places: data.places || [],
+        timestamp: Date.now(),
+      });
+    } catch (error) {
+      console.warn("Could not send AI chat message", error);
+      try {
+        await saveChatMessage({
           role: "ai",
           text: "Sorry, I couldn't reach WeGo AI. Please try again.",
-        },
-      ]);
+          timestamp: Date.now(),
+        });
+      } catch (saveError) {
+        console.warn("Could not save AI chat error message", saveError);
+      }
     } finally {
       setThinking(false);
     }
