@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, BackHandler, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { WebView } from "react-native-webview";
 import GroupChoose from "./GroupChoose";
 
@@ -47,6 +47,8 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetail | null>(null);
   const [routeIds, setRouteIds] = useState<string[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // ─── Group Switcher States ──────────────────────────────────────────────────
   const [groups, setGroups] = useState<GroupResponse[]>([]);
@@ -146,6 +148,24 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     }
   }, [destination, hideTabBar, showTabBar]);
 
+  useEffect(() => {
+    if (!isBottomSheetOpen) return;
+
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+      bottomSheetRef.current?.close();
+      return true;
+    });
+
+    return () => subscription.remove();
+  }, [isBottomSheetOpen]);
+
+  useEffect(() => {
+    webRef.current?.injectJavaScript(`
+      window.locationSelectionLocked = ${isBottomSheetOpen};
+      true;
+    `);
+  }, [isBottomSheetOpen]);
+
   // Hàm xử lý khi ấn vào nút đổi nhóm
   const handleSwitchGroup = () => {
     setGroupChooseVisible(true);
@@ -173,18 +193,30 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         setDestination({ latitude: selectedLat, longitude: selectedLng } as LocationResult);
         bottomSheetRef.current?.open(detail);
 
-        webRef.current?.injectJavaScript(`
-          map.flyTo({ center: [${selectedLng}, ${selectedLat}], zoom: 16 });
-          new goongjs.Marker({ color: "red" })
-            .setLngLat([${selectedLng}, ${selectedLat}])
-            .addTo(map);
-          true;
-        `);
       } catch (e) {
         console.log("AUTO LOAD PLACE ERROR", e);
       }
     })();
   }, [placeId, placeName, lat, lng, prevRoute]);
+
+  useEffect(() => {
+    if (!isMapReady || !destination) return;
+
+    const zoom = isDirectionMode ? 16 : 15;
+    webRef.current?.injectJavaScript(`
+      map.stop();
+      map.easeTo({
+        center: [${destination.longitude}, ${destination.latitude}],
+        zoom: ${zoom},
+        duration: 300
+      });
+      if (!window.destinationMarker) {
+        window.destinationMarker = new goongjs.Marker({ color: "red" }).addTo(map);
+      }
+      window.destinationMarker.setLngLat([${destination.longitude}, ${destination.latitude}]);
+      true;
+    `);
+  }, [destination, isDirectionMode, isMapReady]);
 
   // ─── Re-fetch routes whenever destination or members change ─────────────────
   useEffect(() => {
@@ -192,7 +224,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     setRoute([]);
 
     const runFetch = async () => {
-      if (!destination) return;
+      if (!destination || !isMapReady) return;
       try {
         setLoading(true);
         // Xóa layer cũ
@@ -215,11 +247,19 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         const newRouteIds: string[] = [];
         const routesResult: LatLng[][] = [];
 
+        const fetchedRoutes = await Promise.all(
+          origins.map((origin) =>
+            fetchDirection(origin, {
+              latitude: destination.latitude,
+              longitude: destination.longitude,
+            })
+          )
+        );
+
+        if (!isMounted) return;
+
         for (let i = 0; i < origins.length; i++) {
-          const coords = await fetchDirection(origins[i], {
-            latitude: destination.latitude,
-            longitude: destination.longitude,
-          });
+          const coords = fetchedRoutes[i];
 
           if (!isMounted) return; // Guard chống race-condition khi switch group giữa chừng
           if (!coords.length) continue;
@@ -262,18 +302,31 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
     runFetch();
     return () => { isMounted = false; };
-  }, [destination, members]);
+  }, [destination, members, isMapReady]);
 
-  const handleSearch = (location: LocationResult) => {
-    setDestination(location);
-    webRef.current?.injectJavaScript(`
-      map.flyTo({ center: [${location.longitude}, ${location.latitude}], zoom: 15 });
-      if (!window.destinationMarker) {
-        window.destinationMarker = new goongjs.Marker({ color: "red" }).addTo(map);
-      }
-      window.destinationMarker.setLngLat([${location.longitude}, ${location.latitude}]);
-      true;
-    `);
+  const handleSearch = async (location: LocationResult) => {
+    try {
+      const place = await reverseGeocode(location.latitude, location.longitude);
+      if (!place) return;
+
+      const detail: PlaceDetail = {
+        ...place,
+        name: location.name || place.name,
+        geometry: {
+          location: {
+            lat: location.latitude,
+            lng: location.longitude,
+          },
+          boundary: place.geometry?.boundary ?? null,
+        },
+      };
+
+      setSelectedPlace(detail);
+      setDestination(location);
+      bottomSheetRef.current?.open(detail);
+    } catch (err) {
+      console.log("Search place error:", err);
+    }
   };
 
   const handleSelectPlace = async (place: LatLng) => {
@@ -300,6 +353,13 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         true;
       `);
     });
+    webRef.current?.injectJavaScript(`
+      if (window.destinationMarker) {
+        window.destinationMarker.remove();
+        window.destinationMarker = null;
+      }
+      true;
+    `);
     setDestination(null);
     setRoute([]);
     setRouteIds([]);
@@ -341,9 +401,13 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         onMessage={(event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === "MAP_READY") {
+              setIsMapReady(true);
+              return;
+            }
             if (data.type === "MAP_CLICK") {
 
-              if (isDirectionMode) {
+              if (isDirectionMode || isBottomSheetOpen) {
                 return;
               }
 
@@ -384,17 +448,17 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       />
 
       {loading && (
-        <View style={styles.loading}>
+        <View pointerEvents="none" style={styles.loading}>
           <ActivityIndicator size="large" />
         </View>
       )}
 
       {/* UI Nút chuyển Group nổi trên map */}
-      {!isDirectionMode && (
+      {!isDirectionMode && !isBottomSheetOpen && (
         <SearchBar onSelectLocation={handleSearch} />
       )}
 
-      {!isDirectionMode && (
+      {!isDirectionMode && !isBottomSheetOpen && (
         <View style={styles.topBarContainer}>
 
           <TouchableOpacity
@@ -420,7 +484,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         </View>
       )}
 
-      {!isDirectionMode && activeGroupId && (
+      {!isDirectionMode && activeGroupId && !isBottomSheetOpen && (
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel="Open personal AI chat"
@@ -450,7 +514,16 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
       <PlaceBottomSheet
         ref={bottomSheetRef}
-        onClose={clearDestinationAndRoute}
+        onOpen={() => setIsBottomSheetOpen(true)}
+        onClose={() => {
+          const shouldReturnToPlaceDetail = isDirectionMode && isBottomSheetOpen;
+          setIsBottomSheetOpen(false);
+          clearDestinationAndRoute();
+
+          if (shouldReturnToPlaceDetail) {
+            router.back();
+          }
+        }}
         isDirectionMode={isDirectionMode}
         lat={lat}
         lng={lng}

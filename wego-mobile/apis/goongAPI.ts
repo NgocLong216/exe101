@@ -169,6 +169,13 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
   <style>
     html, body { margin: 0; padding: 0; overflow: hidden; }
     #map { width: 100vw; height: 100vh; }
+    .goongjs-marker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      will-change: transform;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -184,10 +191,17 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
     });
 
     window.destinationMarker = null;
+    window.locationSelectionLocked = false;
+
+    map.on("load", () => {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ type: "MAP_READY" })
+      );
+    });
 
     map.on("click", (e) => {
 
-      if (${readonly}) {
+      if (${readonly} || window.locationSelectionLocked) {
         return;
       }
     

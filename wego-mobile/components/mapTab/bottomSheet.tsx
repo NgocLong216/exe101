@@ -50,6 +50,7 @@ export type PlaceBottomSheetRef = {
 };
 
 type PlaceBottomSheetProps = {
+    onOpen?: () => void;
     onClose?: () => void;
     isDirectionMode?: boolean;
     lat?: string | number;
@@ -57,7 +58,7 @@ type PlaceBottomSheetProps = {
     placeName?: string;
 };
 
-const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(({ onClose, isDirectionMode, lat, lng, placeName }, ref) => {
+const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(({ onOpen, onClose, isDirectionMode, lat, lng, placeName }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     const snapPoints = useMemo(() => ["30%"], []);
@@ -105,12 +106,12 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(
         open: (placeDetail: PlaceDetail) => {
             setPlace(placeDetail);
             setOpenRequested(true);
+            onOpen?.();
         },
         close: () => {
             bottomSheetRef.current?.close();
-            handleSheetClose();
         }
-    }));
+    }), [onOpen]);
 
     React.useEffect(() => {
         if (openRequested && place) {
@@ -198,6 +199,8 @@ const PlaceBottomSheet = forwardRef<PlaceBottomSheetRef, PlaceBottomSheetProps>(
         </BottomSheet>
     );
 });
+
+PlaceBottomSheet.displayName = "PlaceBottomSheet";
 
 export default PlaceBottomSheet;
 

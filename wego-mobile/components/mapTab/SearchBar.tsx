@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     FlatList,
     StyleSheet,
@@ -16,39 +16,55 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [lastSelect, setLastSelect] = useState("");
+    const detailRequestRef = useRef<AbortController | null>(null);
+
+    useEffect(() => () => detailRequestRef.current?.abort(), []);
 
     useEffect(() => {
-        if (query.length < 2) {
+        if (query.length < 2 || query === lastSelect) {
             setResults([]);
             return;
         }
 
+        const controller = new AbortController();
         const timeout = setTimeout(() => {
-            fetchAutocomplete(query);
+            fetchAutocomplete(query, controller.signal);
         }, 500); // debounce
 
-        return () => clearTimeout(timeout);
-    }, [query]);
+        return () => {
+            clearTimeout(timeout);
+            controller.abort();
+        };
+    }, [query, lastSelect]);
 
-    const fetchAutocomplete = async (text: string) => {
+    const fetchAutocomplete = async (text: string, signal: AbortSignal) => {
         try {
             const url =
                 `https://rsapi.goong.io/Place/AutoComplete` +
                 `?api_key=${GOONG_API_KEY}&input=${encodeURIComponent(text)}`;
 
-            const res = await fetch(url);
+            const res = await fetch(url, { signal });
+            if (!res.ok) throw new Error(`Autocomplete failed: ${res.status}`);
             const json = await res.json();
             setResults(json.predictions || []);
         } catch (err) {
+            if (err instanceof Error && err.name === "AbortError") return;
             console.log("Autocomplete error:", err);
         }
     };
 
     const handleDelete = () => {
+        detailRequestRef.current?.abort();
+        setLastSelect("");
         setQuery("");
     }
 
     const handleSelect = async (place : any) => {
+        detailRequestRef.current?.abort();
+        const controller = new AbortController();
+        detailRequestRef.current = controller;
+
+        setLastSelect(place.description);
         setQuery(place.description);
         setResults([]);
 
@@ -57,17 +73,22 @@ export default function SearchBar({ onSelectLocation } : {onSelectLocation : any
             `https://rsapi.goong.io/Place/Detail` +
             `?place_id=${place.place_id}&api_key=${GOONG_API_KEY}`;
 
-        const res = await fetch(url);
-        const json = await res.json();
+        try {
+            const res = await fetch(url, { signal: controller.signal });
+            if (!res.ok) throw new Error(`Place detail failed: ${res.status}`);
+            const json = await res.json();
+            const location = json.result?.geometry?.location;
+            if (!location) throw new Error("Place detail has no location");
 
-        const location = json.result.geometry.location;
-
-        onSelectLocation({
-            latitude: location.lat,
-            longitude: location.lng,
-            name: place.description
-        });
-        setLastSelect(place.description)
+            onSelectLocation({
+                latitude: location.lat,
+                longitude: location.lng,
+                name: place.description
+            });
+        } catch (err) {
+            if (err instanceof Error && err.name === "AbortError") return;
+            console.log("Place detail error:", err);
+        }
     };
 
     return (

@@ -16,6 +16,8 @@ type Props = {
 // project each lat/lng to screen pixel and post it back as MARKER_PIXELS
 const buildPixelScript = (points: MarkerPoint[]) => `
 (function() {
+  if (!window.map) return;
+
   var pts = ${JSON.stringify(
     points.map((p) => ({ id: p.id, lat: p.x, lng: p.y }))
   )};
@@ -73,7 +75,7 @@ export default function MarkersOverlay({
             if (mapRef.current) {
                 mapRef.current.injectJavaScript(buildPixelScript(points));
             }
-        }, 33);
+        }, 200);
 
         return () => {
             if (rafRef.current) clearInterval(rafRef.current);
