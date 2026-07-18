@@ -4,6 +4,7 @@ import { getDatabase, onValue, ref } from "firebase/database";
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY as string;
 const GOONG_API_KEY_2 = process.env.EXPO_PUBLIC_GOONG_API_KEY_2 as string;
 const API_URL = process.env.EXPO_PUBLIC_API_URL as string;
+const GOONG_JS_VERSION = "1.0.9";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,7 +78,8 @@ export async function reverseGeocode(
 
 export async function fetchDirection(
   origin: LatLng,
-  destination: LatLng
+  destination: LatLng,
+  signal?: AbortSignal
 ): Promise<LatLng[]> {
   const url =
     `https://rsapi.goong.io/Direction` +
@@ -85,7 +87,10 @@ export async function fetchDirection(
     `&destination=${destination.latitude},${destination.longitude}` +
     `&vehicle=bike&api_key=${GOONG_API_KEY_2}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { signal });
+  if (!res.ok) {
+    throw new Error(`Direction request failed: ${res.status}`);
+  }
   const data = await res.json();
 
   if (!data.routes?.length) return [];
@@ -106,7 +111,8 @@ export function subscribeGroupMembers(
   onUpdate: (members: Member[]) => void,
   onError?: (err: unknown) => void
 ): () => void {
-  let firebaseUnsub: (() => void) | null = null;
+  let disposed = false;
+  const firebaseUnsubs: (() => void)[] = [];
 
   (async () => {
     try {
@@ -116,21 +122,37 @@ export function subscribeGroupMembers(
         `${API_URL}/api/groups/${groupId}/members/uids`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      if (!response.ok) {
+        throw new Error(`Unable to load group members: ${response.status}`);
+      }
 
-      const memberUids: string[] = await response.json();
+      const memberUids = Array.from(new Set<string>(await response.json()));
+      if (disposed) return;
+      if (memberUids.length === 0) {
+        onUpdate([]);
+        return;
+      }
 
       const db = getDatabase();
+      const locations = new Map<string, Member>();
+      const emitMembers = () => {
+        if (disposed) return;
+        onUpdate(
+          memberUids
+            .map((uid) => locations.get(uid))
+            .filter((member): member is Member => Boolean(member))
+        );
+      };
 
-      firebaseUnsub = onValue(
-        ref(db, "live_locations"),
-        (snapshot) => {
-          const locations = snapshot.val() || {};
-
-          const members: Member[] = memberUids
-            .map((uid) => {
-              const loc = locations[uid];
-              if (!loc) return null;
-              return {
+      memberUids.forEach((uid) => {
+        const unsubscribe = onValue(
+          ref(db, `live_locations/${uid}`),
+          (snapshot) => {
+            const loc = snapshot.val();
+            if (!loc) {
+              locations.delete(uid);
+            } else {
+              locations.set(uid, {
                 firebaseUid: uid,
                 name: loc.name || "",
                 lat: loc.lat,
@@ -139,21 +161,29 @@ export function subscribeGroupMembers(
                   loc.picture ||
                   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
                 updatedAt: loc.updatedAt || 0,
-              };
-            })
-            .filter(Boolean) as Member[];
+              });
+            }
+            emitMembers();
+          },
+          (error) => {
+            if (!disposed) onError?.(error);
+          }
+        );
 
-          onUpdate(members);
+        if (disposed) {
+          unsubscribe();
+        } else {
+          firebaseUnsubs.push(unsubscribe);
         }
-      );
+      });
     } catch (err) {
-      onError?.(err);
+      if (!disposed) onError?.(err);
     }
   })();
 
-  // Return cleanup — works even if firebase hasn't subscribed yet
   return () => {
-    firebaseUnsub?.();
+    disposed = true;
+    firebaseUnsubs.splice(0).forEach((unsubscribe) => unsubscribe());
   };
 }
 
@@ -165,22 +195,45 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@${GOONG_JS_VERSION}/dist/goong-js.css" rel="stylesheet" />
   <style>
-    html, body { margin: 0; padding: 0; overflow: hidden; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
     #map { width: 100vw; height: 100vh; }
-    .goongjs-marker {
-      position: absolute;
-      top: 0;
-      left: 0;
-      will-change: transform;
-      pointer-events: none;
+    .wego-member-marker {
+      width: 62px;
+      height: 64px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wego-member-marker__avatar {
+      width: 54px;
+      height: 54px;
+      box-sizing: border-box;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      background: #cbd5e1;
+      object-fit: cover;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.28);
+    }
+    .wego-member-marker__tip {
+      width: 14px;
+      height: 14px;
+      margin-top: -7px;
+      background: #fff;
+      transform: rotate(45deg);
+      box-shadow: 2px 2px 4px rgba(15, 23, 42, 0.16);
     }
   </style>
 </head>
 <body>
   <div id="map"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@${GOONG_JS_VERSION}/dist/goong-js.js"></script>
   <script>
     goongjs.accessToken = "${GOONG_MAP_TOKEN}";
     window.map = new goongjs.Map({
@@ -191,7 +244,9 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
     });
 
     window.destinationMarker = null;
+    window.memberMarkers = Object.create(null);
     window.locationSelectionLocked = false;
+    window.mapReadOnly = ${readonly};
 
     map.on("load", () => {
       window.ReactNativeWebView.postMessage(
@@ -201,7 +256,7 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
 
     map.on("click", (e) => {
 
-      if (${readonly} || window.locationSelectionLocked) {
+      if (window.mapReadOnly || window.locationSelectionLocked) {
         return;
       }
     
@@ -210,7 +265,8 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
       }
     
       window.destinationMarker = new goongjs.Marker({
-        color: "red"
+        color: "red",
+        anchor: "bottom"
       })
         .setLngLat([e.lngLat.lng, e.lngLat.lat])
         .addTo(map);
