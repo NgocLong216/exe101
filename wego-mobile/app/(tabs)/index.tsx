@@ -29,6 +29,8 @@ const requestPermission = async () => {
 export default function HomeScreen() {
   const [userLocation, setUserLocation] = useState<LocationResult | null>(null);
   const [initializing, setInitializing] = useState(true);
+  const [isLocationSharingEnabled, setIsLocationSharingEnabled] = useState(true);
+  const [locationError, setLocationError] = useState<string | null>(null);
     
 
   const startTracking = useCallback(async () => {
@@ -50,6 +52,7 @@ export default function HomeScreen() {
       async (loc) => {
         const { latitude, longitude } = loc.coords;
         setUserLocation(loc.coords);
+        setInitializing(false);
 
          // Fetch base64 map image rồi mới update widget
          try {
@@ -97,8 +100,6 @@ export default function HomeScreen() {
           }
 
           setUserLocation({ latitude, longitude });
-          setInitializing(false);
-
           await set(locationRef, {
             firebaseUid: user.uid,
             name: user.displayName || "Anonymous",
@@ -125,24 +126,33 @@ export default function HomeScreen() {
       const run = async () => {
         setInitializing(true); // 👈 bắt đầu load
   
+        setLocationError(null);
         const enabled = await AsyncStorage.getItem("locationSharing");
   
         if (enabled === "false") {
+          setIsLocationSharingEnabled(false);
           setUserLocation(null);
           setInitializing(false);
           return;
         }
   
+        setIsLocationSharingEnabled(true);
         const ok = await requestPermission();
   
         if (!ok) {
           setUserLocation(null);
+          setLocationError("Location permission is not granted");
           setInitializing(false);
           return;
         }
   
-        cleanupFn = await startTracking();
-        setInitializing(false);
+        try {
+          cleanupFn = await startTracking();
+        } catch (error) {
+          console.log("Location tracking error:", error);
+          setLocationError("Unable to get your current location");
+          setInitializing(false);
+        }
       };
   
       run();
@@ -165,7 +175,7 @@ export default function HomeScreen() {
     );
   }
   
-  if (!userLocation) {
+  if (!isLocationSharingEnabled) {
     return (
       <View style={{
         flex: 1,
@@ -173,6 +183,31 @@ export default function HomeScreen() {
         alignItems: "center",
       }}>
         <Text>Location sharing is disabled</Text>
+      </View>
+    );
+  }
+
+  if (locationError) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <Text>{locationError}</Text>
+      </View>
+    );
+  }
+
+  if (!userLocation) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <ActivityIndicator size="large" />
+        <Text>Getting your current location...</Text>
       </View>
     );
   }
