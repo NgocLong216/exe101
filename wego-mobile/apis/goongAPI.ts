@@ -247,6 +247,24 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
     window.memberMarkers = Object.create(null);
     window.locationSelectionLocked = false;
     window.mapReadOnly = ${readonly};
+    window.markerPixels = {}; // id -> {x, y}, cập nhật bởi updateMarkerPixels
+
+    // Được GoongWebMap gọi định kỳ (qua injectJavaScript) để cập nhật vị trí
+    // pixel hiện tại của các marker người dùng — dùng để hit-test khi click.
+    window.updateMarkerPixels = function(points) {
+      if (!window.map) return;
+      var results = {};
+      var payload = [];
+      points.forEach(function(p) {
+        var pixel = window.map.project([p.lng, p.lat]);
+        results[p.id] = { x: pixel.x, y: pixel.y };
+        payload.push({ id: p.id, x: pixel.x, y: pixel.y });
+      });
+      window.markerPixels = results;
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ type: "MARKER_PIXELS", pixels: payload })
+      );
+    };
 
     map.on("load", () => {
       window.ReactNativeWebView.postMessage(
@@ -255,27 +273,17 @@ export function buildMapHtml(latitude: number, longitude: number, readonly = fal
     });
 
     map.on("click", (e) => {
-
       if (window.mapReadOnly || window.locationSelectionLocked) {
         return;
       }
-    
-      if (window.destinationMarker) {
-        window.destinationMarker.remove();
-      }
-    
-      window.destinationMarker = new goongjs.Marker({
-        color: "red",
-        anchor: "bottom"
-      })
-        .setLngLat([e.lngLat.lng, e.lngLat.lat])
-        .addTo(map);
-    
+
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
           type: "MAP_CLICK",
           latitude: e.lngLat.lat,
-          longitude: e.lngLat.lng
+          longitude: e.lngLat.lng,
+          pixelX: e.point.x,
+          pixelY: e.point.y
         })
       );
     });
