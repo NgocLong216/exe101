@@ -14,11 +14,11 @@ import { WebView } from "react-native-webview";
 
 type Props = {
     locationPoint: MarkerPoint;
-    // mapRef now points to a WebView, so we receive pixel coords directly
     pixelX: number | null;
     pixelY: number | null;
     isInteracting: React.RefObject<boolean>;
     onPress: () => void;
+    onPositionChange?: (id: string, pos: { x: number; y: number } | null) => void;
 };
 
 const PIN_HEIGHT = 10;
@@ -36,14 +36,11 @@ export function MarkerUsers({
     pixelY,
     isInteracting,
     onPress,
+    onPositionChange,
 }: Props) {
     const { user } = useAuth();
-    if (!user) return null;
 
-    const animatedPoint = useRef(
-        new Animated.ValueXY({ x: 0, y: 0 })
-    ).current;
-
+    const animatedPoint = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
     const overlayFix = useRef({ width: 0, height: 0 });
 
     const ready =
@@ -62,9 +59,11 @@ export function MarkerUsers({
         }).start();
     };
 
-    // Animate to new pixel position whenever parent sends updated coords
     useEffect(() => {
-        if (pixelX === null || pixelY === null || !ready) return;
+        if (pixelX === null || pixelY === null || !ready) {
+            onPositionChange?.(locationPoint.id, null);
+            return;
+        }
 
         const halfW = overlayFix.current.width / 2;
         const halfH = overlayFix.current.height / 2;
@@ -74,11 +73,16 @@ export function MarkerUsers({
         const minY = EDGE_PADDING + halfH;
         const maxY = SCREEN_HEIGHT - EDGE_PADDING - halfH;
 
-        animateTo(
-            clamp(pixelX, minX, maxX),
-            clamp(pixelY, minY, maxY)
-        );
-    }, [pixelX, pixelY]);
+        const clampedX = clamp(pixelX, minX, maxX);
+        const clampedY = clamp(pixelY, minY, maxY);
+
+        animateTo(clampedX, clampedY);
+        // Báo vị trí ĐÃ CLAMP (vị trí thật đang hiển thị trên màn hình) lên
+        // component cha, để dùng cho hit-test khi có MAP_CLICK.
+        onPositionChange?.(locationPoint.id, { x: clampedX, y: clampedY });
+    }, [pixelX, pixelY, ready]);
+
+    if (!user) return null;
 
     return (
         <Animated.View

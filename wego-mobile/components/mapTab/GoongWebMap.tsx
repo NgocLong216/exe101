@@ -1,12 +1,15 @@
 import { useAuth } from "@/auth0/AuthContext";
 import { LocationResult } from "@/types/location";
+import { MarkerPoint } from "@/types/map";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import { WebView } from "react-native-webview";
 import GroupChoose from "./GroupChoose";
+import MarkersOverlay from "./overlayMarker/MarkersOverlay";
 
 // Import API lấy danh sách nhóm của bạn
 import { getUserGroups, GroupResponse } from "@/apis/groupAPI"; // Điều chỉnh đường dẫn cho đúng
@@ -23,9 +26,10 @@ import PlaceBottomSheet, {
   PlaceBottomSheetRef,
   PlaceDetail,
 } from "./bottomSheet";
-import SearchBar from "./SearchBar";
+import SearchBar, { SearchBarRef } from "./SearchBar";
 import { useTabBarVisibility } from "@/contexts/TabBarVisibility";
 
+const ICON_VISUAL_OFFSET = 0;
 const ROUTE_COLORS = ["#2563EB", "#EF4444", "#22C55E", "#F59E0B", "#A855F7", "#EC4899"];
 const ROUTE_REFRESH_INTERVAL_MS = 15_000;
 const EMPTY_ROUTE_COLLECTION = {
@@ -33,12 +37,16 @@ const EMPTY_ROUTE_COLLECTION = {
   features: [],
 };
 
-type MemberMarkerData = {
-  id: string;
-  latitude: number;
-  longitude: number;
-  picture: string;
-};
+// Bán kính (px) chấp nhận là "trúng icon" khi hit-test toạ độ click trên map
+// so với vị trí pixel hiện tại của các marker người dùng.
+const ICON_HIT_RADIUS = 36;
+
+// Khoảng thời gian (ms) trì hoãn việc tắt cờ "đang focus search" sau khi
+// TextInput blur — đủ để MAP_CLICK (nếu do cùng cú tap gây ra) kịp đọc
+// được giá trị true trước khi cờ bị tắt.
+const SEARCH_BLUR_GRACE_MS = 250;
+
+type PixelCoord = { x: number; y: number };
 
 type RouteFeature = {
   type: "Feature";
@@ -61,70 +69,17 @@ const haveSameVisibleMembers = (previous: Member[], next: Member[]) =>
     );
   });
 
-const buildMemberMarkerScript = (points: MemberMarkerData[]) => `
+const buildPixelScript = (points: MarkerPoint[]) => `
   (function() {
-    if (!window.map || !window.goongjs) return;
-
-    var points = ${JSON.stringify(points)};
-    var markers = window.memberMarkers || (window.memberMarkers = Object.create(null));
-    var nextIds = Object.create(null);
-    var fallbackPicture = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-
-    points.forEach(function(point) {
-      if (!Number.isFinite(point.latitude) || !Number.isFinite(point.longitude)) return;
-
-      nextIds[point.id] = true;
-      var entry = markers[point.id];
-
-      if (!entry) {
-        var element = document.createElement("button");
-        element.type = "button";
-        element.className = "wego-member-marker";
-        element.setAttribute("aria-label", "Center map on member");
-
-        var avatar = document.createElement("img");
-        avatar.className = "wego-member-marker__avatar";
-        avatar.alt = "";
-
-        var tip = document.createElement("span");
-        tip.className = "wego-member-marker__tip";
-
-        element.appendChild(avatar);
-        element.appendChild(tip);
-
-        entry = { point: point, avatar: avatar, picture: null, marker: null };
-        element.addEventListener("click", function(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          var current = entry.point;
-          window.map.flyTo({
-            center: [current.longitude, current.latitude],
-            zoom: 17,
-            pitch: 0,
-            bearing: 0,
-            duration: 600
-          });
-        });
-
-        entry.marker = new window.goongjs.Marker({ element: element, anchor: "bottom" })
-          .setLngLat([point.longitude, point.latitude])
-          .addTo(window.map);
-        markers[point.id] = entry;
-      }
-
-      entry.point = point;
-      entry.marker.setLngLat([point.longitude, point.latitude]);
-      if (entry.picture !== point.picture) {
-        entry.avatar.src = point.picture || fallbackPicture;
-        entry.picture = point.picture;
-      }
+    if (!window.map) return;
+    var pts = ${JSON.stringify(points.map((p) => ({ id: p.id, lat: p.x, lng: p.y })))};
+    var results = pts.map(function(p) {
+      var pixel = window.map.project([p.lng, p.lat]);
+      return { id: p.id, x: pixel.x, y: pixel.y };
     });
-
-    Object.keys(markers).forEach(function(id) {
-      if (nextIds[id]) return;
-      markers[id].marker.remove();
-      delete markers[id];
-    });
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({ type: "MARKER_PIXELS", pixels: results })
+    );
   })();
   true;
 `;
@@ -134,9 +89,9 @@ const buildRouteLayerScript = (features: RouteFeature[]) => `
     if (!window.map) return;
 
     var data = ${JSON.stringify({
-      type: "FeatureCollection",
-      features,
-    })};
+  type: "FeatureCollection",
+  features,
+})};
     var source = window.map.getSource("wego-routes");
 
     if (source) {
@@ -171,6 +126,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   const currentUid = getAuth().currentUser?.uid;
   const webRef = useRef<WebView>(null);
   const bottomSheetRef = useRef<PlaceBottomSheetRef>(null);
+  const searchBarRef = useRef<SearchBarRef>(null);
   const routeRequestRef = useRef(0);
   const lastRouteFetchAtRef = useRef(0);
   const lastRouteDestinationRef = useRef<string | null>(null);
@@ -178,11 +134,36 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
   latestLocationRef.current = { latitude, longitude };
   const { hide: hideTabBar, show: showTabBar } = useTabBarVisibility();
 
+  const isInteracting = useRef(false);
+
   const [loading, setLoading] = useState(false);
   const [destination, setDestination] = useState<LocationResult | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
+
+  // ─── Search focus state (drives keyboard-dismiss-on-map-tap fix) ───────────
+  // isSearchFocusedRef is the source of truth read inside handleMapPress
+  // (needs to be read synchronously, not delayed by a React re-render).
+  // isSearchFocused (state) only exists to control SearchBar/other UI.
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const isSearchFocusedRef = useRef(false);
+  const blurResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  //Clamp
+  const displayedPixelsRef = useRef<Record<string, PixelCoord>>({});
+
+  const handleMarkerPositionChange = (id: string, pos: PixelCoord | null) => {
+    if (pos) {
+      displayedPixelsRef.current[id] = pos;
+    } else {
+      delete displayedPixelsRef.current[id];
+    }
+  };
+
+  // ─── Marker pixel positions (for member/self icons drawn as native overlay) ─
+  const [markerPixels, setMarkerPixels] = useState<Record<string, PixelCoord>>({});
+  const markerPixelsRef = useRef<Record<string, PixelCoord>>({});
 
   // ─── Group Switcher States ──────────────────────────────────────────────────
   const [groups, setGroups] = useState<GroupResponse[]>([]);
@@ -221,6 +202,19 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     return found?.groupPhoto ?? null;
 
   }, [activeGroupId, groups]);
+
+  const handleFocusPoint = (point: MarkerPoint) => {
+    webRef.current?.injectJavaScript(`
+    map.flyTo({
+      center: [${point.y}, ${point.x}],
+      zoom: 17,
+      pitch: 0,
+      bearing: 0,
+      duration: 600
+    });
+    true;
+  `);
+  };
 
   // Load danh sách nhóm của user khi vào map
   useEffect(() => {
@@ -285,34 +279,37 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     [latitude, longitude, members]
   );
 
-  const memberMarkerData = useMemo<MemberMarkerData[]>(
+  // Tất cả marker "người" (bản thân + thành viên khác) được vẽ bằng
+  // native overlay (MarkersOverlay/MarkerUsers) thay vì vẽ trong DOM WebView,
+  // để có animation mượt + có thể hit-test khi bấm.
+  const overlayPoints = useMemo<MarkerPoint[]>(
     () => [
       {
         id: "me",
-        latitude,
-        longitude,
-        picture: user?.picture || "",
+        x: latitude,
+        y: longitude,
+        user: { picture: user?.picture || "" },
       },
       ...members.map((member) => ({
         id: member.firebaseUid,
-        latitude: member.lat,
-        longitude: member.lng,
-        picture: member.picture || "",
+        x: member.lat,
+        y: member.lng,
+        user: { picture: member.picture || "" },
       })),
     ],
     [latitude, longitude, members, user?.picture]
   );
 
+  // Poll toạ độ pixel của các marker người mỗi 200ms khi map đã sẵn sàng.
   useEffect(() => {
     if (!isMapReady) return;
-    const timeout = setTimeout(() => {
-      webRef.current?.injectJavaScript(
-        buildMemberMarkerScript(memberMarkerData)
-      );
-    }, 100);
 
-    return () => clearTimeout(timeout);
-  }, [isMapReady, memberMarkerData]);
+    const interval = setInterval(() => {
+      webRef.current?.injectJavaScript(buildPixelScript(overlayPoints));
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [isMapReady, overlayPoints]);
 
   // ─── Tab bar visibility follows destination state ───────────────────────────
   // Bottom sheet opens whenever destination is set (search, map tap, or
@@ -347,6 +344,15 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       true;
     `);
   }, [isBottomSheetOpen, isDirectionMode, isMapReady]);
+
+  // Dọn timeout khi unmount, tránh set state sau khi component đã gỡ.
+  useEffect(() => {
+    return () => {
+      if (blurResetTimeoutRef.current) {
+        clearTimeout(blurResetTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Hàm xử lý khi ấn vào nút đổi nhóm
   const handleSwitchGroup = () => {
@@ -479,15 +485,15 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         const features: RouteFeature[] = fetchedRoutes.flatMap((coordinates, index) =>
           coordinates.length
             ? [{
-                type: "Feature" as const,
-                properties: { color: ROUTE_COLORS[index % ROUTE_COLORS.length] },
-                geometry: {
-                  type: "LineString" as const,
-                  coordinates: coordinates.map(
-                    (coordinate) => [coordinate.longitude, coordinate.latitude] as [number, number]
-                  ),
-                },
-              }]
+              type: "Feature" as const,
+              properties: { color: ROUTE_COLORS[index % ROUTE_COLORS.length] },
+              geometry: {
+                type: "LineString" as const,
+                coordinates: coordinates.map(
+                  (coordinate) => [coordinate.longitude, coordinate.latitude] as [number, number]
+                ),
+              },
+            }]
             : []
         );
 
@@ -591,6 +597,78 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         groupId: activeGroupId,
       },
     });
+
+  // Chỉ zoom — dùng nội bộ khi hit-test từ MAP_CLICK phát hiện trúng icon.
+  const focusOnPoint = (point: MarkerPoint) => {
+    webRef.current?.injectJavaScript(`
+    map.flyTo({
+      center: [${point.y}, ${point.x}],
+      zoom: 17,
+      pitch: 0,
+      bearing: 0,
+      duration: 600
+    });
+    true;
+  `);
+  };
+
+  const handleSearchFocusChange = (focused: boolean) => {
+    if (blurResetTimeoutRef.current) {
+      clearTimeout(blurResetTimeoutRef.current);
+      blurResetTimeoutRef.current = null;
+    }
+
+    if (focused) {
+      isSearchFocusedRef.current = true;
+      setIsSearchFocused(true);
+      return;
+    }
+
+    // Blur xảy ra đồng bộ ngay khi user chạm ra ngoài, NHƯNG MAP_CLICK
+    // tương ứng chỉ tới sau đó (qua WebView bridge). Trì hoãn việc tắt cờ
+    // để handleMapPress còn kịp đọc được giá trị true của cùng cú tap đó.
+    blurResetTimeoutRef.current = setTimeout(() => {
+      isSearchFocusedRef.current = false;
+      setIsSearchFocused(false);
+    }, SEARCH_BLUR_GRACE_MS);
+  };
+
+  // ─── Hàm trung tâm xử lý MỌI lần bấm vào map ────────────────────────────────
+  // 1) Hit-test toạ độ pixel của click so với vị trí hiện tại của các icon
+  //    người dùng — nếu trúng, chỉ zoom tới người đó, KHÔNG chọn destination.
+  // 2) Nếu không trúng icon nào và search đang mở bàn phím, chỉ tắt bàn phím,
+  //    KHÔNG chọn destination ở lần bấm đó.
+  // 3) Ngược lại, xử lý như một lần chọn destination bình thường.
+  const handleMapPress = (pixelX: number, pixelY: number, lat: number, lng: number) => {
+    for (const point of overlayPoints) {
+      const pixel = displayedPixelsRef.current[point.id];
+      if (!pixel) continue;
+
+      const dx = pixel.x - pixelX;
+      const dy = pixel.y - pixelY;
+      if (Math.sqrt(dx * dx + dy * dy) <= ICON_HIT_RADIUS) {
+        focusOnPoint(point);
+        return;
+      }
+    }
+
+    if (isSearchFocusedRef.current) {
+      searchBarRef.current?.blur();
+      Keyboard.dismiss();
+      if (blurResetTimeoutRef.current) {
+        clearTimeout(blurResetTimeoutRef.current);
+        blurResetTimeoutRef.current = null;
+      }
+      isSearchFocusedRef.current = false;
+      setIsSearchFocused(false);
+      return;
+    }
+
+    if (isDirectionMode || isBottomSheetOpen) {
+      return;
+    }
+
+    handleSelectPlace({ latitude: lat, longitude: lng });
   };
 
   return (
@@ -612,25 +690,38 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         onMessage={(event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
+
             if (data.type === "MAP_READY") {
               setIsMapReady(true);
               return;
             }
-            if (data.type === "MAP_CLICK") {
 
-              if (isDirectionMode || isBottomSheetOpen) {
-                return;
+            if (data.type === "MARKER_PIXELS") {
+              const next = { ...markerPixelsRef.current };
+              for (const item of data.pixels as Array<{ id: string; x: number; y: number }>) {
+                next[item.id] = { x: item.x, y: item.y };
               }
+              markerPixelsRef.current = next;
+              setMarkerPixels(next);
+              return;
+            }
 
-              handleSelectPlace({
-                latitude: data.latitude,
-                longitude: data.longitude
-              });
+            if (data.type === "MAP_CLICK") {
+              handleMapPress(data.pixelX, data.pixelY, data.latitude, data.longitude);
+              return;
             }
           } catch (err) {
             console.log(err);
           }
         }}
+      />
+
+      <MarkersOverlay
+        points={overlayPoints}
+        pixelMap={markerPixels}
+        isInteracting={isInteracting}
+        onMarkerPress={handleFocusPoint}
+        onPositionChange={handleMarkerPositionChange}
       />
 
       {isDirectionMode && (
@@ -661,7 +752,11 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
 
       {/* UI Nút chuyển Group nổi trên map */}
       {!isDirectionMode && !isBottomSheetOpen && (
-        <SearchBar onSelectLocation={handleSearch} />
+        <SearchBar
+          ref={searchBarRef}
+          onSelectLocation={handleSearch}
+          onFocusChange={handleSearchFocusChange}
+        />
       )}
 
       {!isDirectionMode && !isBottomSheetOpen && (

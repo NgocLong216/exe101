@@ -1,6 +1,6 @@
 import { Search, X } from "lucide-react-native";
 import type { LocationResult } from "@/types/location";
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import {
     FlatList,
     Keyboard,
@@ -17,13 +17,26 @@ const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_API_KEY_2;
 
 type Props = {
     onSelectLocation: (location: LocationResult, detail: PlaceDetail) => void;
+    onFocusChange?: (focused: boolean) => void;
 };
 
-export default function SearchBar({ onSelectLocation }: Props) {
+export type SearchBarRef = {
+    blur: () => void;
+};
+
+const SearchBar = forwardRef<SearchBarRef, Props>(function SearchBar(
+    { onSelectLocation, onFocusChange },
+    ref
+) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [lastSelect, setLastSelect] = useState("");
     const detailRequestRef = useRef<AbortController | null>(null);
+    const inputRef = useRef<TextInput>(null);
+
+    useImperativeHandle(ref, () => ({
+        blur: () => inputRef.current?.blur(),
+    }));
 
     useEffect(() => () => detailRequestRef.current?.abort(), []);
 
@@ -118,17 +131,17 @@ export default function SearchBar({ onSelectLocation }: Props) {
             <View style={styles.searchBox}>
                 <Search />
                 <TextInput
+                    ref={inputRef}
                     placeholder="Search location..."
                     placeholderTextColor="#94A3B8"
                     value={query}
                     onChangeText={setQuery}
+                    onFocus={() => onFocusChange?.(true)}
+                    onBlur={() => onFocusChange?.(false)}
                     style={styles.input}
                 />
                 {query !== "" && (
-                    <TouchableOpacity
-                        style={styles.rightIcon}
-                        onPress={handleDelete}
-                    >
+                    <TouchableOpacity style={styles.rightIcon} onPress={handleDelete}>
                         <X />
                     </TouchableOpacity>
                 )}
@@ -153,7 +166,9 @@ export default function SearchBar({ onSelectLocation }: Props) {
             )}
         </View>
     );
-}
+});
+
+export default SearchBar
 
 const styles = StyleSheet.create({
     wrapper: {
