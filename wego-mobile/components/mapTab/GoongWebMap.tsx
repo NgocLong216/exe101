@@ -597,10 +597,11 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         groupId: activeGroupId,
       },
     });
+  };
 
-  // Chỉ zoom — dùng nội bộ khi hit-test từ MAP_CLICK phát hiện trúng icon.
-  const focusOnPoint = (point: MarkerPoint) => {
-    webRef.current?.injectJavaScript(`
+    // Chỉ zoom — dùng nội bộ khi hit-test từ MAP_CLICK phát hiện trúng icon.
+    const focusOnPoint = (point: MarkerPoint) => {
+      webRef.current?.injectJavaScript(`
     map.flyTo({
       center: [${point.y}, ${point.x}],
       zoom: 17,
@@ -610,374 +611,374 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     });
     true;
   `);
-  };
+    };
 
-  const handleSearchFocusChange = (focused: boolean) => {
-    if (blurResetTimeoutRef.current) {
-      clearTimeout(blurResetTimeoutRef.current);
-      blurResetTimeoutRef.current = null;
-    }
-
-    if (focused) {
-      isSearchFocusedRef.current = true;
-      setIsSearchFocused(true);
-      return;
-    }
-
-    // Blur xảy ra đồng bộ ngay khi user chạm ra ngoài, NHƯNG MAP_CLICK
-    // tương ứng chỉ tới sau đó (qua WebView bridge). Trì hoãn việc tắt cờ
-    // để handleMapPress còn kịp đọc được giá trị true của cùng cú tap đó.
-    blurResetTimeoutRef.current = setTimeout(() => {
-      isSearchFocusedRef.current = false;
-      setIsSearchFocused(false);
-    }, SEARCH_BLUR_GRACE_MS);
-  };
-
-  // ─── Hàm trung tâm xử lý MỌI lần bấm vào map ────────────────────────────────
-  // 1) Hit-test toạ độ pixel của click so với vị trí hiện tại của các icon
-  //    người dùng — nếu trúng, chỉ zoom tới người đó, KHÔNG chọn destination.
-  // 2) Nếu không trúng icon nào và search đang mở bàn phím, chỉ tắt bàn phím,
-  //    KHÔNG chọn destination ở lần bấm đó.
-  // 3) Ngược lại, xử lý như một lần chọn destination bình thường.
-  const handleMapPress = (pixelX: number, pixelY: number, lat: number, lng: number) => {
-    for (const point of overlayPoints) {
-      const pixel = displayedPixelsRef.current[point.id];
-      if (!pixel) continue;
-
-      const dx = pixel.x - pixelX;
-      const dy = pixel.y - pixelY;
-      if (Math.sqrt(dx * dx + dy * dy) <= ICON_HIT_RADIUS) {
-        focusOnPoint(point);
-        return;
-      }
-    }
-
-    if (isSearchFocusedRef.current) {
-      searchBarRef.current?.blur();
-      Keyboard.dismiss();
+    const handleSearchFocusChange = (focused: boolean) => {
       if (blurResetTimeoutRef.current) {
         clearTimeout(blurResetTimeoutRef.current);
         blurResetTimeoutRef.current = null;
       }
-      isSearchFocusedRef.current = false;
-      setIsSearchFocused(false);
-      return;
-    }
 
-    if (isDirectionMode || isBottomSheetOpen) {
-      return;
-    }
+      if (focused) {
+        isSearchFocusedRef.current = true;
+        setIsSearchFocused(true);
+        return;
+      }
 
-    handleSelectPlace({ latitude: lat, longitude: lng });
-  };
+      // Blur xảy ra đồng bộ ngay khi user chạm ra ngoài, NHƯNG MAP_CLICK
+      // tương ứng chỉ tới sau đó (qua WebView bridge). Trì hoãn việc tắt cờ
+      // để handleMapPress còn kịp đọc được giá trị true của cùng cú tap đó.
+      blurResetTimeoutRef.current = setTimeout(() => {
+        isSearchFocusedRef.current = false;
+        setIsSearchFocused(false);
+      }, SEARCH_BLUR_GRACE_MS);
+    };
 
-  return (
+    // ─── Hàm trung tâm xử lý MỌI lần bấm vào map ────────────────────────────────
+    // 1) Hit-test toạ độ pixel của click so với vị trí hiện tại của các icon
+    //    người dùng — nếu trúng, chỉ zoom tới người đó, KHÔNG chọn destination.
+    // 2) Nếu không trúng icon nào và search đang mở bàn phím, chỉ tắt bàn phím,
+    //    KHÔNG chọn destination ở lần bấm đó.
+    // 3) Ngược lại, xử lý như một lần chọn destination bình thường.
+    const handleMapPress = (pixelX: number, pixelY: number, lat: number, lng: number) => {
+      for (const point of overlayPoints) {
+        const pixel = displayedPixelsRef.current[point.id];
+        if (!pixel) continue;
 
-    <View style={styles.container}>
+        const dx = pixel.x - pixelX;
+        const dy = pixel.y - pixelY;
+        if (Math.sqrt(dx * dx + dy * dy) <= ICON_HIT_RADIUS) {
+          focusOnPoint(point);
+          return;
+        }
+      }
 
-      <WebView
-        ref={webRef}
-        source={webViewSource}
-        onTouchStart={Keyboard.dismiss}
-        originWhitelist={["*"]}
-        javaScriptEnabled
-        domStorageEnabled
-        style={StyleSheet.absoluteFill}
-        onLoadStart={() => {
-          lastRouteDestinationRef.current = null;
-          setIsMapReady(false);
-        }}
-        onMessage={(event) => {
-          try {
-            const data = JSON.parse(event.nativeEvent.data);
+      if (isSearchFocusedRef.current) {
+        searchBarRef.current?.blur();
+        Keyboard.dismiss();
+        if (blurResetTimeoutRef.current) {
+          clearTimeout(blurResetTimeoutRef.current);
+          blurResetTimeoutRef.current = null;
+        }
+        isSearchFocusedRef.current = false;
+        setIsSearchFocused(false);
+        return;
+      }
 
-            if (data.type === "MAP_READY") {
-              setIsMapReady(true);
-              return;
-            }
+      if (isDirectionMode || isBottomSheetOpen) {
+        return;
+      }
 
-            if (data.type === "MARKER_PIXELS") {
-              const next = { ...markerPixelsRef.current };
-              for (const item of data.pixels as Array<{ id: string; x: number; y: number }>) {
-                next[item.id] = { x: item.x, y: item.y };
-              }
-              markerPixelsRef.current = next;
-              setMarkerPixels(next);
-              return;
-            }
+      handleSelectPlace({ latitude: lat, longitude: lng });
+    };
 
-            if (data.type === "MAP_CLICK") {
-              handleMapPress(data.pixelX, data.pixelY, data.latitude, data.longitude);
-              return;
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        }}
-      />
+    return (
 
-      <MarkersOverlay
-        points={overlayPoints}
-        pixelMap={markerPixels}
-        isInteracting={isInteracting}
-        onMarkerPress={handleFocusPoint}
-        onPositionChange={handleMarkerPositionChange}
-      />
+      <View style={styles.container}>
 
-      {isDirectionMode && (
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => {
-            if (isBottomSheetOpen) {
-              bottomSheetRef.current?.close();
-              return;
-            }
-
-            returnToPlaceDetail();
+        <WebView
+          ref={webRef}
+          source={webViewSource}
+          onTouchStart={Keyboard.dismiss}
+          originWhitelist={["*"]}
+          javaScriptEnabled
+          domStorageEnabled
+          style={StyleSheet.absoluteFill}
+          onLoadStart={() => {
+            lastRouteDestinationRef.current = null;
+            setIsMapReady(false);
           }}
-        >
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="#000"
-          />
-        </TouchableOpacity>
-      )}
+          onMessage={(event) => {
+            try {
+              const data = JSON.parse(event.nativeEvent.data);
 
-      {loading && (
-        <View pointerEvents="none" style={styles.loading}>
-          <ActivityIndicator size="large" />
-        </View>
-      )}
+              if (data.type === "MAP_READY") {
+                setIsMapReady(true);
+                return;
+              }
 
-      {/* UI Nút chuyển Group nổi trên map */}
-      {!isDirectionMode && !isBottomSheetOpen && (
-        <SearchBar
-          ref={searchBarRef}
-          onSelectLocation={handleSearch}
-          onFocusChange={handleSearchFocusChange}
+              if (data.type === "MARKER_PIXELS") {
+                const next = { ...markerPixelsRef.current };
+                for (const item of data.pixels as Array<{ id: string; x: number; y: number }>) {
+                  next[item.id] = { x: item.x, y: item.y };
+                }
+                markerPixelsRef.current = next;
+                setMarkerPixels(next);
+                return;
+              }
+
+              if (data.type === "MAP_CLICK") {
+                handleMapPress(data.pixelX, data.pixelY, data.latitude, data.longitude);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          }}
         />
-      )}
 
-      {!isDirectionMode && !isBottomSheetOpen && (
-        <View style={styles.topBarContainer}>
+        <MarkersOverlay
+          points={overlayPoints}
+          pixelMap={markerPixels}
+          isInteracting={isInteracting}
+          onMarkerPress={handleFocusPoint}
+          onPositionChange={handleMarkerPositionChange}
+        />
 
+        {isDirectionMode && (
           <TouchableOpacity
-            style={styles.groupSwitcherBtn}
-            onPress={handleSwitchGroup}
+            style={styles.backBtn}
+            onPress={() => {
+              if (isBottomSheetOpen) {
+                bottomSheetRef.current?.close();
+                return;
+              }
+
+              returnToPlaceDetail();
+            }}
           >
-
-            <Image
-              source={{
-                uri:
-                  currentGroupPhoto ||
-                  `https://ui-avatars.com/api/?name=${currentGroupName}`,
-              }}
-              style={styles.groupSwitcherAvatar}
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#000"
             />
-
-            <View style={styles.avatarOverlay}>
-              <Text style={styles.dropdownIcon}>▾</Text>
-            </View>
-
           </TouchableOpacity>
+        )}
 
-        </View>
-      )}
+        {loading && (
+          <View pointerEvents="none" style={styles.loading}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
 
-      {!isDirectionMode && activeGroupId && !isBottomSheetOpen && (
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Open personal AI chat"
-          style={styles.aiChatButton}
-          onPress={() =>
-            router.push({
-              pathname: "/PersonalAiChat",
-              params: { groupId: activeGroupId },
-            })
-          }
-        >
-          <Ionicons name="sparkles" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      )}
+        {/* UI Nút chuyển Group nổi trên map */}
+        {!isDirectionMode && !isBottomSheetOpen && (
+          <SearchBar
+            ref={searchBarRef}
+            onSelectLocation={handleSearch}
+            onFocusChange={handleSearchFocusChange}
+          />
+        )}
 
-      {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
-      <GroupChoose
-        visible={groupChooseVisible}
-        onClose={() => setGroupChooseVisible(false)}
-        groups={groups}
-        activeGroupId={activeGroupId}
-        onSelectGroup={(groupId) => {
-          clearDestinationAndRoute();
-          setActiveGroupId(groupId);
-        }}
-      />
+        {!isDirectionMode && !isBottomSheetOpen && (
+          <View style={styles.topBarContainer}>
 
-      <PlaceBottomSheet
-        ref={bottomSheetRef}
-        onOpen={() => setIsBottomSheetOpen(true)}
-        onClose={() => {
-          const shouldReturnToPlaceDetail = isDirectionMode && isBottomSheetOpen;
+            <TouchableOpacity
+              style={styles.groupSwitcherBtn}
+              onPress={handleSwitchGroup}
+            >
 
-          if (shouldReturnToPlaceDetail) {
-            returnToPlaceDetail();
-            return;
-          }
+              <Image
+                source={{
+                  uri:
+                    currentGroupPhoto ||
+                    `https://ui-avatars.com/api/?name=${currentGroupName}`,
+                }}
+                style={styles.groupSwitcherAvatar}
+              />
 
-          setIsBottomSheetOpen(false);
-          clearDestinationAndRoute();
-        }}
-        isDirectionMode={isDirectionMode}
-        lat={lat}
-        lng={lng}
-        placeName={placeName}
-      />
-    </View>
-  );
-}
+              <View style={styles.avatarOverlay}>
+                <Text style={styles.dropdownIcon}>▾</Text>
+              </View>
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  topBarContainer: {
-    position: "absolute",
+            </TouchableOpacity>
 
-    top: 120,
+          </View>
+        )}
 
-    right: 16,
+        {!isDirectionMode && activeGroupId && !isBottomSheetOpen && (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Open personal AI chat"
+            style={styles.aiChatButton}
+            onPress={() =>
+              router.push({
+                pathname: "/PersonalAiChat",
+                params: { groupId: activeGroupId },
+              })
+            }
+          >
+            <Ionicons name="sparkles" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
 
-    zIndex: 1000,
-  },
+        {/* 4. Nhúng Component GroupChoose xuống cuối Render JSX */}
+        <GroupChoose
+          visible={groupChooseVisible}
+          onClose={() => setGroupChooseVisible(false)}
+          groups={groups}
+          activeGroupId={activeGroupId}
+          onSelectGroup={(groupId) => {
+            clearDestinationAndRoute();
+            setActiveGroupId(groupId);
+          }}
+        />
 
-  avatarOverlay: {
-    position: "absolute",
+        <PlaceBottomSheet
+          ref={bottomSheetRef}
+          onOpen={() => setIsBottomSheetOpen(true)}
+          onClose={() => {
+            const shouldReturnToPlaceDetail = isDirectionMode && isBottomSheetOpen;
 
-    bottom: 0,
+            if (shouldReturnToPlaceDetail) {
+              returnToPlaceDetail();
+              return;
+            }
 
-    width: "100%",
+            setIsBottomSheetOpen(false);
+            clearDestinationAndRoute();
+          }}
+          isDirectionMode={isDirectionMode}
+          lat={lat}
+          lng={lng}
+          placeName={placeName}
+        />
+      </View>
+    );
+  }
 
-    height: "50%",
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    topBarContainer: {
+      position: "absolute",
 
-    backgroundColor: "rgba(0,0,0,0.35)",
+      top: 120,
 
-    borderBottomLeftRadius: 32,
+      right: 16,
 
-    borderBottomRightRadius: 32,
-
-    justifyContent: "center",
-
-    alignItems: "center",
-  },
-
-  dropdownIcon: {
-    color: "#FFFFFF",
-
-    fontSize: 18,
-
-    fontWeight: "700",
-
-    marginTop: 6,
-  },
-
-  groupSwitcherBtn: {
-    width: 60,
-
-    height: 60,
-
-    borderRadius: 30,
-
-    backgroundColor: "#fff",
-
-    justifyContent: "center",
-
-    alignItems: "center",
-
-    shadowColor: "#000",
-
-    shadowOpacity: 0.18,
-
-    shadowRadius: 8,
-
-    shadowOffset: {
-      width: 0,
-      height: 3,
+      zIndex: 1000,
     },
 
-    elevation: 5,
-  },
+    avatarOverlay: {
+      position: "absolute",
 
-  groupSwitcherAvatar: {
-    width: 52,
+      bottom: 0,
 
-    height: 52,
+      width: "100%",
 
-    borderRadius: 26,
+      height: "50%",
 
-    backgroundColor: "#E2E8F0",
-  },
-  groupSwitcherText: {
-    fontWeight: "600",
-    color: "#1F2937",
-    fontSize: 14,
-  },
-  loading: {
-    position: "absolute",
-    top: 0, left: 0, right: 0, bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.4)",
-    zIndex: 10,
-  },
-  aiChatButton: {
-    position: "absolute",
-    left: 16,
-    bottom: 112,
-    width: 52,
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: "#1AF364",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 6,
-    zIndex: 2000,
-  },
-  backBtn: {
-    position: "absolute",
+      backgroundColor: "rgba(0,0,0,0.35)",
 
-    top: 60,
+      borderBottomLeftRadius: 32,
 
-    left: 16,
+      borderBottomRightRadius: 32,
 
-    width: 48,
+      justifyContent: "center",
 
-    height: 48,
-
-    borderRadius: 24,
-
-    backgroundColor: "#FFFFFF",
-
-    justifyContent: "center",
-
-    alignItems: "center",
-
-    shadowColor: "#000",
-
-    shadowOpacity: 0.15,
-
-    shadowRadius: 8,
-
-    shadowOffset: {
-      width: 0,
-      height: 3,
+      alignItems: "center",
     },
 
-    elevation: 5,
+    dropdownIcon: {
+      color: "#FFFFFF",
 
-    zIndex: 2000,
-  },
-});
+      fontSize: 18,
+
+      fontWeight: "700",
+
+      marginTop: 6,
+    },
+
+    groupSwitcherBtn: {
+      width: 60,
+
+      height: 60,
+
+      borderRadius: 30,
+
+      backgroundColor: "#fff",
+
+      justifyContent: "center",
+
+      alignItems: "center",
+
+      shadowColor: "#000",
+
+      shadowOpacity: 0.18,
+
+      shadowRadius: 8,
+
+      shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+
+      elevation: 5,
+    },
+
+    groupSwitcherAvatar: {
+      width: 52,
+
+      height: 52,
+
+      borderRadius: 26,
+
+      backgroundColor: "#E2E8F0",
+    },
+    groupSwitcherText: {
+      fontWeight: "600",
+      color: "#1F2937",
+      fontSize: 14,
+    },
+    loading: {
+      position: "absolute",
+      top: 0, left: 0, right: 0, bottom: 0,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(255,255,255,0.4)",
+      zIndex: 10,
+    },
+    aiChatButton: {
+      position: "absolute",
+      left: 16,
+      bottom: 112,
+      width: 52,
+      height: 52,
+      borderRadius: 16,
+      backgroundColor: "#1AF364",
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOpacity: 0.18,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 6,
+      zIndex: 2000,
+    },
+    backBtn: {
+      position: "absolute",
+
+      top: 60,
+
+      left: 16,
+
+      width: 48,
+
+      height: 48,
+
+      borderRadius: 24,
+
+      backgroundColor: "#FFFFFF",
+
+      justifyContent: "center",
+
+      alignItems: "center",
+
+      shadowColor: "#000",
+
+      shadowOpacity: 0.15,
+
+      shadowRadius: 8,
+
+      shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+
+      elevation: 5,
+
+      zIndex: 2000,
+    },
+  });
