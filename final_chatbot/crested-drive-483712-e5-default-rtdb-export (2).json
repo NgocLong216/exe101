@@ -1,0 +1,2285 @@
+{
+  "group_chats": {
+    "2d48059f-664f-4b1e-9fda-760e9ce1633a": {
+      "-Ovrkb9IyYQqRx0BAzFn": {
+        "imageUri": "https://res.cloudinary.com/dagdecq9j/image/upload/v1782273175/wego/groups/vwln3encgefgfapzusnl.jpg",
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocKU57fEDhOQbAIWCk2mZxpsVzbySnDXRR7wbU_TwA_Q31VF78oS=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+        "timestamp": 1782273176439,
+        "type": "image"
+      }
+    },
+    "93335f6c-e019-4323-9185-4f43a647c643": {
+      "-Ov_-zf1BOcQhL3HKSvO": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán nướng thủ đức",
+        "timestamp": 1781958703453,
+        "type": "text"
+      },
+      "-Ov_03mRimkoDWAPnuWY": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, ở Thủ Đức có khá nhiều quán nướng ngon với rating cao. Dưới đây là một vài gợi ý nổi bật dựa trên đánh giá và số lượng review từ Google Maps:\n\n1.  **Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện**\n    *   **Rating:** 4.9/5 sao với **16.903 lượt đánh giá** – Đây là một trong những quán nướng buffet cực kỳ nổi tiếng và được yêu thích ở Thủ Đức, đảm bảo chất lượng và sự đa dạng.\n    *   **Địa chỉ:** 7 Tô Vĩnh Diện, Thủ Đức.\n    *   **Không gian:** Thoải mái (Casual).\n    *   **Tiện ích:** Có nhà vệ sinh.\n    *   **Giờ mở cửa:** Mở cửa đến 11 giờ tối.\n    *   Nếu bạn tìm một quán buffet nướng đa dạng món với mức giá phải chăng và không gian bình dân, đây là lựa chọn hàng đầu.\n\n2.  **PO BBQ Buffet Lẩu Nướng 139k**\n    *   **Rating:** 4.9/5 sao với **5.590 lượt đánh giá** – Một lựa chọn buffet lẩu nướng khác cũng rất được lòng thực khách.\n    *   **Địa chỉ:** 96 Tô Vĩnh Diện, Thủ Đức.\n    *   **Không gian:** Thoải mái (Casual), ấm cúng (Cosy) và yên tĩnh (Quiet) – Phù hợp cho những buổi tụ tập bạn bè hoặc gia đình muốn không gian dễ chịu hơn.\n    *   **Tiện ích:** Có nhà vệ sinh (bao gồm cả nhà vệ sinh trung tính), Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Mở cửa đến 11 giờ tối.\n    *   Quán này có thêm lẩu, rất thích hợp nếu bạn muốn kết hợp cả nướng và lẩu.\n\n3.  **Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức**\n    *   **Rating:** 4.9/5 sao với **215 lượt đánh giá** – Nếu bạn là fan của nem nướng Nha Trang, đây là địa chỉ không thể bỏ qua.\n    *   **Địa chỉ:** 541 Kha Vạn Cân, Thủ Đức.\n    *   **Không gian:** Thoải mái (Casual).\n    *   **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Mở cửa đến 9:30 tối.\n    *   Chuyên về nem nướng, mang hương vị đặc trưng của Nha Trang.\n\n4.  **Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức**\n    *   **Rating:** 5/5 sao với 4 lượt đánh giá.\n    *   **Địa chỉ:** 59A Đ. Số 2, Thủ Đức.\n    *   **Giờ mở cửa:** Mở cửa đến 11 giờ tối.\n    *   Nếu bạn muốn thử món gà nướng đặc trưng, đây có thể là một lựa chọn mới mẻ với rating tuyệt đối, dù số lượng review còn ít.\n\n**Lưu ý:** Các quán buffet thường rất đông vào giờ cao điểm, bạn nên cân nhắc đặt bàn trước hoặc đi sớm để có trải nghiệm tốt nhất nhé!",
+        "timestamp": 1781958724406,
+        "type": "ai-text"
+      },
+      "-Ov_03s0n8coaJ8wRivk": {
+        "mapData": {
+          "description": "59A Đ. Số 2, Thủ Đức, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=pMP1Cs_nZRQhRojCc4xIIA&cb_client=search.gws-prod.gps&w=80&h=92&yaw=221.44566&pitch=0&thumbfov=100",
+          "lat": 10.836784999999999,
+          "lng": 106.7523674,
+          "title": "Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781958724764,
+        "type": "map"
+      },
+      "-Ov_03w_fm6px4Tv68vR": {
+        "mapData": {
+          "description": "128 Đặng Văn Bi, Thủ Đức, Hồ Chí Minh 71300, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEsBMwHAGeej2hOByhtZSs2TFEwh-gBHCv79BhF-XNJrEBANxyHvT4-LO1qjLX2UVBWns2EeBijkHfvDkmJ7uiPRYpk2jlM0NqmLOlN_gMX6iTNgx5ZSiqplRAes_15PlM3__oN=w1000-h1000-c-n",
+          "lat": 10.8458431,
+          "lng": 106.7615565,
+          "title": "Quán Nướng Bò Vui Đặng Văn Bi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781958725055,
+        "type": "map"
+      },
+      "-Ov_04-b0lIzrvjhripP": {
+        "mapData": {
+          "description": "96 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh 713000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHZmlqWpBnLgO6DDmsyC5kUT4-LcvpqTdZA9eKhXwRH0u2hcIwSHoFs-ItIUAIo-wpu3lGefnBMfM7uZ_e2P27utrgbzUqWuYP9xDxr8V1L1OWL1_kI1d7ohRx0AybXq85I4VoceBCXc1A3=w1000-h1000-c-n",
+          "lat": 10.8535243,
+          "lng": 106.76807679999999,
+          "title": "PO BBQ Buffet Lẩu Nướng 139k"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781958725314,
+        "type": "map"
+      },
+      "-Ov_044FEKsceq4kCi09": {
+        "mapData": {
+          "description": "541 Kha Vạn Cân, Thủ Đức, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFxNFBL-u11WfRRQu20Tooqz_Yk9y3JA2MhWgYOMqtUqQiQZOYEhXdh8G2vZTuvkLIg_c0XJkqNc6XG3LfglqNcK1iLW8MKQHej3YaWyMoB___bAEeH9P2m_x2meydARBckN0Yw=w1000-h1000-c-n",
+          "lat": 10.846494,
+          "lng": 106.75081499999999,
+          "title": "Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781958725610,
+        "type": "map"
+      },
+      "-Ov_04ADts3LsvgSwOnj": {
+        "mapData": {
+          "description": "7 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIiNBKev482MsAEqXF08T-aM_tLW5Jv_73u1kHsOd2jR766Fu8STZ7wvM2i9qWFFrYsgF385Df8-BgpAT59axE0ePVPY1n15-zcrHuWiJxpZglxbSVTgfrba-Gk52R8ZIm4dxC2A=w1000-h1000-c-n",
+          "lat": 10.852604399999999,
+          "lng": 106.7669384,
+          "title": "Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781958725992,
+        "type": "map"
+      },
+      "-Ov_3KGfAuPvZVMNDQfi": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán nướng ở vincom mega mall grand park 88 phước thiện thành phố hồ chí minh",
+        "timestamp": 1781959578011,
+        "type": "text"
+      },
+      "-Ov_3NEbCWeHUbkd5Hdw": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một địa điểm rất phù hợp với nhu cầu của bạn:\n\n**Tiệm Nướng NỌ**\n\n*   **Địa chỉ:** 728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam\n*   **Đánh giá:** 4.9/5 sao từ 7179 lượt đánh giá – Một con số cực kỳ ấn tượng, cho thấy chất lượng và sự yêu thích của khách hàng.\n*   **Loại hình:** Nhà hàng nướng (Barbecue restaurant) – Đúng với yêu cầu của bạn.\n*   **Không gian:** Quán có không khí \"Thoải mái\" (Casual) và \"Ấm cúng\" (Cozy), rất thích hợp cho những buổi tụ tập ăn uống.\n*   **Tiện ích:** Có nhà vệ sinh (Restroom).\n*   **Giờ mở cửa:** Hiện đang mở cửa và đóng lúc 11 PM.\n\nVới rating cao ngất ngưởng và số lượng review lớn, Tiệm Nướng NỌ chắc chắn là một lựa chọn tuyệt vời cho bạn nếu đang tìm kiếm một quán nướng chất lượng.",
+        "timestamp": 1781959590167,
+        "type": "ai-text"
+      },
+      "-Ov_3NJqhs5FR2Kvfp6n": {
+        "mapData": {
+          "description": "670 W Cuthbert Blvd, Haddon Township, NJ 08108",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHqp2xQkBOzlKiQ9C7D8yZJotNXerp4bRw9SToymyMfIN0j6GWKVRCSLe5oZ6lgkK1l1UbBzNKbEEDToCRsrjnpwm-ZWxlArHCmtW4m2evdex4kup5TuD-DQ0Y568laa5faPDmt5JikK60=w1000-h1000-c-n",
+          "lat": 39.9005484,
+          "lng": -75.06364169999999,
+          "title": "Hanoi Cuisine"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959590503,
+        "type": "map"
+      },
+      "-Ov_3NQsQa92_F3PfRgI": {
+        "mapData": {
+          "description": "728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGlEoRDneR3NUXTHGJqw66vW_epS-ADkmFGmrbEXx25cqmta4fbOYcDewUr94KFI887eEmu1wM7DIAxenVHWSDGg12SQG9nRR64g8y_PdBdsOJA7abch1az145nZYHHVH8oQsY=w1000-h1000-c-n",
+          "lat": 10.787862599999999,
+          "lng": 106.6630917,
+          "title": "Tiệm Nướng NỌ"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959590953,
+        "type": "map"
+      },
+      "-Ov_3NVQXR2KRO84AECr": {
+        "mapData": {
+          "description": "2039 S 5th St, Philadelphia, PA 19148",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFPWfvtK0zXL6tdkDU8b6-SgwkMs5eQaORdeBxL7VjDFKSmOga4mDA2HSw-uW7DSSzdCbTt8C9QGtUE7PKw7P35JYIDdN1RNzv7kBQaDhIMd4HFhususMJDUhM1nB96EQzL0Fti=w1000-h1000-c-n",
+          "lat": 39.9225993,
+          "lng": -75.15484719999999,
+          "title": "Phở Duyên Restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959591243,
+        "type": "map"
+      },
+      "-Ov_3N_FoQ1YFmD5r0Hl": {
+        "mapData": {
+          "description": "6757 Wilson Blvd Unit 9, Falls Church, VA 22044",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFfAZLkRcLTznDcJndtJKao9JtMRwc1j_aNU5Ct8fEvFOLQtBjYkTLCj36ytu3vHRzukP5GdjI2JzFHHJ44Br_iUr-vqFgMKFK-Sf_hNqMSjusmlhPEcZFFKM55wclvLVrOLFM5Wg=w1000-h1000-c-n",
+          "lat": 38.8743909,
+          "lng": -77.15413989999999,
+          "title": "Cha Oc Gia Huy"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959591552,
+        "type": "map"
+      },
+      "-Ov_3NddnGnyoZssXTjO": {
+        "mapData": {
+          "description": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+          "lat": 39.9246714,
+          "lng": -75.1732256,
+          "title": "Café Nhan"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959591833,
+        "type": "map"
+      },
+      "-Ov_47PjoifQ65HrUsYK": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán nướng ở vincom mega mall grand park 88 phước thiện",
+        "timestamp": 1781959787479,
+        "type": "text"
+      },
+      "-Ov_4ALtEwBUHhd0Sgy9": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một địa điểm rất phù hợp với nhu cầu của bạn:\n\n**Tiệm Nướng NỌ**\n\n*   **Địa chỉ:** 728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam\n*   **Đánh giá:** 4.9/5 sao từ 7179 lượt đánh giá – Một con số cực kỳ ấn tượng, cho thấy chất lượng và sự yêu thích của khách hàng.\n*   **Loại hình:** Nhà hàng nướng (Barbecue restaurant) – Đúng với yêu cầu của bạn.\n*   **Không gian:** Quán có không khí \"Thoải mái\" (Casual) và \"Ấm cúng\" (Cozy), rất thích hợp cho những buổi tụ tập ăn uống.\n*   **Tiện ích:** Có nhà vệ sinh (Restroom).\n*   **Giờ mở cửa:** Hiện đang mở cửa và đóng lúc 11 PM.\n\nVới rating cao ngất ngưởng và số lượng review lớn, Tiệm Nướng NỌ chắc chắn là một lựa chọn tuyệt vời cho bạn nếu đang tìm kiếm một quán nướng chất lượng.",
+        "timestamp": 1781959799521,
+        "type": "ai-text"
+      },
+      "-Ov_4APzarcUpvba4pwC": {
+        "mapData": {
+          "description": "670 W Cuthbert Blvd, Haddon Township, NJ 08108",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHqp2xQkBOzlKiQ9C7D8yZJotNXerp4bRw9SToymyMfIN0j6GWKVRCSLe5oZ6lgkK1l1UbBzNKbEEDToCRsrjnpwm-ZWxlArHCmtW4m2evdex4kup5TuD-DQ0Y568laa5faPDmt5JikK60=w1000-h1000-c-n",
+          "lat": 39.9005484,
+          "lng": -75.06364169999999,
+          "title": "Hanoi Cuisine"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959799783,
+        "type": "map"
+      },
+      "-Ov_4AV3cSSIK63bIp4w": {
+        "mapData": {
+          "description": "728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGlEoRDneR3NUXTHGJqw66vW_epS-ADkmFGmrbEXx25cqmta4fbOYcDewUr94KFI887eEmu1wM7DIAxenVHWSDGg12SQG9nRR64g8y_PdBdsOJA7abch1az145nZYHHVH8oQsY=w1000-h1000-c-n",
+          "lat": 10.787862599999999,
+          "lng": 106.6630917,
+          "title": "Tiệm Nướng NỌ"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959800108,
+        "type": "map"
+      },
+      "-Ov_4AbHxhJQElhd396X": {
+        "mapData": {
+          "description": "2039 S 5th St, Philadelphia, PA 19148",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFPWfvtK0zXL6tdkDU8b6-SgwkMs5eQaORdeBxL7VjDFKSmOga4mDA2HSw-uW7DSSzdCbTt8C9QGtUE7PKw7P35JYIDdN1RNzv7kBQaDhIMd4HFhususMJDUhM1nB96EQzL0Fti=w1000-h1000-c-n",
+          "lat": 39.9225993,
+          "lng": -75.15484719999999,
+          "title": "Phở Duyên Restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959800571,
+        "type": "map"
+      },
+      "-Ov_4AgtRgL1oXm5B6oW": {
+        "mapData": {
+          "description": "6757 Wilson Blvd Unit 9, Falls Church, VA 22044",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFfAZLkRcLTznDcJndtJKao9JtMRwc1j_aNU5Ct8fEvFOLQtBjYkTLCj36ytu3vHRzukP5GdjI2JzFHHJ44Br_iUr-vqFgMKFK-Sf_hNqMSjusmlhPEcZFFKM55wclvLVrOLFM5Wg=w1000-h1000-c-n",
+          "lat": 38.8743909,
+          "lng": -77.15413989999999,
+          "title": "Cha Oc Gia Huy"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959800929,
+        "type": "map"
+      },
+      "-Ov_4AmOnKPB-JEQkDzW": {
+        "mapData": {
+          "description": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+          "lat": 39.9246714,
+          "lng": -75.1732256,
+          "title": "Café Nhan"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781959801282,
+        "type": "map"
+      },
+      "-OvdGmEZ-ueZj-v_J37g": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán buffet ở quận 1",
+        "timestamp": 1782030214180,
+        "type": "text"
+      },
+      "-OvdH_bjMvIcXX9Sbnyh": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, dựa trên yêu cầu tìm quán buffet ở Quận 1 và dữ liệu Google Maps, đây là một số gợi ý nổi bật dành cho bạn:\n\n1.  **Saigon Café - International Seafood Buffet Restaurant**\n    *   **Rating:** 4.7/5 (1032 reviews) - Rất cao và được nhiều người đánh giá.\n    *   **Địa chỉ:** Sheraton Saigon Grand Opera Hotel, 88 Đồng Khởi, Quận 1.\n    *   **Điểm nổi bật:** Đây là một nhà hàng buffet hải sản quốc tế cao cấp, phù hợp cho những ai muốn trải nghiệm ẩm thực đa dạng trong không gian sang trọng.\n    *   **Không gian:** Ấm cúng, sang trọng (Cozy, Upscale).\n    *   **Tiện ích:** Nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Hiện đang đóng cửa, mở cửa lại lúc 6 PM.\n\n2.  **Hoang Yen Buffet Premier**\n    *   **Rating:** 4.6/5 (1556 reviews) - Số lượng đánh giá cực kỳ lớn, cho thấy sự phổ biến và tin cậy.\n    *   **Địa chỉ:** 174A Nguyễn Đình Chiểu, Quận 1.\n    *   **Điểm nổi bật:** Một lựa chọn buffet phổ biến với không gian lãng mạn và sang trọng, phù hợp cho các buổi hẹn hò hoặc tụ họp gia đình.\n    *   **Không gian:** Ấm cúng, lãng mạn, sang trọng (Cozy, Romantic, Upscale).\n    *   **Tiện ích:** Nhà vệ sinh.\n    *   **Giờ mở cửa:** Hiện đang đóng cửa, mở cửa lại lúc 6 PM.\n\n3.  **Latest Recipe**\n    *   **Rating:** 4.6/5 (183 reviews)\n    *   **Địa chỉ:** Le Méridien Saigon, 3C Tôn Đức Thắng, Quận 1.\n    *   **Điểm nổi bật:** Nằm trong khách sạn Le Méridien Saigon, mang đến trải nghiệm buffet cao cấp với không gian hiện đại và lãng mạn. Có quầy bar ngay tại chỗ.\n    *   **Không gian:** Ấm cúng, lãng mạn, hợp thời trang, sang trọng (Cozy, Romantic, Trendy, Upscale).\n    *   **Tiện ích:** Quầy bar tại chỗ, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 10 PM.\n\n**Nếu bạn tìm kiếm buffet chay:**\n\n*   **VƯỜN CHAY GIÁC DUYÊN - BUFFET LẨU CHAY| BUFFET CHAY QUẬN 1**\n    *   **Rating:** 4.7/5 (324 reviews) - Rating rất cao cho một nhà hàng chay.\n    *   **Địa chỉ:** 19 Trần Khắc Chân, Tân Định, Quận 1.\n    *   **Điểm nổi bật:** Chuyên buffet lẩu chay và các món chay đa dạng, là lựa chọn tuyệt vời cho những ai yêu thích ẩm thực chay.\n    *   **Không gian:** Thân mật, ấm cúng (Casual, Cozy).\n    *   **Tiện ích:** Nhà vệ sinh.\n    *   **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 10 PM.\n\nChúc bạn có một bữa ăn ngon miệng!",
+        "timestamp": 1782030424585,
+        "type": "ai-text"
+      },
+      "-OvdH_iwT89qCRRA3kYO": {
+        "mapData": {
+          "description": "19 Trần Khắc Chân, Tân Định, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHFN39-MMFDbcKRkAHOnM3nsNgpIbWHn2Ei0lrtvhPJJKrhmFTWiMeEy0HL3XSbykGQJAazQJmfgr24v_tOxwB1CzIHxAr-OFNHiIbO5IAd_Utdju5CvdQd2FpEzKYc8GpVTVaE01mTe9Uq=w1000-h1000-c-n",
+          "lat": 10.7926748,
+          "lng": 106.6911361,
+          "title": "VƯỜN CHAY GIÁC DUYÊN - BUFFET LẨU CHAY| BUFFET CHAY QUẬN 1"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782030425046,
+        "type": "map"
+      },
+      "-OvdH_q2i-qnUH4Jkqgn": {
+        "mapData": {
+          "description": "Sheraton Saigon Grand Opera Hotel, 88 Đồng Khởi, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHGl0nJyEByWqX8xt5C9IOf4lICRdlzMtYoMuTa-bM2FvIvLszAdOqIFWZDdco8GcFLGUV2EUsgKFpIS5M6J7YbWuVGhrSIhAdWfJth_sMMZp7jdQWA4eHIBZobhXYdidovwo_e7w=w1000-h1000-c-n",
+          "lat": 10.7754704,
+          "lng": 106.7038796,
+          "title": "Saigon Café - International Seafood Buffet Restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782030425501,
+        "type": "map"
+      },
+      "-OvdH_xv0T_5AKrVijFn": {
+        "mapData": {
+          "description": "Le Méridien Saigon, 3C Tôn Đức Thắng, Sài Gòn, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHikDC1RRzMZWXGt7_Jc5v7Slq0jxPImaU8QESYRoTs8s1KGkOF2YCGFRYJGfkF9tI8hOADM7EXYci8t2GyjFjFiQAUtzJ3JuctSwEU5v5IaCxfB3ZFXzhGZBGoU75dkFNoC5c0a4EUJ0TZ=w1000-h1000-c-n",
+          "lat": 10.7800292,
+          "lng": 106.7075244,
+          "title": "Latest Recipe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782030426005,
+        "type": "map"
+      },
+      "-OvdHa5OXpy6dKmha_ni": {
+        "mapData": {
+          "description": "174A Nguyễn Đình Chiểu, Xuân Hòa, Hồ Chí Minh 720000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFVeZ-oDpwFdhOUFW_fs4HvQcKBQBtPc3hZHT3RSMQMxafRDgb9QYw0Nx6q9urNl1e0sBqz2pCJ1rV4MjQM-zdjZEtIfH7cKzpJzquaQIkK3chTUT2N_inV44DAw45SjYzYnHkMBA=w1000-h1000-c-n",
+          "lat": 10.780275,
+          "lng": 106.6915619,
+          "title": "Hoang Yen Buffet Premier"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782030426548,
+        "type": "map"
+      },
+      "-OvdHaFJR823PLeOQUWf": {
+        "mapData": {
+          "description": "65d Lê Lợi, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHy9ghh1YI49wABGvVZGyFRwmWoHNPml7-axA04bDWehwG70P--sbCSFMh95IPo77DL-VZqxy1Y7tRceH2LMYBRJ_ALjBLdnqRUbddHcb_thUBgGaF4ykosRvm_htzYw7pzCtDy=w1000-h1000-c-n",
+          "lat": 10.7731883,
+          "lng": 106.70091939999999,
+          "title": "SPICY BOX SAIGON CENTRE"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782030427182,
+        "type": "map"
+      },
+      "-OvdKjUYlxAzdqLz0fXm": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán nướng ở mall quận 1",
+        "timestamp": 1782031251425,
+        "type": "text"
+      },
+      "-OvdKoZesKKq8ZasqpKH": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một số địa điểm được đánh giá rất cao. Dưới đây là những gợi ý tốt nhất, ưu tiên các quán có rating cao và nhiều đánh giá:\n\n1.  **THE KING BBQ AND GRILL**\n    *   **Rating:** 5/5 sao (129 đánh giá)\n    *   **Địa chỉ:** 12525 SW 128th St, Miami, FL 33186 (Mỹ)\n    *   **Không gian:** Thoải mái (Casual), Hợp thời trang (Trendy)\n    *   **Tiện ích:** Wi-Fi miễn phí\n    *   **Giờ mở cửa:** Đóng cửa, mở cửa lúc 5 PM\n    *   **Lý do đề xuất:** Đây là quán có số lượng đánh giá cao nhất và rating hoàn hảo, với không gian hiện đại và tiện ích Wi-Fi.\n\n2.  **Quán nướng Xèo Chill**\n    *   **Rating:** 5/5 sao (47 đánh giá)\n    *   **Địa chỉ:** 68 Ngách 44/460 Khương Đình, Khương Đình, Hà Nội 11410, Vietnam\n    *   **Không gian:** Thoải mái (Casual)\n    *   **Tiện ích:** Nhà vệ sinh\n    *   **Giờ mở cửa:** Đóng cửa, mở cửa lúc 5:30 PM\n    *   **Lý do đề xuất:** Một lựa chọn tuyệt vời tại Hà Nội với rating hoàn hảo và số lượng đánh giá đáng tin cậy, không gian thoải mái.\n\n3.  **Quán Nướng 123 Zo Ninh Bình**\n    *   **Rating:** 5/5 sao (4 đánh giá)\n    *   **Địa chỉ:** 34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam\n    *   **Không gian:** Thoải mái (Casual), Ấm cúng (Cozy)\n    *   **Tiện ích:** Nhà vệ sinh\n    *   **Giờ mở cửa:** Mở cửa 24 giờ\n    *   **Lý do đề xuất:** Nếu bạn ở Ninh Bình, đây là một lựa chọn có rating hoàn hảo, không gian ấm cúng và đặc biệt là mở cửa 24/7.\n\n**Lưu ý:** Các kết quả tìm kiếm có sự đa dạng về địa lý (từ Miami, Mỹ đến Hà Nội, Hồ Chí Minh, Cần Thơ, Ninh Bình ở Việt Nam). Bạn có thể chọn địa điểm phù hợp với vị trí của mình.",
+        "timestamp": 1782031272232,
+        "type": "ai-text"
+      },
+      "-OvdKoiz6A8chHuBTOgx": {
+        "mapData": {
+          "description": "The King Bbq and Grill, 12525 SW 128th St, Miami, FL 33186",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFHOrrVxG_8Ehw0rUdq1vuzR1YfKUGPf63lkXK02ylHyxHPOKPUPsD4j92AJ1W8o7TjCgdINhcHfUxQWuT9tNcxlRFT7Z3Rr4Vd8njU00UoV4UlVhD7Ko0GZkFEggmth-iYz40DWQ7ZCSBU=w1000-h1000-c-n",
+          "lat": 25.6500409,
+          "lng": -80.3970753,
+          "title": "THE KING BBQ AND GRILL"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782031272893,
+        "type": "map"
+      },
+      "-OvdKothdKRa17LxJp-S": {
+        "mapData": {
+          "description": "68 Ngách 44/460 Khương Đình, Khương Đình, Hà Nội 11410, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG2Qw7EufQcArQNLUaMgaQ2IK4iqugJKaYX30988shTWEGaSHSx8dzFqaHEhK_gfoaKIMZssXpHWO5ywck5-GPlJXemb7P8NOkA7vmWlDpnkZvNSSNb2azZemawOO3kWBmo-Rtexifj8qYB=w1000-h1000-c-n",
+          "lat": 20.9880699,
+          "lng": 105.81108499999999,
+          "title": "Quán nướng Xèo Chill"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782031273579,
+        "type": "map"
+      },
+      "-OvdKp4PsbJdn00qjKoE": {
+        "mapData": {
+          "description": "172 Nguyễn Phúc Chu, Tân Sơn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGw8gWd_X4XAZk6KUmqJP2NotGIRyAZOmquuxo3Kqjj1dnO800HvYeTQTouCrsU9EAlUMmkSa7OXMQ4_MsDzoMIdUTl5GeRC2jHzeiBR3c0VqII1ScjfiGOgMQwjAdLINxjYSHlfKRVqoQw=w1000-h1000-c-n",
+          "lat": 10.823498599999999,
+          "lng": 106.6368305,
+          "title": "A MƯỜI ĐỒ NƯỚNG"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782031274328,
+        "type": "map"
+      },
+      "-OvdKpFgDbRHdqWESkkH": {
+        "mapData": {
+          "description": "9 Đ. Nguyễn Văn Linh, Tân An, Cần Thơ, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG0W9qHcfkutH2ZtvuZAtZpX_OZ7LhwoQNfChxUUHyuRraYS1BdQ6FLPjuHzvR7IAdyKSnZNzJ0u8IO17NYqxKk7aQVs94ZAFwdC11F33bP5tZ-wAG1tz2WGIr7fA6XUOWUPee-jg=w1000-h1000-c-n",
+          "lat": 10.0300345,
+          "lng": 105.7523808,
+          "title": "QUÁN NƯỚNG MANG VỀ"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782031275050,
+        "type": "map"
+      },
+      "-OvdKpSltia4bT7fX8kE": {
+        "mapData": {
+          "description": "34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG0HyntqRxnTeI0cvrTT5M-iiQYd6iqhY3rEwnRQ3u_uqFSsf4sOf5_JH3vheWBHg3gYxUxp0fzNf-ZVrIA9ZpgaSEujzQMUsWEZxQSNjl3W5icrKQO-IB8RDc4RBfSeBDZ0ypWdw=w1000-h1000-c-n",
+          "lat": 20.258986699999998,
+          "lng": 105.9725584,
+          "title": "Quán Nướng 123 Zo Ninh Bình"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782031275887,
+        "type": "map"
+      },
+      "-OvhraeiPQvKV-sUunoN": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782107236737,
+        "type": "text"
+      },
+      "-OvhrecHVu5yKyg3c54Q": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 1",
+        "timestamp": 1782107252964,
+        "type": "text"
+      },
+      "-OvhtBhA4ulKsXxBOQHc": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782107654685,
+        "type": "text"
+      },
+      "-OvhvAkYDNud2tOtuq11": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782108175303,
+        "type": "text"
+      },
+      "-OvhwFT-XfxiW1LhIZc5": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782108456511,
+        "type": "text"
+      },
+      "-OvhxmskrWeHkp9bU4T3": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot ai",
+        "timestamp": 1782108859633,
+        "type": "text"
+      },
+      "-OvhydB7UObFdL37LAnu": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782109082048,
+        "type": "text"
+      },
+      "-Ovi3Lu7VWaFjfxtX-M5": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782110580053,
+        "type": "text"
+      },
+      "-OvtrpmylMMSClb_w9S7": {
+        "imageUri": "https://res.cloudinary.com/dagdecq9j/image/upload/v1782308624/wego/groups/zhsp4seenpbijejta6eh.jpg",
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocKU57fEDhOQbAIWCk2mZxpsVzbySnDXRR7wbU_TwA_Q31VF78oS=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+        "timestamp": 1782308625501,
+        "type": "image"
+      }
+    },
+    "97e5e779-79ba-4ea4-a75a-001b3b677859": {
+      "-Osp16DPiRKUsWqc2i5_": {
+        "senderName": "Dragon Monster ",
+        "senderUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+        "text": "ey",
+        "timestamp": 1779006217144
+      },
+      "-Osp1VC88cS7n8loywug": {
+        "senderName": "Nguyen Ngoc Long 216",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "gì",
+        "timestamp": 1779006319464
+      }
+    },
+    "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f": {
+      "-OuBtK5yauLmyR0Zsiu6": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Alo bụt êi",
+        "timestamp": 1780480299173,
+        "type": "text"
+      },
+      "-OuBtMoZitajldaZxbaj": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Chat thử đê",
+        "timestamp": 1780480310282,
+        "type": "text"
+      },
+      "-OuC2u9lX6iUWeNINILQ": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocLYPV7naWRpRuftTU7TJCcD1vyU4NDJGH52SwJQoG3X6ctCEm4=s96-c",
+        "senderName": "The anh Pham",
+        "senderUid": "5zQo0rFmp2WNYR13knguOYjWzSL2",
+        "text": "Râu tôm nấu với rụôt bầu",
+        "timestamp": 1780483072874,
+        "type": "text"
+      },
+      "-OuC2x7BC2HfX_dXfdm0": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocLYPV7naWRpRuftTU7TJCcD1vyU4NDJGH52SwJQoG3X6ctCEm4=s96-c",
+        "senderName": "The anh Pham",
+        "senderUid": "5zQo0rFmp2WNYR13knguOYjWzSL2",
+        "text": "Chồng chan vợ húp gật đầu khen ngon",
+        "timestamp": 1780483084994,
+        "type": "text"
+      },
+      "-OuCTPYn2frqKWoricw_": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Vcl:))",
+        "timestamp": 1780490020770,
+        "type": "text"
+      },
+      "-OuCVPwGFS5YKLLisSX2": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot tôi muốn tìm quán cà phê quận 1",
+        "timestamp": 1780490546625,
+        "type": "text"
+      },
+      "-OuCVTTcSJSsuVQDxx9d": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "text": "Chào bạn, dựa trên yêu cầu tìm quán cà phê ở Quận 1, đây là một vài gợi ý nổi bật với rating cao và không gian đa dạng để bạn lựa chọn:\n\n1.  **Little HaNoi Egg Coffee (Yersin)**\n    *   **Rating:** 4.8/5 sao (5343 đánh giá)\n    *   **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1\n    *   **Không gian:** Casual, ấm cúng, yên tĩnh, lãng mạn, hợp xu hướng.\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh.\n    *   **Điểm nổi bật:** Quán cà phê trứng nổi tiếng, được đánh giá rất cao với số lượng review khủng, không gian ấm cúng và trendy. Rất phù hợp cho những ai muốn trải nghiệm món cà phê trứng đặc trưng Hà Nội ngay giữa Sài Gòn.\n\n2.  **Uncle Nick's Cafe (& brunch)**\n    *   **Rating:** 4.9/5 sao (459 đánh giá)\n    *   **Địa chỉ:** 211/10 Nguyễn Trãi, Cầu Ông Lãnh, Quận 1\n    *   **Không gian:** Casual, ấm cúng, yên tĩnh.\n    *   **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Điểm nổi bật:** Với rating gần như tuyệt đối, đây là lựa chọn lý tưởng nếu bạn tìm một nơi yên tĩnh, ấm cúng để làm việc hoặc thư giãn. Có Wi-Fi miễn phí là một điểm cộng lớn.\n\n3.  **Hoff Coffee Brewers**\n    *   **Rating:** 4.8/5 sao (340 đánh giá)\n    *   **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1\n    *   **Không gian:** Casual, ấm cúng.\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Điểm nổi bật:** Một quán cà phê có rating rất cao, không gian ấm cúng và đầy đủ Wi-Fi miễn phí, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc.\n\n4.  **L'Usine Le Thanh Ton**\n    *   **Rating:** 4.6/5 sao (3359 đánh giá)\n    *   **Địa chỉ:** 19 Lê Thánh Tôn, Quận 1\n    *   **Không gian:** Casual, ấm cúng, lãng mạn, hợp xu hướng, sang trọng.\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh (cả nam và nữ), Wi-Fi miễn phí.\n    *   **Điểm nổi bật:** Một địa điểm đa năng vừa là quán cà phê, vừa là cửa hàng thời trang/quà lưu niệm. Không gian sang trọng, trendy và có Wi-Fi miễn phí, rất phù hợp cho những ai muốn kết hợp mua sắm và thưởng thức cà phê.\n\nChúc bạn tìm được quán cà phê ưng ý ở Quận 1!",
+        "timestamp": 1780490561111,
+        "type": "ai-text"
+      },
+      "-OuCVTXwBGdlVr4gtV1o": {
+        "mapData": {
+          "description": "85 Phan Kế Bính, Quận 1, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF8WaoKWTYAm8ErZZ_H-ukn9hr24P_NLSSnsC_2jHKyll0RY5aa5zj0BWex7l69tLEDcnXhN9ofmsg68TOFrE1G4a3K25uxNyHBbXgNdt6DIa9n06ysjLjQvzcshgNpFxUenzc7=w1000-h1000-c-n",
+          "lat": 10.7906677,
+          "lng": 106.69836169999999,
+          "title": "Oromia Coffee & Lounge"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490561387,
+        "type": "map"
+      },
+      "-OuCVTdoDK0CfH7q8ScI": {
+        "mapData": {
+          "description": "Yersin/119/5 Phạm Ngũ Lão, Phường, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHUGgt7D-bBGlW9GyH8cV-pLZFH0zpkHsJs_DqfUh_APbsuopyeHU44eHP1ukxwQY7gZXH7N9HVXiX4TBhvL_P6l7mppwCu9DV46_jflblkw8bBW9Q3-GR5QjiDzRDY2Os5N6h6=w1000-h1000-c-n",
+          "lat": 10.7694043,
+          "lng": 106.6960112,
+          "title": "Little HaNoi Egg Coffee (Yersin)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490561827,
+        "type": "map"
+      },
+      "-OuCVTjBtavZRf0JWCi6": {
+        "mapData": {
+          "description": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFTLIjoN33ZZJV1DNsUuldFRcfXIUYUXGmyTxW7NQzNA3GOyzx4IdA37OQJ9T5HROsD35iqyb2Xe3Cd3C18tiQiPojY2FGgtfLQm1vVTvHn-fIxa7h2xnS0nnUr1Eh5HFJEzcU7rA=w1000-h1000-c-n",
+          "lat": 10.772407999999999,
+          "lng": 106.6972096,
+          "title": "Soo Kafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490562171,
+        "type": "map"
+      },
+      "-OuCVTp2gMsZy4OPzaII": {
+        "mapData": {
+          "description": "42 Hồ Hảo Hớn, Cầu Ông Lãnh, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGDmenl4w09AuW3xA9dpoIeXUFm2zGwcjyFcI49av4_I0XT-Wv9GdbjaLIYSxM2y-0uEmaHu5cxl9ZaJF8lCi_QRccqhLCDjNpR4_35SAiqEICu4XgFJl8OWJaZOqYXC9J8kDA=w1000-h1000-c-n",
+          "lat": 10.7620124,
+          "lng": 106.6923935,
+          "title": "Beanthere Cafe - Hồ Hảo Hớn"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490562547,
+        "type": "map"
+      },
+      "-OuCVTvQWdQtVIdVCryT": {
+        "mapData": {
+          "description": "4-6 Đồng Khởi, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoEFHba0WI9V0NCrG0OH9s4eF3NBLWdZL1FThTaNYc4_7TuENQ5nocx5HB555iSG2BwWhTt1fOAFjYxHuU-Z1GcgiNwyIlrA1PipaH70-MthylhD4Lpiq2_azHf-MEAMhSrwiWKw=w1000-h1000-c-n",
+          "lat": 10.773668599999999,
+          "lng": 106.7058177,
+          "title": "Cà phê Cô Ba Đồng Khởi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490562955,
+        "type": "map"
+      },
+      "-OuCVU-p-A312VeOQE91": {
+        "mapData": {
+          "description": "120 - 122 Lê Lợi, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHtC4e5YoMnvH9xjPw2g3LCnIWKQ0e0B_zUw4eRPS9ItnXFgzZSXUqUkikE5qSL9uPnoZVFHRe-XA-2wkR1sBGUj6jR-3vJ4sV-56kAys5MR3_UGVSaOwuSVp5w2r-NPSfsn4DjsQ=w1000-h1000-c-n",
+          "lat": 10.7725195,
+          "lng": 106.69895849999999,
+          "title": "OKKIO"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490563300,
+        "type": "map"
+      },
+      "-OuCVU3jjr0Jqq7z1cTC": {
+        "mapData": {
+          "description": "42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHswlDDvvNZ2nG8Ys49HLMLxZy67JNbHq2fABup910zzqGc04g4n1s9ONQxJ-7-wAYEiObmyKdS3mBx7R5eWa7UOXavO2Ucg1e8d7vGHlcC8O8Q76ond87qQ4ph3Dgzkr0hNYbnYA=w1000-h1000-c-n",
+          "lat": 10.777160499999999,
+          "lng": 106.70015479999999,
+          "title": "Hoff Coffee Brewers"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490563550,
+        "type": "map"
+      },
+      "-OuCVU9_QsjC1Fm36bv4": {
+        "mapData": {
+          "description": "27 Ngô Đức Kế, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGObfaQ_dMa-a9pVmIXs1ynYo7jiU2QEZJnLS8iYwllHKK4reDTLtQhZx4jCvBSHa-gSUFF5poJ_W_H8w5SdFzXhcVbaAPPTApENtNtlJ1qrzqk-qrW7Tv4uVTZ-H59ZRG2lJWK=w1000-h1000-c-n",
+          "lat": 10.7734764,
+          "lng": 106.7056037,
+          "title": "The Workshop Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490563924,
+        "type": "map"
+      },
+      "-OuCVUEsJ4uK8CQ0OjKu": {
+        "mapData": {
+          "description": "19 Lê Thánh Tôn, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIrIV27JCtnvzv5BCY2BLqa9MfAWqAikaiuuFWqVwkQmGvTOSg1w58ULjeXrdPfMlCzbStiLo01VB77NnxaD1zu4oAjliuApVpIv0xS2E0MX4fXAKRwLx9fTN9tMa7cuEVZZk=w1000-h1000-c-n",
+          "lat": 10.7796591,
+          "lng": 106.70399599999999,
+          "title": "L'Usine Le Thanh Ton"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490564264,
+        "type": "map"
+      },
+      "-OuCVUL0BpbppWoQKPL8": {
+        "mapData": {
+          "description": "182 Pasteur, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHu8EKUMsDI-rnlX0kmoGkOJ8_FZDvsuaQSzjkB5MCQVLrmqjb4kjWQ_hsf8y1LQC93JQLlaLnbPOC5GsFisnwFzg2rPqMM5yfJZpsUubRROzB7ZCdDfis7DMWKUf3Qek5S0GHr=w1000-h1000-c-n",
+          "lat": 10.778506499999999,
+          "lng": 106.6982525,
+          "title": "Cafe Đen Đá"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490564656,
+        "type": "map"
+      },
+      "-OuCVUOylB6E6QEkeSSO": {
+        "mapData": {
+          "description": "144/7 Pasteur, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGNzBxoenrREivr73EUwf9p7Jy3hRoG5-cmwYUS8QpK9QTHiinvVZB-fYrb6VHBCZy5Tqs4vHpPA_SBorzbg920aX3tt4k3CAi3N4xza1AdCaVDRlXC8nHnMU6GILDRxq-0NMgl=w1000-h1000-c-n",
+          "lat": 10.7751027,
+          "lng": 106.700785,
+          "title": "11:11 cafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490564909,
+        "type": "map"
+      },
+      "-OuCVUTaQA9R_Qt00fQ4": {
+        "mapData": {
+          "description": "9 Thái Văn Lung, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF5MKaEKUIH_Ho5P4SGHoM6NUlFg9-DimgKgG7oqh_HGC7E82z28G_cSssfyEKLDZCU1rPT6Hzk4hh5Hn9bg0GjOuu9i6Cvb-s3SAwmL9S6sCRV1oUMThxpKL_y90aTxI3hL2Krgw=w1000-h1000-c-n",
+          "lat": 10.77869,
+          "lng": 106.7050646,
+          "title": "Bâng Khuâng Café"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490565205,
+        "type": "map"
+      },
+      "-OuCVUYWtkIGgUJHVYW3": {
+        "mapData": {
+          "description": "3 Công trường Công xã Paris, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHP67zPVgLMUMhyIDe_7DEaC6fvU5Bn4NjLUhRyDSnU-K7XxeJw6szrX8z32DQRkX5QUJylBHt9e-NLu9ClvpNxkj7XBVViEcEImZZnToqm1G1Vr6k6xTS_nwGs6boJCiEUDcd5=w1000-h1000-c-n",
+          "lat": 10.779138,
+          "lng": 106.6988865,
+          "title": "RuNam d'Or"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490565520,
+        "type": "map"
+      },
+      "-OuCVUdmcQ-r4AcPdSPq": {
+        "mapData": {
+          "description": "299B Hoàng Sa, Tân Định, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgLJGYHbF5G-BTAd7r8oASC2w5j-stI7rNpwlG299VBTvj9AwF61Ow26L_OIJ8nuq_VIOvsVQBkChHdbQ_PmXeZUDdtmJRZFJ3I-eU8CQhsf_0rruEayW5isADS4e1nGhcKahq=w1000-h1000-c-n",
+          "lat": 10.795858599999999,
+          "lng": 106.6852972,
+          "title": "Lão Hạc Quán"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490565921,
+        "type": "map"
+      },
+      "-OuCVUhn6sOFXqpT1eWJ": {
+        "mapData": {
+          "description": "139 Nguyễn Thái Bình, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEft0m04x-eepDw-W-KOMbTKxBd7vAW4pys2-36iMah2GtNDhNVCrSxchmIZA8NtuDq7RTXgzRjMY92kmOk9MiwNuMmBymkI_hDjIuAhyiYR-SuECObHvCcerz0jwpQmOhXKqvr=w1000-h1000-c-n",
+          "lat": 10.7684341,
+          "lng": 106.6989863,
+          "title": "Kai Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490566178,
+        "type": "map"
+      },
+      "-OuCVUnZZKe5NDVOB5BP": {
+        "mapData": {
+          "description": "toà nhà Halo, 39 Đinh Công Tráng, Tân Định, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHbQncyAC0BIgXNlKzLJ5NPcky6PgnfWvCW_vt19YtccbMoR1pd3OXlGwgITf2pLdcdvw0S8PFNKjG3tm5_LgAbQttyYL5S2nWDPL-UootMHPvGxXYhVBf30fvCxRaa4Y7VEfuih7uSs57I=w1000-h1000-c-n",
+          "lat": 10.7896626,
+          "lng": 106.6916243,
+          "title": "Tiệm Lưu Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490566547,
+        "type": "map"
+      },
+      "-OuCVUsEoGUdsR5X0aTs": {
+        "mapData": {
+          "description": "64Bis Nguyễn Thị Minh Khai, Quận 1, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGxAmRZPovBlbCPOMZ8LCha30QNVIG5BuVshrLbal12PboozmRvh6zl-8WLZ7DB5j12MzbXJSxwWrTmgMiE9vdsIFopqTXyYJhQ9ETvbQ7RUyuaTJ42OibhZ8EHzf66QOJmW4XW=w1000-h1000-c-n",
+          "lat": 10.783399,
+          "lng": 106.69830479999999,
+          "title": "Little Cam Saigon"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490566846,
+        "type": "map"
+      },
+      "-OuCVUylrYIcs2xSAvJI": {
+        "mapData": {
+          "description": "14, Đường Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHtpijRhLlytnqy-idVQXlvxQcNzR_m46OXvXDSbxUyO0pnoa6ypYErbgaEQjp36JKS4MWUpam3BEE30bXm4qKVQl_9AtCEw4kuChq6SXjx_W7mZ3XPde5CgTcRm-JQ4ihtYjYeSw=w1000-h1000-c-n",
+          "lat": 10.7695583,
+          "lng": 106.7041722,
+          "title": "Mockingbird Cafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490567264,
+        "type": "map"
+      },
+      "-OuCVV1bmDltufMCJhSy": {
+        "mapData": {
+          "description": "42 Nguyễn Huệ, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFLC-hA1u08Qa1YWoGJsENUtvQjVL_L6tg_Wa20zXDruRzcDw6Trl8ni7gGyYC6-x8bAGM5BoM4tV2N_Ziaj6BKhTLvAsDj-hZcN46ZCxaQmCWLzcPbSmO-yTUKmEM3pvIOF_lZDQ=w1000-h1000-c-n",
+          "lat": 10.774111999999999,
+          "lng": 106.704089,
+          "title": "Cà phê Sài Gòn Ơi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490567510,
+        "type": "map"
+      },
+      "-OuCVV7U4HAw6VeOKnR3": {
+        "mapData": {
+          "description": "211/10 Nguyễn Trãi, Cầu Ông Lãnh, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEpf6bC6FiooKfAcmPpnlHzkcmHPVFVBQk1_evaq_YgN-aP_QxPQlNfbu7m-Z99qXpob38Xi6fdPupfVCtaoxuPg4j32bFuOh7uYZYnI8vXV2vOpF5nnTatdjm7GlN8Gyus5AoV=w1000-h1000-c-n",
+          "lat": 10.765619599999999,
+          "lng": 106.6883738,
+          "title": "Uncle Nick's Cafe (& brunch)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WEGO AI",
+        "senderUid": "bot",
+        "timestamp": 1780490567886,
+        "type": "map"
+      },
+      "-OuH7JY4BxumkzGzL77Q": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1780568114767,
+        "type": "text"
+      },
+      "-OuHA5sMTp4duKFJ6H9J": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê quận 1",
+        "timestamp": 1780568845274,
+        "type": "text"
+      },
+      "-OuHACPLdVNOjjle2v7K": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Có wifi",
+        "timestamp": 1780568872024,
+        "type": "text"
+      },
+      "-OuHAF1IQ1aZbgk7Yxy3": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot có wifi",
+        "timestamp": 1780568882773,
+        "type": "text"
+      },
+      "-OuHGgELqfwW1_jbhtxV": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê quận 1",
+        "timestamp": 1780570571176,
+        "type": "text"
+      },
+      "-OuMVFmZmXly5tAm51ZZ": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot có quán cà phê hầu gái ở gần khu vực đó không",
+        "timestamp": 1780658277636,
+        "type": "text"
+      },
+      "-OuMVYSS0ivGIba_uaXs": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot cà phê hầu gái thì hơi ngại dù phong cách anime hay nhật bản cũng hay",
+        "timestamp": 1780658354107,
+        "type": "text"
+      },
+      "-OuMVjCCkvXGEXktVLFV": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Bạn muốn tìm quán cà phê hầu gái ở khu vực cụ thể nào?",
+        "timestamp": 1780658402220,
+        "type": "ai-text"
+      },
+      "-OuMVnYDFhZYbEN38MqI": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot trung tâm sài gòn",
+        "timestamp": 1780658420012,
+        "type": "text"
+      },
+      "-OuMVplWFs1Dq24kL9-X": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Bạn muốn tìm loại trung tâm nào ở Sài Gòn? Ví dụ: trung tâm thương mại, trung tâm hành chính, hay khu vực trung tâm thành phố?",
+        "timestamp": 1780658429120,
+        "type": "ai-text"
+      },
+      "-OuMdFfnXr69r6QcQ7eI": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán đồ nhật gần đây",
+        "timestamp": 1780660636476,
+        "type": "text"
+      },
+      "-OuMdIAutFJ3KOxSKD7X": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Bạn muốn tìm quán đồ Nhật ở khu vực cụ thể nào?",
+        "timestamp": 1780660646721,
+        "type": "ai-text"
+      },
+      "-OuMlzhyLHVhzNkLiBdj": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot tìm cafe hầu gái",
+        "timestamp": 1780662926203,
+        "type": "text"
+      },
+      "-OuMm2eeSUMoStl5_uwC": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot ở quận 1",
+        "timestamp": 1780662942374,
+        "type": "text"
+      },
+      "-OuMm8Ibmp0DC2Bcqk4F": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn,\n\nDựa trên dữ liệu Google Maps hiện có, mình không tìm thấy quán cafe hầu gái nào ở Quận 1.\n\nCó vẻ như loại hình cafe này chưa phổ biến hoặc chưa được liệt kê rõ ràng trên Google Maps tại khu vực này.",
+        "timestamp": 1780662965475,
+        "type": "ai-text"
+      },
+      "-OuWOpm8OoPJF_e_n_UZ": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán đồ nhật gần trung tâm sài gòn",
+        "timestamp": 1780824365552,
+        "type": "text"
+      },
+      "-OuWOwY1iAVRfXGiaITc": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, dựa trên yêu cầu tìm nhà hàng Nhật gần trung tâm Sài Gòn với rating cao, đây là một vài gợi ý nổi bật dành cho bạn:\n\n1.  **Nori - Modern Izakaya**\n    *   **Địa chỉ:** 114 - 114A Lý Tự Trọng, Bến Thành, Quận 1 (rất gần trung tâm).\n    *   **Rating:** 4.8/5 sao (2237 đánh giá).\n    *   **Không gian:** Ấm cúng (Cozy), Hiện đại (Trendy).\n    *   **Tiện ích:** Có quầy bar, Wi-Fi miễn phí.\n    *   **Điểm cộng:** Một lựa chọn tuyệt vời cho những ai thích phong cách Izakaya hiện đại, không gian trẻ trung và vị trí đắc địa.\n\n2.  **Mayonaka Sushi**\n    *   **Địa chỉ:** 175 Đề Thám, Bến Thành, Quận 1 (rất gần trung tâm).\n    *   **Rating:** 4.9/5 sao (1754 đánh giá).\n    *   **Không gian:** Ấm cúng (Cozy), Lãng mạn (Romantic).\n    *   **Tiện ích:** Có quầy bar, Wi-Fi miễn phí.\n    *   **Điểm cộng:** Rating cực cao và không gian lãng mạn, phù hợp cho các buổi hẹn hò hoặc bữa ăn ấm cúng.\n\n3.  **Matsuri Japanese Restaurant - Nguyễn Huệ**\n    *   **Địa chỉ:** 3 Nguyễn Huệ, Quận 1 (vị trí trung tâm đắc địa nhất).\n    *   **Rating:** 4.8/5 sao (1070 đánh giá).\n    *   **Không gian:** Ấm cúng (Cozy), Yên tĩnh (Quiet), Lãng mạn (Romantic), Sang trọng (Upscale).\n    *   **Tiện ích:** Có quầy bar, Wi-Fi miễn phí.\n    *   **Điểm cộng:** Nằm ngay phố đi bộ Nguyễn Huệ, không gian sang trọng, lý tưởng cho những dịp đặc biệt.\n\n4.  **Sorae Restaurant & Lounge**\n    *   **Địa chỉ:** Bitexco Financial Tower, 36 Hồ Tùng Mậu, Quận 1 (vị trí trung tâm, có view đẹp).\n    *   **Rating:** 4.5/5 sao (1331 đánh giá).\n    *   **Không gian:** Ấm cúng (Cozy), Yên tĩnh (Quiet), Lãng mạn (Romantic), Hiện đại (Trendy), Sang trọng (Upscale).\n    *   **Tiện ích:** Có quầy bar.\n    *   **Điểm cộng:** Nằm trên tòa nhà Bitexco, mang đến trải nghiệm ẩm thực Nhật Bản cao cấp với tầm nhìn tuyệt đẹp ra thành phố.\n\n5.  **Ikigai Sushi - 4A Cao Thắng**\n    *   **Địa chỉ:** 4A Cao Thắng, Bàn Cờ, Quận 3 (gần trung tâm, dễ di chuyển).\n    *   **Rating:** 4.9/5 sao (2956 đánh giá).\n    *   **Không gian:** Ấm cúng (Cozy), Lãng mạn (Romantic).\n    *   **Tiện ích:** Có quầy bar, Wi-Fi miễn phí.\n    *   **Điểm cộng:** Rating gần như tuyệt đối và số lượng đánh giá rất lớn, cho thấy sự yêu thích của thực khách.\n\n**Lưu ý:** Một số nhà hàng có thể đóng cửa vào buổi trưa hoặc có giờ mở cửa khác nhau, bạn nên kiểm tra lại giờ hoạt động trước khi đến nhé!\n\nChúc bạn có một bữa ăn ngon miệng!",
+        "timestamp": 1780824393257,
+        "type": "ai-text"
+      },
+      "-OuWOwbGl37cFcTXmrdx": {
+        "mapData": {
+          "description": "114 - 114A Lý Tự Trọng, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAE8vhY6LR5RKRliWu9ZYw7LbGLDlMUNtfcvxbKjAsAnZ7INYGfC5LjkYJUy3dHqyZPkkcXhLu6jficWdSMQi0xMRX-WbjM-NYamT_eMSbZ2p1lNyeLAmj5AQDFDH_sSIGbsTO28DyR--u9Z=w1000-h1000-c-n",
+          "lat": 10.7739962,
+          "lng": 106.6969123,
+          "title": "Nori - Modern Izakaya"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824393528,
+        "type": "map"
+      },
+      "-OuWOwfn0ISf7lQQjjTF": {
+        "mapData": {
+          "description": "219 Nguyễn Công Trứ, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGKIeq9lQ6R8O3fjA3D4mlFfpwKW2ax0wVHLx7gtMVuSjLR25SqWiBgSnM3eYHr7iYt-Wf4U1704FIGo1epFQR_oVjoxmn_w4v3XnS9aOdW1v-Mrx4vQsO855a1LU5MyjXOHD11GA=w1000-h1000-c-n",
+          "lat": 10.7678502,
+          "lng": 106.7006523,
+          "title": "Sushi Tony"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824393819,
+        "type": "map"
+      },
+      "-OuWOwjrltGHTu3U5CEe": {
+        "mapData": {
+          "description": "63B Hoàng Hoa Thám, Tân Bình, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHUshlNZSVJ1ww76nuigAQbLJpn_Gauww-cbCae7jeNqOq6SeWAjkTA-Ax2qbjMNczKZurlRWXZHRRYymTxDG6rCh-5r3YECYPfg_2CMFM4pDqq7NHwoaTM31xladCO24RH3QPb0ykazM_v=w1000-h1000-c-n",
+          "lat": 10.8004986,
+          "lng": 106.647252,
+          "title": "Chiba - Yakiniku Nướng Nhật Bản"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824394078,
+        "type": "map"
+      },
+      "-OuWOwoHMMLhx_k2EPgI": {
+        "mapData": {
+          "description": "Nam Kỳ Khởi Nghĩa, Xuân Hòa, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH2K5vSl-9A4mjmckwS3cSTeIb6bgPO9weIwN24wIk6L-VhqnRPy1XrPgMnYntwW-nveq7E3j8QnWCUpC8wH15KN76wI7-Nz2QOD1TQuct2eBBC3PYQNA3rIaRUUVLz-fCMv8pG_Q=w1000-h1000-c-n",
+          "lat": 10.7862048,
+          "lng": 106.6871086,
+          "title": "Naked Sushi - Xuan Hoa"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824394361,
+        "type": "map"
+      },
+      "-OuWOwvAA7vWtS6agl_X": {
+        "mapData": {
+          "description": "13A Tú Xương, Xuân Hòa, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFp12-m3nl89tyGdVW6Eiaqa3ZfNhWUJb-ct0ZS-0ir4afEnTp0h0iX84SuQZgbmJSsezM_-KhBbZAzmYB7odb4c-CgAjAZz5dMd7RvG2wMAuweT4tXKAhbS5gRdm2S8bXHHU3cDQ=w1000-h1000-c-n",
+          "lat": 10.7834086,
+          "lng": 106.689397,
+          "title": "Kobe Teppanyaki"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824394802,
+        "type": "map"
+      },
+      "-OuWOx-Vx9DxI7lgR0n2": {
+        "mapData": {
+          "description": "81 Hồ Hảo Hớn, Cầu Ông Lãnh, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHp6k4eT7NesKOOAdTQYcte499S8Qivx0hoZUZstDtRXjHud-n150Z6--eJRHaeutOn02YmV3JWmoE2M9_VW2_px8HDV3xUx7ykMijdVQDsQS5bZxvkx_bkQaLt854cbaRbu4cF=w1000-h1000-c-n",
+          "lat": 10.7622318,
+          "lng": 106.6913438,
+          "title": "Nhà Hàng Nhật Yume"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824395144,
+        "type": "map"
+      },
+      "-OuWOx5sViaWsFA3vebK": {
+        "mapData": {
+          "description": "Bitexco Financial Tower, 36 Hồ Tùng Mậu, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH-9MBauzqAShjLj8H4zQIzTMsDQmgW4dFft6dT7qd3VNVkqcozvglRoDBR9Ge_552PEKKRJCLm1f0mEGt0gsRBKqhBY2IErYChD_Wxnz9ECyAZvVygdnMZE_Z8_SWq9M77CIis=w1000-h1000-c-n",
+          "lat": 10.771433499999999,
+          "lng": 106.7042231,
+          "title": "Sorae Restaurant & Lounge"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824395551,
+        "type": "map"
+      },
+      "-OuWOxBHeX1CXKlYGQJq": {
+        "mapData": {
+          "description": "3 Nguyễn Huệ, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGubYQwBkIt_3IxSJtJXEuqA3K8TD8sBjfoJxa3UNQKkpfgOq8GogJ9PuGtEPkjY2eh7rkJ4zeBRGj8jBkC60lE1GHLMIOCZrbbeiWo7xFmZN7FFmLdcpS0mZCzBsO_MqcdQZunzoND7STN=w1000-h1000-c-n",
+          "lat": 10.771649,
+          "lng": 106.7058812,
+          "title": "Matsuri Japanese Restaurant - Nguyễn Huệ"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824395897,
+        "type": "map"
+      },
+      "-OuWOxGaLuE-YobnkvPK": {
+        "mapData": {
+          "description": "Thái Văn Lung, Phường, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGel5o0B8sb1iNuA6nJ6aj3rLUX4wJ9axrKotNaiej9tJfKVK7n038P34VDB4XR3U0IZ1GFLMNs3q1-rYceaClK-TMIdlWqvlCIUY-8x5-5DfEiYMWHhknr-xl4Up-TrAkVTVo9=w1000-h1000-c-n",
+          "lat": 10.7797901,
+          "lng": 106.7048648,
+          "title": "Fujiro【Le thanh ton】"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824396237,
+        "type": "map"
+      },
+      "-OuWOxLxE89gpEfjj812": {
+        "mapData": {
+          "description": "52 Thạch Thị Thanh, Tân Định, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHi9Y_1j3H7bdffzSv8phIvRbqkV4PT9Lmb-vFz4gSYO9Ry1uk4pE_7LGmxO2rx_MYkm5Ket4LfIcI0cWQ6Eb8WGyjz9Tm0X8ZCkHf__DsSg3Z65ROT-HoHccxmvxyF0XGM4G99=w1000-h1000-c-n",
+          "lat": 10.7905328,
+          "lng": 106.6924793,
+          "title": "Sushi Masa"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824396580,
+        "type": "map"
+      },
+      "-OuWOxRDGkBhIF5-ML1y": {
+        "mapData": {
+          "description": "175 Đề Thám, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGbQ8T6TuldvfUcmvd081OcBy4EexfiJWbSsEpefM5rg1Db5v1nIl_qya5AnE7nFuLbRIuYbZVZSPBksmzYByLVjAiLREGxr7xiTH1eHe3dDFH3CC3EQ0LofouENxDCSf4ZvFgBiZNPzTHi=w1000-h1000-c-n",
+          "lat": 10.7670856,
+          "lng": 106.6940884,
+          "title": "Mayonaka Sushi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824396917,
+        "type": "map"
+      },
+      "-OuWOxW_GmDp-vSIYOV7": {
+        "mapData": {
+          "description": "26 Cao Thắng, Bàn Cờ, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7_yno0sX7USl8h2PQkFJYPZuhFkWlV0Dhdg6pg8pVf97YdQJU5pIPS30e85G0Q-zMEDnjEdoG3QMVjVuC-DMb7WAAPbtM7EWOIS0YWW9B5iDmTrhKP5DHsiuk6a6_yJ3zFtDm=w1000-h1000-c-n",
+          "lat": 10.7692537,
+          "lng": 106.68330399999999,
+          "title": "Sushi Tei Restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824397261,
+        "type": "map"
+      },
+      "-OuWOxb4QMsc2aUAHJE6": {
+        "mapData": {
+          "description": "19 Đông Du, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFMjvwlTuDPLu_Qn4jQs79rN8yhLwk3von1DJcOIGbZWTfW5Q2MnROiJwVxX3p-SVNAEwy7B_385U8BajUVstTKq_W9i536oAFDBzQCoNSTOCRdtRZYkycQPEYf_d01lhg15qNO=w1000-h1000-c-n",
+          "lat": 10.77618,
+          "lng": 106.704937,
+          "title": "MAGURO Studio"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824397612,
+        "type": "map"
+      },
+      "-OuWOxh37ui-uEmo5ONi": {
+        "mapData": {
+          "description": "28 Thái Văn Lung, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAErBlQdP42YEZjZxOVhKq0OswsrBHv8BkeDrQJnoxlz128HhrEfffVmef2_ZYfjOTFEeu5OjRcsK5sph9P5VYAY-xI_4NxQzPeTpqRReVx0vNolWX_qytIcaUbFDBJuUMO5g1Zq=w1000-h1000-c-n",
+          "lat": 10.7801765,
+          "lng": 106.7038054,
+          "title": "Wakaba - Japanese restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824397995,
+        "type": "map"
+      },
+      "-OuWOxnSGT7YkWIx_5vJ": {
+        "mapData": {
+          "description": "18bis Cộng Hòa, Tân Sơn Nhất, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH4et-Mf8NU86mVpJ8w-0VtXd1E5pvr69fl6-2u1862KL824t-ISpQmZs3gVSvO0vPNz9wfz1sJbhMjdU-Y0by3TXM0oLKs2PTxO9S2hPbZaoFZHXnAH9RuK8j6TxbwSHAt_3MJ=w1000-h1000-c-n",
+          "lat": 10.8016299,
+          "lng": 106.654197,
+          "title": "Takumi-Tei, Saigon"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824398404,
+        "type": "map"
+      },
+      "-OuWOxtL0-deC4SBMFvk": {
+        "mapData": {
+          "description": "L5 - 17 Saigon Centre, 65 Lê Lợi, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHdaCJ4GCqw7NZ_F_R_0yVu4sUdWK5SPLXUJmHlj91bVMNDa9MOZr8WB0kEhX7lumD9pTqzCv4eN303nAbN6IIJ2oybnZNZqb7_Xc8Sh8panIpBBca__0mpgPRYASmxRldRDc9_qw=w1000-h1000-c-n",
+          "lat": 10.7731883,
+          "lng": 106.70091939999999,
+          "title": "Sushi Hokkaido Sachi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824398781,
+        "type": "map"
+      },
+      "-OuWOy-SW_TbTmijGQpj": {
+        "mapData": {
+          "description": "15A Lê Quý Đôn, Xuân Hòa, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFwEtIHA64UFWIm39yPPgQ9oIVwhpxXa6mNlRHA240pl9PI__oA3LPVJNE3-NnKNUMfHKylkeY9MrtApXcIiLH2MZ5dF9pX0dTOe0-NqNk7aTyDGPgcCxlds1rwuB4ztz4wPZ_kVA=w1000-h1000-c-n",
+          "lat": 10.7804854,
+          "lng": 106.6914695,
+          "title": "YEN Sushi & Sake Pub"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824399236,
+        "type": "map"
+      },
+      "-OuWOy5bTK5ngf6tc0lK": {
+        "mapData": {
+          "description": "236 Nguyễn Trọng Tuyển, Phú Nhuận, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEMEKHHO8hVRnQAfH8ZtIht_9FtBteSRFBWibTcojaq41uqA6g0CGsgcKP2P8JU3Rj7k0768RFfZAtZh-mT9JPiyFAR9KYtmTw4dTbQ9cr27NT3xKSwH4e-j9e0L2Yl2WyuWrBd8A=w1000-h1000-c-n",
+          "lat": 10.7979088,
+          "lng": 106.673368,
+          "title": "Ikigai Sushi - 236 nguyễn trọng tuyển"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824399630,
+        "type": "map"
+      },
+      "-OuWOyBjRa8X2zcRYk2Z": {
+        "mapData": {
+          "description": "4A Cao Thắng, Bàn Cờ, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH4GxFe52-qesiE0XsGaStBkc_-j9hnlPZ-OgHo_uEiQ-Z8qeLmZQ0eGGLHB-dWfwXB644M76aym95Yrh8JwwRMjJO-KnWjpV43HM6YTEJL7JoG4S2hmf3y5Eg2fWqQN9MDS9o4=w1000-h1000-c-n",
+          "lat": 10.7687014,
+          "lng": 106.68384599999999,
+          "title": "Ikigai Sushi - 4A Cao Thắng"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824400022,
+        "type": "map"
+      },
+      "-OuWOyHxAX1dyZ578awK": {
+        "mapData": {
+          "description": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+          "lat": 10.7654088,
+          "lng": 106.6902769,
+          "title": "SOSAKU SUSHI DAN"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780824400420,
+        "type": "map"
+      },
+      "-OuWTH37xUOqv8q17H2Q": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán đồ nhật gần trung tâm sài gòn",
+        "timestamp": 1780825529968,
+        "type": "text"
+      },
+      "-OuWTTnbDyli_-2TCf8m": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, dựa trên yêu cầu tìm nhà hàng Nhật gần trung tâm Sài Gòn với rating cao, đây là một vài gợi ý nổi bật dành cho bạn:\n\n1.  **Nori - Modern Izakaya**\n    *   **Địa chỉ:** 114 - 114A Lý Tự Trọng, Bến Thành, Quận 1 (rất trung tâm)\n    *   **Rating:** 4.8/5 sao (2237 đánh giá)\n    *   **Không gian:** Ấm cúng, hiện đại (Cozy, Trendy)\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Lưu ý:** Hiện đang đóng cửa, mở cửa lại lúc 6 giờ tối.\n    *   *Nori là lựa chọn tuyệt vời nếu bạn tìm một không gian hiện đại, trẻ trung và đồ ăn Nhật chất lượng cao ngay giữa trung tâm Sài Gòn.*\n\n2.  **Naked Sushi - Xuan Hoa**\n    *   **Địa chỉ:** Nam Kỳ Khởi Nghĩa, Xuân Hòa, Quận 3 (gần trung tâm)\n    *   **Rating:** 4.9/5 sao (2271 đánh giá)\n    *   **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng, hợp thời trang (Cozy, Quiet, Romantic, Trendy, Upscale)\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh.\n    *   **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 9:15 tối.\n    *   *Nếu bạn muốn một trải nghiệm ẩm thực Nhật Bản tinh tế, sang trọng và lãng mạn, Naked Sushi là một điểm đến lý tưởng với rating cực cao và không gian được đánh giá rất tốt.*\n\n3.  **Matsuri Japanese Restaurant - Nguyễn Huệ**\n    *   **Địa chỉ:** 3 Nguyễn Huệ, Sài Gòn, Quận 1 (vị trí đắc địa ngay phố đi bộ)\n    *   **Rating:** 4.8/5 sao (1070 đánh giá)\n    *   **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng (Cozy, Quiet, Romantic, Upscale)\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 10 giờ tối.\n    *   *Với vị trí không thể trung tâm hơn trên phố đi bộ Nguyễn Huệ, Matsuri mang đến không gian sang trọng, lãng mạn và chất lượng món ăn Nhật được đánh giá cao.*\n\n4.  **Ikigai Sushi - 4A Cao Thắng**\n    *   **Địa chỉ:** 4A Cao Thắng, Bàn Cờ, Quận 3 (gần trung tâm)\n    *   **Rating:** 4.9/5 sao (2956 đánh giá)\n    *   **Không gian:** Ấm cúng, lãng mạn (Cozy, Romantic)\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 10 giờ tối.\n    *   *Ikigai Sushi có số lượng đánh giá rất lớn và rating gần như tuyệt đối, cho thấy sự yêu thích của thực khách. Đây là lựa chọn tuyệt vời cho những ai yêu thích sushi trong không gian ấm cúng.*\n\n5.  **Sorae Restaurant & Lounge**\n    *   **Địa chỉ:** Bitexco Financial Tower, 36 Hồ Tùng Mậu, Sài Gòn, Quận 1 (tòa nhà biểu tượng, có thể có view đẹp)\n    *   **Rating:** 4.5/5 sao (1331 đánh giá)\n    *   **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng, hợp thời trang (Cozy, Quiet, Romantic, Trendy, Upscale)\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh.\n    *   **Lưu ý:** Hiện đang đóng cửa, mở cửa lại lúc 5 giờ chiều.\n    *   *Nếu bạn muốn một trải nghiệm ẩm thực Nhật Bản đẳng cấp với không gian sang trọng và có thể ngắm nhìn thành phố từ trên cao, Sorae là một lựa chọn đáng cân nhắc.*\n\nChúc bạn có một bữa ăn ngon miệng!",
+        "timestamp": 1780825582158,
+        "type": "ai-text"
+      },
+      "-OuWTTznBzTcPDJdRdSf": {
+        "mapData": {
+          "description": "114 - 114A Lý Tự Trọng, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAE8vhY6LR5RKRliWu9ZYw7LbGLDlMUNtfcvxbKjAsAnZ7INYGfC5LjkYJUy3dHqyZPkkcXhLu6jficWdSMQi0xMRX-WbjM-NYamT_eMSbZ2p1lNyeLAmj5AQDFDH_sSIGbsTO28DyR--u9Z=w1000-h1000-c-n",
+          "lat": 10.7739962,
+          "lng": 106.6969123,
+          "title": "Nori - Modern Izakaya"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825582939,
+        "type": "map"
+      },
+      "-OuWTUARp2JHL03_EFpe": {
+        "mapData": {
+          "description": "219 Nguyễn Công Trứ, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGKIeq9lQ6R8O3fjA3D4mlFfpwKW2ax0wVHLx7gtMVuSjLR25SqWiBgSnM3eYHr7iYt-Wf4U1704FIGo1epFQR_oVjoxmn_w4v3XnS9aOdW1v-Mrx4vQsO855a1LU5MyjXOHD11GA=w1000-h1000-c-n",
+          "lat": 10.7678502,
+          "lng": 106.7006523,
+          "title": "Sushi Tony"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825583684,
+        "type": "map"
+      },
+      "-OuWTUNmsSWI7pKlF6x1": {
+        "mapData": {
+          "description": "63B Hoàng Hoa Thám, Tân Bình, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHUshlNZSVJ1ww76nuigAQbLJpn_Gauww-cbCae7jeNqOq6SeWAjkTA-Ax2qbjMNczKZurlRWXZHRRYymTxDG6rCh-5r3YECYPfg_2CMFM4pDqq7NHwoaTM31xladCO24RH3QPb0ykazM_v=w1000-h1000-c-n",
+          "lat": 10.8004986,
+          "lng": 106.647252,
+          "title": "Chiba - Yakiniku Nướng Nhật Bản"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825584537,
+        "type": "map"
+      },
+      "-OuWTU_pchLYYbK87JNf": {
+        "mapData": {
+          "description": "Nam Kỳ Khởi Nghĩa, Xuân Hòa, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH2K5vSl-9A4mjmckwS3cSTeIb6bgPO9weIwN24wIk6L-VhqnRPy1XrPgMnYntwW-nveq7E3j8QnWCUpC8wH15KN76wI7-Nz2QOD1TQuct2eBBC3PYQNA3rIaRUUVLz-fCMv8pG_Q=w1000-h1000-c-n",
+          "lat": 10.7862048,
+          "lng": 106.6871086,
+          "title": "Naked Sushi - Xuan Hoa"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825585372,
+        "type": "map"
+      },
+      "-OuWTUnoW6mhQIEf9b7M": {
+        "mapData": {
+          "description": "13A Tú Xương, Xuân Hòa, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFp12-m3nl89tyGdVW6Eiaqa3ZfNhWUJb-ct0ZS-0ir4afEnTp0h0iX84SuQZgbmJSsezM_-KhBbZAzmYB7odb4c-CgAjAZz5dMd7RvG2wMAuweT4tXKAhbS5gRdm2S8bXHHU3cDQ=w1000-h1000-c-n",
+          "lat": 10.7834086,
+          "lng": 106.689397,
+          "title": "Kobe Teppanyaki"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825586267,
+        "type": "map"
+      },
+      "-OuWTV0SxEyOpVnXm5t9": {
+        "mapData": {
+          "description": "81 Hồ Hảo Hớn, Cầu Ông Lãnh, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHp6k4eT7NesKOOAdTQYcte499S8Qivx0hoZUZstDtRXjHud-n150Z6--eJRHaeutOn02YmV3JWmoE2M9_VW2_px8HDV3xUx7ykMijdVQDsQS5bZxvkx_bkQaLt854cbaRbu4cF=w1000-h1000-c-n",
+          "lat": 10.7622318,
+          "lng": 106.6913438,
+          "title": "Nhà Hàng Nhật Yume"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825587140,
+        "type": "map"
+      },
+      "-OuWTVFO5wl-l2QxGfwK": {
+        "mapData": {
+          "description": "Bitexco Financial Tower, 36 Hồ Tùng Mậu, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH-9MBauzqAShjLj8H4zQIzTMsDQmgW4dFft6dT7qd3VNVkqcozvglRoDBR9Ge_552PEKKRJCLm1f0mEGt0gsRBKqhBY2IErYChD_Wxnz9ECyAZvVygdnMZE_Z8_SWq9M77CIis=w1000-h1000-c-n",
+          "lat": 10.771433499999999,
+          "lng": 106.7042231,
+          "title": "Sorae Restaurant & Lounge"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825588096,
+        "type": "map"
+      },
+      "-OuWTVVjJdUr1T5J2isa": {
+        "mapData": {
+          "description": "3 Nguyễn Huệ, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGubYQwBkIt_3IxSJtJXEuqA3K8TD8sBjfoJxa3UNQKkpfgOq8GogJ9PuGtEPkjY2eh7rkJ4zeBRGj8jBkC60lE1GHLMIOCZrbbeiWo7xFmZN7FFmLdcpS0mZCzBsO_MqcdQZunzoND7STN=w1000-h1000-c-n",
+          "lat": 10.771649,
+          "lng": 106.7058812,
+          "title": "Matsuri Japanese Restaurant - Nguyễn Huệ"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825589142,
+        "type": "map"
+      },
+      "-OuWTVioxpPz2AnDiO8X": {
+        "mapData": {
+          "description": "Thái Văn Lung, Phường, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGel5o0B8sb1iNuA6nJ6aj3rLUX4wJ9axrKotNaiej9tJfKVK7n038P34VDB4XR3U0IZ1GFLMNs3q1-rYceaClK-TMIdlWqvlCIUY-8x5-5DfEiYMWHhknr-xl4Up-TrAkVTVo9=w1000-h1000-c-n",
+          "lat": 10.7797901,
+          "lng": 106.7048648,
+          "title": "Fujiro【Le thanh ton】"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825590043,
+        "type": "map"
+      },
+      "-OuWTVyN8AAezXbiJ102": {
+        "mapData": {
+          "description": "52 Thạch Thị Thanh, Tân Định, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHi9Y_1j3H7bdffzSv8phIvRbqkV4PT9Lmb-vFz4gSYO9Ry1uk4pE_7LGmxO2rx_MYkm5Ket4LfIcI0cWQ6Eb8WGyjz9Tm0X8ZCkHf__DsSg3Z65ROT-HoHccxmvxyF0XGM4G99=w1000-h1000-c-n",
+          "lat": 10.7905328,
+          "lng": 106.6924793,
+          "title": "Sushi Masa"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825591039,
+        "type": "map"
+      },
+      "-OuWTWDflvV260rDGXH4": {
+        "mapData": {
+          "description": "175 Đề Thám, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGbQ8T6TuldvfUcmvd081OcBy4EexfiJWbSsEpefM5rg1Db5v1nIl_qya5AnE7nFuLbRIuYbZVZSPBksmzYByLVjAiLREGxr7xiTH1eHe3dDFH3CC3EQ0LofouENxDCSf4ZvFgBiZNPzTHi=w1000-h1000-c-n",
+          "lat": 10.7670856,
+          "lng": 106.6940884,
+          "title": "Mayonaka Sushi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825592082,
+        "type": "map"
+      },
+      "-OuWTWSoAdvtynx13Xbe": {
+        "mapData": {
+          "description": "26 Cao Thắng, Bàn Cờ, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7_yno0sX7USl8h2PQkFJYPZuhFkWlV0Dhdg6pg8pVf97YdQJU5pIPS30e85G0Q-zMEDnjEdoG3QMVjVuC-DMb7WAAPbtM7EWOIS0YWW9B5iDmTrhKP5DHsiuk6a6_yJ3zFtDm=w1000-h1000-c-n",
+          "lat": 10.7692537,
+          "lng": 106.68330399999999,
+          "title": "Sushi Tei Restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825593051,
+        "type": "map"
+      },
+      "-OuWTWi4ZctfTBBqjnvu": {
+        "mapData": {
+          "description": "19 Đông Du, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFMjvwlTuDPLu_Qn4jQs79rN8yhLwk3von1DJcOIGbZWTfW5Q2MnROiJwVxX3p-SVNAEwy7B_385U8BajUVstTKq_W9i536oAFDBzQCoNSTOCRdtRZYkycQPEYf_d01lhg15qNO=w1000-h1000-c-n",
+          "lat": 10.77618,
+          "lng": 106.704937,
+          "title": "MAGURO Studio"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825594092,
+        "type": "map"
+      },
+      "-OuWTWxoKpz0EmWMQZUs": {
+        "mapData": {
+          "description": "28 Thái Văn Lung, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAErBlQdP42YEZjZxOVhKq0OswsrBHv8BkeDrQJnoxlz128HhrEfffVmef2_ZYfjOTFEeu5OjRcsK5sph9P5VYAY-xI_4NxQzPeTpqRReVx0vNolWX_qytIcaUbFDBJuUMO5g1Zq=w1000-h1000-c-n",
+          "lat": 10.7801765,
+          "lng": 106.7038054,
+          "title": "Wakaba - Japanese restaurant"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825595099,
+        "type": "map"
+      },
+      "-OuWTXEBvqH2PJycU0eb": {
+        "mapData": {
+          "description": "18bis Cộng Hòa, Tân Sơn Nhất, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH4et-Mf8NU86mVpJ8w-0VtXd1E5pvr69fl6-2u1862KL824t-ISpQmZs3gVSvO0vPNz9wfz1sJbhMjdU-Y0by3TXM0oLKs2PTxO9S2hPbZaoFZHXnAH9RuK8j6TxbwSHAt_3MJ=w1000-h1000-c-n",
+          "lat": 10.8016299,
+          "lng": 106.654197,
+          "title": "Takumi-Tei, Saigon"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825596211,
+        "type": "map"
+      },
+      "-OuWTXU5cAKzPGF0m3_t": {
+        "mapData": {
+          "description": "L5 - 17 Saigon Centre, 65 Lê Lợi, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHdaCJ4GCqw7NZ_F_R_0yVu4sUdWK5SPLXUJmHlj91bVMNDa9MOZr8WB0kEhX7lumD9pTqzCv4eN303nAbN6IIJ2oybnZNZqb7_Xc8Sh8panIpBBca__0mpgPRYASmxRldRDc9_qw=w1000-h1000-c-n",
+          "lat": 10.7731883,
+          "lng": 106.70091939999999,
+          "title": "Sushi Hokkaido Sachi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825597229,
+        "type": "map"
+      },
+      "-OuWTXk4LrFhpXwTZkkM": {
+        "mapData": {
+          "description": "15A Lê Quý Đôn, Xuân Hòa, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFwEtIHA64UFWIm39yPPgQ9oIVwhpxXa6mNlRHA240pl9PI__oA3LPVJNE3-NnKNUMfHKylkeY9MrtApXcIiLH2MZ5dF9pX0dTOe0-NqNk7aTyDGPgcCxlds1rwuB4ztz4wPZ_kVA=w1000-h1000-c-n",
+          "lat": 10.7804854,
+          "lng": 106.6914695,
+          "title": "YEN Sushi & Sake Pub"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825598317,
+        "type": "map"
+      },
+      "-OuWTY0Kjrs-j9mE00DP": {
+        "mapData": {
+          "description": "236 Nguyễn Trọng Tuyển, Phú Nhuận, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEMEKHHO8hVRnQAfH8ZtIht_9FtBteSRFBWibTcojaq41uqA6g0CGsgcKP2P8JU3Rj7k0768RFfZAtZh-mT9JPiyFAR9KYtmTw4dTbQ9cr27NT3xKSwH4e-j9e0L2Yl2WyuWrBd8A=w1000-h1000-c-n",
+          "lat": 10.7979088,
+          "lng": 106.673368,
+          "title": "Ikigai Sushi - 236 nguyễn trọng tuyển"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825599420,
+        "type": "map"
+      },
+      "-OuWTYHngkqRhuy7STR9": {
+        "mapData": {
+          "description": "4A Cao Thắng, Bàn Cờ, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH4GxFe52-qesiE0XsGaStBkc_-j9hnlPZ-OgHo_uEiQ-Z8qeLmZQ0eGGLHB-dWfwXB644M76aym95Yrh8JwwRMjJO-KnWjpV43HM6YTEJL7JoG4S2hmf3y5Eg2fWqQN9MDS9o4=w1000-h1000-c-n",
+          "lat": 10.7687014,
+          "lng": 106.68384599999999,
+          "title": "Ikigai Sushi - 4A Cao Thắng"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825600538,
+        "type": "map"
+      },
+      "-OuWTYbUZOHMoBK7BlF2": {
+        "mapData": {
+          "description": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+          "lat": 10.7654088,
+          "lng": 106.6902769,
+          "title": "SOSAKU SUSHI DAN"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1780825601863,
+        "type": "map"
+      }
+    },
+    "edca12e0-1a76-404c-8657-8062f51f583d": {
+      "-OvIhKLuFvkSxFRqHBDF": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Hello",
+        "timestamp": 1781668336297,
+        "type": "text"
+      },
+      "-OvJqGmydFoz7nDnB-68": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán nướng thủ đức",
+        "timestamp": 1781687458226,
+        "type": "text"
+      },
+      "-OvJqVzQWcaTMzm50NWU": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, dựa trên tìm kiếm \"quán nướng Thủ Đức\", đây là một vài gợi ý nổi bật dành cho bạn:\n\n**1. PO BBQ Buffet Lẩu Nướng 139k**\n*   **Rating:** 4.9/5 sao (với 5577 đánh giá) - Đây là quán có số lượng đánh giá cao nhất và chất lượng được khẳng định.\n*   **Địa chỉ:** 96 Tô Vĩnh Diện, Thủ Đức.\n*   **Điểm nổi bật:** Là nhà hàng buffet lẩu nướng với mức giá rất phải chăng (139k). Không gian được mô tả là **thoải mái (Casual), ấm cúng (Cosy) và yên tĩnh (Quiet)**, rất phù hợp cho các buổi tụ tập bạn bè hoặc gia đình. Quán có đầy đủ tiện nghi như **nhà vệ sinh (bao gồm cả nhà vệ sinh trung tính giới tính) và Wi-Fi miễn phí**.\n*   **Phù hợp cho:** Những ai muốn thưởng thức buffet nướng đa dạng với chi phí hợp lý và không gian dễ chịu.\n\n**2. Subin BBQ Giga Mall Thủ Đức**\n*   **Rating:** 4.9/5 sao (với 2729 đánh giá) - Một lựa chọn tuyệt vời khác với lượng đánh giá rất cao.\n*   **Địa chỉ:** Tầng trệt Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Thủ Đức.\n*   **Điểm nổi bật:** Là nhà hàng nướng kiểu Hàn Quốc, nằm trong trung tâm thương mại Gigamall tiện lợi cho việc đi lại và gửi xe. Không gian **ấm cúng (Cosy)**, có **nhà vệ sinh và Wi-Fi miễn phí**.\n*   **Phù hợp cho:** Những tín đồ của món nướng Hàn Quốc, hoặc những ai muốn kết hợp ăn uống với mua sắm, giải trí tại trung tâm thương mại.\n\n**3. Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức**\n*   **Rating:** 4.9/5 sao (với 215 đánh giá) - Nếu bạn muốn thử món nướng đặc trưng hơn.\n*   **Địa chỉ:** 541 Kha Vạn Cân, Thủ Đức.\n*   **Điểm nổi bật:** Chuyên về nem nướng Nha Trang, một món ăn đặc sản được nhiều người yêu thích. Không gian **thoải mái (Casual)**, có **nhà vệ sinh và Wi-Fi miễn phí**.\n*   **Phù hợp cho:** Những ai muốn thưởng thức nem nướng chuẩn vị Nha Trang.\n\n**Các lựa chọn khác (với ít đánh giá hơn):**\n\n*   **Quán Nướng Bò Vui Đặng Văn Bi:** Rating 5/5 sao (3 đánh giá). Không gian thoải mái, có nhà vệ sinh.\n*   **Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức:** Rating 5/5 sao (4 đánh giá).\n\n**Tóm lại:**\nNếu bạn tìm một quán nướng buffet đa dạng, đông khách và được đánh giá cao, hãy chọn **PO BBQ Buffet Lẩu Nướng 139k**.\nNếu bạn thích nướng Hàn Quốc và không ngại vào trung tâm thương mại, **Subin BBQ Giga Mall Thủ Đức** là lựa chọn lý tưởng.\nNếu bạn muốn thưởng thức món nem nướng đặc trưng, **Nem Nướng Nha Trang Hùng Việt** là địa chỉ đáng cân nhắc.\n\nChúc bạn có một bữa ăn ngon miệng!",
+        "timestamp": 1781687520462,
+        "type": "ai-text"
+      },
+      "-OvJqW2pD095agKZhCE5": {
+        "mapData": {
+          "description": "128 Đặng Văn Bi, Thủ Đức, Hồ Chí Minh 71300, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFY_AfbiXIfaI61ePtLcE4dJ3BhecbiPxM1L-TSzp_k8ZN1niz3FrvcAx8xfe0ZpozJC_sm3rC2nPKywaoEMyf6zMCC0jx3LopYKRsI79K0sOuwxzGq6QNJn6NtWNXVsyroDNlV=w1000-h1000-c-n",
+          "lat": 10.8458431,
+          "lng": 106.7615565,
+          "title": "Quán Nướng Bò Vui Đặng Văn Bi"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781687520745,
+        "type": "map"
+      },
+      "-OvJqW6t7WAHz41TjGoe": {
+        "mapData": {
+          "description": "59A Đ. Số 2, Thủ Đức, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=pMP1Cs_nZRQhRojCc4xIIA&cb_client=search.gws-prod.gps&w=80&h=92&yaw=221.44566&pitch=0&thumbfov=100",
+          "lat": 10.836784999999999,
+          "lng": 106.7523674,
+          "title": "Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781687521005,
+        "type": "map"
+      },
+      "-OvJqWApUio1_hYD4NFr": {
+        "mapData": {
+          "description": "96 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh 713000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEz-Ojvf-z-iBil4OEZShddi4BflNyq2EYLHj-Q80eTpYjdyW1QujjbKI_NddhKYlgdcuRGrddVvv5TK7Ft0tQl1puX9lit5t2F9lV0qo17iSrfYuquso2z6-H4C1sZPderhiasm0pT44SQ=w1000-h1000-c-n",
+          "lat": 10.8535243,
+          "lng": 106.76807679999999,
+          "title": "PO BBQ Buffet Lẩu Nướng 139k"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781687521256,
+        "type": "map"
+      },
+      "-OvJqWEkhmfgY0VZzKeA": {
+        "mapData": {
+          "description": "541 Kha Vạn Cân, Thủ Đức, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFwntsM6BpGe237l-2uDDtVsZzU4k0acDWu3kCZ8i41e-Z8z5Ypb-WfrCH2RTBycfU3DbslI_VJKjv1R2tj59HZRhXIFP2muEFtiJMvgiKV1pnbWpfW1lRFMDe3RYYIAZ859RRC=w1000-h1000-c-n",
+          "lat": 10.846494,
+          "lng": 106.75081499999999,
+          "title": "Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781687521507,
+        "type": "map"
+      },
+      "-OvJqWInW-nRQPIkUTPy": {
+        "mapData": {
+          "description": "Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Hồ Chí Minh 71300, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAES2Ddp_I8Z6KzwEloMSO8-dfxS6kIX8f5gH4SufxmTerK_6H5I8c59d3PcX9m8pqwkZCjZ_swqtKYqKHjFUxCwkIljCKdlvlW51SrzL6GGQqi67P4Qnbn4WPBfAOqNgXLhE2mWo6dOeHFo=w1000-h1000-c-n",
+          "lat": 10.8273647,
+          "lng": 106.7216358,
+          "title": "Subin BBQ Giga Mall Thủ Đức"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781687521766,
+        "type": "map"
+      },
+      "-OvPPXwoOwZtRYKtyDsF": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê quận 1",
+        "timestamp": 1781780852646,
+        "type": "text"
+      },
+      "-OvPPbV_sWCBNCg-4_8G": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, ở Quận 1 có rất nhiều quán cà phê chất lượng. Dựa trên dữ liệu, đây là một vài gợi ý nổi bật dành cho bạn:\n\n1.  **Little HaNoi Egg Coffee (Yersin)**\n    *   **Rating:** 4.8/5 sao với hơn 5.300 lượt đánh giá.\n    *   **Điểm nổi bật:** Nổi tiếng với món cà phê trứng đặc trưng của Hà Nội. Không gian được mô tả là **ấm cúng, yên tĩnh, lãng mạn** và **hợp xu hướng**. Rất phù hợp nếu bạn muốn trải nghiệm một không gian độc đáo và thưởng thức món đồ uống đặc biệt.\n    *   **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1.\n    *   **Giờ mở cửa:** Hiện đang đóng cửa, sẽ mở lại lúc 7 giờ sáng thứ Sáu.\n\n2.  **Tonkin Specialty Coffee**\n    *   **Rating:** 4.8/5 sao với hơn 4.400 lượt đánh giá.\n    *   **Điểm nổi bật:** Là quán cà phê chuyên về cà phê đặc sản (Specialty Coffee). Không gian **ấm cúng, lãng mạn** và **hợp thời trang**. Quán có **Wi-Fi miễn phí** và nhà vệ sinh tiện nghi, rất thích hợp cho những ai muốn làm việc hoặc thư giãn.\n    *   **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành, Quận 1.\n    *   **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 9 giờ tối.\n\n3.  **Hoff Coffee Brewers**\n    *   **Rating:** 4.8/5 sao với 341 lượt đánh giá.\n    *   **Điểm nổi bật:** Không gian **thoải mái và ấm cúng**. Quán cũng cung cấp **Wi-Fi miễn phí** và có quầy bar nhỏ.\n    *   **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1.\n    *   **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 9 giờ tối.\n\nChúc bạn tìm được quán cà phê ưng ý ở Quận 1 nhé!",
+        "timestamp": 1781780871318,
+        "type": "ai-text"
+      },
+      "-OvPPbZP91BJzwf28Sru": {
+        "mapData": {
+          "description": "Yersin/119/5 Phạm Ngũ Lão, Phường, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHxsWMFKWlUu8SVAaj7BAPzKI8MxV47vLJl4x_IVA19t7tRP9bLjUyx40bqfYHk09hjv1iTilulnDdAlPZLoUEKR4JN98qP4Gjyji-FsZdqFf9Dmcq_XC88wJVnKzXkOmKZsrK6=w1000-h1000-c-n",
+          "lat": 10.7694043,
+          "lng": 106.6960112,
+          "title": "Little HaNoi Egg Coffee (Yersin)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781780871562,
+        "type": "map"
+      },
+      "-OvPPbhLR1JtRDoPd6DT": {
+        "mapData": {
+          "description": "91 Lý Tự Trọng, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEexk_aevomXvb9YLhwN-FPmly1rOXc2ezbco9V4z3CVbkHhhce_EnoCm2r2kH7hM1KrfRWJ0f6nli-XENKYYL8ZbLyGaELorN5wnvX09ZLkhjBSEPQQsggx9pDc1zIVuBc6go=w1000-h1000-c-n",
+          "lat": 10.7743893,
+          "lng": 106.6978901,
+          "title": "Tonkin Specialty Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781780872134,
+        "type": "map"
+      },
+      "-OvPPbl55tXKSy64HFRA": {
+        "mapData": {
+          "description": "42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGnfjREemWPSBcYnzv5jo1QikTPrp93gAVfiWadf6ObuSlv-1wx1o37Zd6h_snKYyqVh-2kligxMFI9ZXfUEKj9Jvh4HJDV_9diu3Km3iFffWyfbWxRqGQ2MgTGQKgiAo_F8-c=w1000-h1000-c-n",
+          "lat": 10.777160499999999,
+          "lng": 106.70015479999999,
+          "title": "Hoff Coffee Brewers"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781780872375,
+        "type": "map"
+      },
+      "-OvPPbp-DM0qSW-yAPiB": {
+        "mapData": {
+          "description": "158/17 Nguyễn Công Trứ, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHkzzfpZROSVjR4bIPgM7maQvoeeQjMqPxHFu5BLamyiiPNRuEg4R9se9zNUWIR90aeYN6LR4Hhg-3uoFOaljWpCXuBhDvdhS1kK21zstN6mcEh4X9nY6CCJrPXyGy4wV77lZQ=w1000-h1000-c-n",
+          "lat": 10.76914,
+          "lng": 106.70102899999999,
+          "title": "Hôm nay cafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781780872624,
+        "type": "map"
+      },
+      "-OvPPbsf8d0-e-cIYvFr": {
+        "mapData": {
+          "description": "64Bis Nguyễn Thị Minh Khai, Quận 1, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEKNWK0-QXJ0VOktaLO3w_L_q46_pr6cUzfDCbdCeGshei3d6oWTtLIpBxljnr0DsPGoiujhhRHQuGUNWXgGEk1cb6NYldQ3lr0EDuvuCdJT-f1ta6_s04hGr1Yw_sfmBA71RvF=w1000-h1000-c-n",
+          "lat": 10.783399,
+          "lng": 106.69830479999999,
+          "title": "Little Cam Saigon"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1781780872860,
+        "type": "map"
+      },
+      "-OvUOu15CcN_xDMFBWKl": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1781864570665,
+        "type": "text"
+      },
+      "-OvUOwwsolKa_fs8v_QG": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 7",
+        "timestamp": 1781864582618,
+        "type": "text"
+      },
+      "-OvhsOE1iLSkIAw14oCN": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782107443860,
+        "type": "text"
+      },
+      "-Ovhstu9z2pyehKVqVWw": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782107577692,
+        "type": "text"
+      },
+      "-Ovhszvlh7esLDg2Y__8": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782107602371,
+        "type": "text"
+      },
+      "-Ovhu43LclaweWhfO-Xm": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782107885548,
+        "type": "text"
+      },
+      "-OvhwUqqMoibHW7O7_vb": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782108519613,
+        "type": "text"
+      },
+      "-OvhwfPTqXTRh8b3hYD2": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot  h",
+        "timestamp": 1782108566949,
+        "type": "text"
+      },
+      "-Ovhww4A8btbqW4X4JBd": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782108635217,
+        "type": "text"
+      },
+      "-Ovhx6qKZ9-fmnWRJCeW": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782108683419,
+        "type": "text"
+      },
+      "-Ovhx_5WTiUfjTGBJ6_n": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782108803171,
+        "type": "text"
+      },
+      "-Ovi-0lvXDYy4SFmHIiR": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782109444930,
+        "type": "text"
+      },
+      "-Ovi3wR8KT8WMUkOh7YU": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 1",
+        "timestamp": 1782110733873,
+        "type": "text"
+      },
+      "-Ovi47KShMW3zJW4oEiS": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot 1",
+        "timestamp": 1782110782596,
+        "type": "text"
+      },
+      "-Ovi4zl9bCNC0T_sFAYF": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782111009536,
+        "type": "text"
+      },
+      "-OvrkRXIqTZGnNTcrWmr": {
+        "imageUri": "https://res.cloudinary.com/dagdecq9j/image/upload/v1782273132/wego/groups/r1qvtbm97mllkx9orjre.jpg",
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocKU57fEDhOQbAIWCk2mZxpsVzbySnDXRR7wbU_TwA_Q31VF78oS=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+        "timestamp": 1782273132919,
+        "type": "image"
+      },
+      "-OwGNOL5aj3MrQAQlYWF": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot h",
+        "timestamp": 1782703035259,
+        "type": "text"
+      },
+      "-OwN9oxyAdiu9cZvBmoA": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782816918489,
+        "type": "text"
+      },
+      "-OwN9qevxFG1p8iK7D06": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 1",
+        "timestamp": 1782816925461,
+        "type": "text"
+      },
+      "-OwNA0YDBY-SRkyr027B": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, dựa trên tìm kiếm \"quán cà phê ở quận 1\" và dữ liệu có sẵn, đây là một vài gợi ý nổi bật dành cho bạn:\n\n1.  **Little HaNoi Egg Coffee (Yersin)**\n    *   **Rating:** 4.8/5 sao (5415 đánh giá)\n    *   **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1\n    *   **Điểm nổi bật:** Quán có không gian **ấm cúng, lãng mạn, yên tĩnh** và **phong cách trendy**. Đây là lựa chọn tuyệt vời nếu bạn muốn trải nghiệm cà phê trứng đặc trưng của Hà Nội ngay tại Sài Gòn.\n    *   **Tiện ích:** Có quầy bar và nhà vệ sinh.\n    *   **Giờ mở cửa:** Mở cửa đến 9:30 PM.\n\n2.  **Tonkin Specialty Coffee**\n    *   **Rating:** 4.8/5 sao (4504 đánh giá)\n    *   **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành, Quận 1\n    *   **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và hiện đại**. Rất phù hợp cho những ai tìm kiếm một quán cà phê chất lượng cao với không gian thoải mái.\n    *   **Tiện ích:** Có **Wi-Fi miễn phí**, nhà vệ sinh (bao gồm nhà vệ sinh trung tính).\n    *   **Giờ mở cửa:** Mở cửa đến 9 PM.\n\n3.  **Hoff Coffee Brewers**\n    *   **Rating:** 4.8/5 sao (343 đánh giá)\n    *   **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1\n    *   **Điểm nổi bật:** Quán có không gian **ấm cúng và thoải mái**, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc.\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh và **Wi-Fi miễn phí**.\n    *   **Giờ mở cửa:** Mở cửa đến 9 PM.\n\n4.  **Soo Kafe**\n    *   **Rating:** 4.6/5 sao (1973 đánh giá)\n    *   **Địa chỉ:** 35 Phan Chu Trinh, Bến Thành, Quận 1\n    *   **Điểm nổi bật:** Không gian **ấm cúng, yên tĩnh, lãng mạn** và **phong cách trending**. Đặc biệt, quán mở cửa khá muộn.\n    *   **Tiện ích:** Có quầy bar và nhà vệ sinh.\n    *   **Giờ mở cửa:** Mở cửa đến 11 PM.\n\nChúc bạn tìm được quán cà phê ưng ý ở Quận 1!",
+        "timestamp": 1782816970024,
+        "type": "ai-text"
+      },
+      "-OwNA0ddh_8ViXNbFC5d": {
+        "mapData": {
+          "description": "Yersin/119/5 Phạm Ngũ Lão, Phường, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFJso609Own5E2M2WN6zVYc1BleTHbi4Zmwndmg1frnIzRmLUyiYPkLqHhmq1SapMcLjnWwgkoba63j6yiUJhQ3LsUJy0kz7TP_258YH9yczLSux9c_IiOI2ruiZg8ZpDmWSNJI=w1000-h1000-c-n",
+          "lat": 10.7694043,
+          "lng": 106.6960112,
+          "title": "Little HaNoi Egg Coffee (Yersin)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782816970435,
+        "type": "map"
+      },
+      "-OwNA0lDT07GR-NstG-m": {
+        "mapData": {
+          "description": "91 Lý Tự Trọng, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGxY573we629DXdFTt1jObQSOJpKjrgh_7nRZDKQAOlZLLKMAH4dHNvHPJhV6MHkf0RNUV4eEiuNzFhQJjQrdM_IYQa2B1LExOhF4LVAvQLLUwdUIBSeuYlG9gRl0Os6QqWttY=w1000-h1000-c-n",
+          "lat": 10.7743893,
+          "lng": 106.6978901,
+          "title": "Tonkin Specialty Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782816970920,
+        "type": "map"
+      },
+      "-OwNA0vPWjRgBh65Vbcz": {
+        "mapData": {
+          "description": "42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFWXyLDHZf3smAH-pVGwDvNXguZqDC7eRKvvRlYuSPviX2yap5cFTRW99FgRv2LsUiuZywvBw2uo_nyTvGDhrhditZGAc4paJHXod6yOkO2dC2yTxFvz9Q-ktHFgXsCv84ZLJE=w1000-h1000-c-n",
+          "lat": 10.777160499999999,
+          "lng": 106.70015479999999,
+          "title": "Hoff Coffee Brewers"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782816971572,
+        "type": "map"
+      },
+      "-OwNA12I5XuWy3NxgrN2": {
+        "mapData": {
+          "description": "158/17 Nguyễn Công Trứ, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHXn2UU9xzlICfvM4NfrvwaXDFlExs-Jc10GXn0DsMRDLiuXi7xDy4AIAyua17s8WQGcuCVnWKxPdgtcfE5S45N12V9YGnAm6FNOoYrt8tEwDwWBPgdRh57jei7o6QluDlqcmM=w1000-h1000-c-n",
+          "lat": 10.76914,
+          "lng": 106.70102899999999,
+          "title": "Hôm nay cafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782816972077,
+        "type": "map"
+      },
+      "-OwNA1B14gEnBdmvRF4K": {
+        "mapData": {
+          "description": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+          "lat": 10.772407999999999,
+          "lng": 106.6972096,
+          "title": "Soo Kafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782816972636,
+        "type": "map"
+      },
+      "-OwNXihjT1eTb3nCrnfC": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocKU57fEDhOQbAIWCk2mZxpsVzbySnDXRR7wbU_TwA_Q31VF78oS=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+        "text": "Ok",
+        "timestamp": 1782823184262,
+        "type": "text"
+      },
+      "-OwNeT5JpD-EHQJwlxMj": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "Hello",
+        "timestamp": 1782825213395,
+        "type": "text"
+      },
+      "-OwNeYW1B10rt5cMkPuK": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782825235584,
+        "type": "text"
+      },
+      "-OwNeZzR9LDRCitB4JiE": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 1",
+        "timestamp": 1782825241626,
+        "type": "text"
+      },
+      "-OwNefxyW9Kj8nX3x-wX": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, đây là một vài quán cà phê chất lượng ở Quận 1 mà bạn có thể tham khảo nhé:\n\n1.  **Little HaNoi Egg Coffee (Yersin)**\n    *   **Rating:** 4.8/5 sao với 5417 đánh giá – Một trong những quán được yêu thích nhất!\n    *   **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành.\n    *   **Điểm nổi bật:** Nổi tiếng với món cà phê trứng đặc trưng của Hà Nội. Không gian đa dạng, từ **ấm cúng, lãng mạn, yên tĩnh** đến **hợp xu hướng và thời thượng**, rất phù hợp cho nhiều mục đích. Quán có quầy bar và nhà vệ sinh.\n    *   **Giờ mở cửa:** Mở cửa đến 9:30 PM.\n\n2.  **Tonkin Specialty Coffee**\n    *   **Rating:** 4.8/5 sao với 4504 đánh giá – Cũng là một lựa chọn tuyệt vời với lượng đánh giá cao.\n    *   **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành.\n    *   **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và hợp thời trang**. Đặc biệt, quán có **Wi-Fi miễn phí** và nhà vệ sinh riêng biệt, rất tiện lợi nếu bạn cần làm việc hoặc thư giãn.\n    *   **Giờ mở cửa:** Đóng cửa lúc 9 PM.\n\n3.  **Hoff Coffee Brewers**\n    *   **Rating:** 4.8/5 sao với 343 đánh giá.\n    *   **Địa chỉ:** 42bis Lý Tự Trọng.\n    *   **Điểm nổi bật:** Không gian **thoải mái, ấm cúng**, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc. Quán cung cấp **Wi-Fi miễn phí**, có quầy bar và nhà vệ sinh.\n    *   **Giờ mở cửa:** Đóng cửa lúc 9 PM.\n\n4.  **Whisfee Café**\n    *   **Rating:** 4.8/5 sao với 321 đánh giá.\n    *   **Địa chỉ:** 14 Tôn Thất Đạm.\n    *   **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và thoải mái**. Quán có **Wi-Fi miễn phí**, quầy bar và nhà vệ sinh. Đặc biệt, quán mở cửa khá muộn, đến 11 PM.\n    *   **Giờ mở cửa:** Mở cửa đến 11 PM.\n\nChúc bạn tìm được quán cà phê ưng ý!",
+        "timestamp": 1782825270204,
+        "type": "ai-text"
+      },
+      "-OwNeg52A6teoyMWZjFU": {
+        "mapData": {
+          "description": "1 Hoàng Sa, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEJSS49WGzmlv8V2p6d7CKILd7aCrd5PiiVsGMAFp5O4mNQIGtvHeNHK5-Jw6GNKIW27_YLZfN3JfMQahyK8-iZvY5YKKSDJbCVkHzkIs2ePFRZtGf1mYgNqKHbGC_LxavU0TYoAQ=w1000-h1000-c-n",
+          "lat": 10.791216499999999,
+          "lng": 106.7048162,
+          "title": "Cavinline cafe và vitamin quận 1"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782825270721,
+        "type": "map"
+      },
+      "-OwNegCwYejRG5eU8yAT": {
+        "mapData": {
+          "description": "Yersin/119/5 Phạm Ngũ Lão, Phường, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFJso609Own5E2M2WN6zVYc1BleTHbi4Zmwndmg1frnIzRmLUyiYPkLqHhmq1SapMcLjnWwgkoba63j6yiUJhQ3LsUJy0kz7TP_258YH9yczLSux9c_IiOI2ruiZg8ZpDmWSNJI=w1000-h1000-c-n",
+          "lat": 10.7694043,
+          "lng": 106.6960112,
+          "title": "Little HaNoi Egg Coffee (Yersin)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782825271226,
+        "type": "map"
+      },
+      "-OwNegLQH2BWYp62ZSIy": {
+        "mapData": {
+          "description": "42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFKur9-XJZz6Mb0X1718wmxg6l0IdBA5fOBnqauhycnn2FxvqQnSiIodBXJqWke89uzt27X87FJuke5ZN7mNKMFgVplWweDPMeaO8PoFtXkathPWOgSwPnKTAc-VneT1Ot0Uio4gQ=w1000-h1000-c-n",
+          "lat": 10.777160499999999,
+          "lng": 106.70015479999999,
+          "title": "Hoff Coffee Brewers"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782825271769,
+        "type": "map"
+      },
+      "-OwNegTsvfD8u-204teA": {
+        "mapData": {
+          "description": "91 Lý Tự Trọng, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGxY573we629DXdFTt1jObQSOJpKjrgh_7nRZDKQAOlZLLKMAH4dHNvHPJhV6MHkf0RNUV4eEiuNzFhQJjQrdM_IYQa2B1LExOhF4LVAvQLLUwdUIBSeuYlG9gRl0Os6QqWttY=w1000-h1000-c-n",
+          "lat": 10.7743893,
+          "lng": 106.6978901,
+          "title": "Tonkin Specialty Coffee"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782825272310,
+        "type": "map"
+      },
+      "-OwNegcSG4FtBG_SDsA7": {
+        "mapData": {
+          "description": "14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoDn8NWWjz_kdmyb9RH_7RqWKWegeiZOknX3c03K7lPKOIge-kqUxY3xFzzt1L-lJxX82zbZDHDEb4_Ix2PkgtOhvkwpC3DHMtYTWhcFxJOUA8ShXi3T3t0MBAdQ7wo80D-DS-OAcrcKQt=w1000-h1000-c-n",
+          "lat": 10.7696408,
+          "lng": 106.7040756,
+          "title": "Whisfee Café"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782825272923,
+        "type": "map"
+      },
+      "-OwQXZyRKxBqUUyZv1BW": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quán cà phê",
+        "timestamp": 1782873477049,
+        "type": "text"
+      },
+      "-OwQXaNqvBaw2A1c2A8t": {
+        "senderAvatar": "https://lh3.googleusercontent.com/a/ACg8ocJjCk43tYoUXTvBO-VJ67KiDMVBWzXXv_LDxKX-IBJ5N3EvO83Z=s96-c",
+        "senderName": "Ngọc Long Nguyễn",
+        "senderUid": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+        "text": "@bot quận 1",
+        "timestamp": 1782873482834,
+        "type": "text"
+      },
+      "-OwQXexkCO4p0D9XK5y2": {
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "text": "Chào bạn, đây là một vài gợi ý quán cà phê chất lượng ở Quận 1 dựa trên dữ liệu Google Maps:\n\n1.  **Little HaNoi Egg Coffee (Yersin)**\n    *   **Rating:** 4.8/5 (5418 reviews)\n    *   **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Hồ Chí Minh\n    *   **Điểm nổi bật:** Quán nổi tiếng với cà phê trứng chuẩn vị Hà Nội, được đánh giá rất cao và có lượng review khủng. Không gian quán ấm cúng, yên tĩnh, lãng mạn và rất hợp xu hướng.\n    *   **Không khí:** Casual, Cozy, Quiet, Romantic, Trending, Trendy\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh.\n    *   **Giờ mở cửa:** Mở cửa đến 9:30 PM\n\n2.  **The Running Bean**\n    *   **Rating:** 4.7/5 (3101 reviews)\n    *   **Địa chỉ:** 33 Mạc Thị Bưởi, Sài Gòn, Hồ Chí Minh\n    *   **Điểm nổi bật:** Một quán cà phê có không gian sang trọng, hiện đại nhưng vẫn ấm cúng và yên tĩnh. Rất phù hợp cho những ai muốn tìm một nơi vừa thưởng thức cà phê ngon, vừa có thể làm việc hoặc trò chuyện. Quán còn phục vụ brunch.\n    *   **Không khí:** Casual, Cozy, Quiet, Romantic, Trendy, Upscale\n    *   **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Mở cửa đến 10 PM\n\n3.  **Hoff Coffee Brewers**\n    *   **Rating:** 4.8/5 (343 reviews)\n    *   **Địa chỉ:** 42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh\n    *   **Điểm nổi bật:** Một lựa chọn tuyệt vời với rating cao và không gian ấm cúng. Quán cung cấp đầy đủ tiện ích cần thiết cho một buổi cà phê thư giãn hoặc làm việc.\n    *   **Không khí:** Casual, Cozy\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Mở cửa đến 9 PM\n\n4.  **Whisfee Café**\n    *   **Rating:** 4.8/5 (321 reviews)\n    *   **Địa chỉ:** 14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh\n    *   **Điểm nổi bật:** Quán cà phê này cũng có rating rất cao, không gian ấm cúng và lãng mạn. Đặc biệt, đây còn là một \"Art cafe\" nên có thể có những điểm nhấn nghệ thuật thú vị.\n    *   **Không khí:** Casual, Cozy, Romantic\n    *   **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí.\n    *   **Giờ mở cửa:** Mở cửa đến 11 PM\n\nChúc bạn tìm được quán cà phê ưng ý!",
+        "timestamp": 1782873501580,
+        "type": "ai-text"
+      },
+      "-OwQXf7hpErmm9Mx_c8y": {
+        "mapData": {
+          "description": "Yersin/119/5 Phạm Ngũ Lão, Phường, Bến Thành, Hồ Chí Minh, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGpAR2-vmM8eL48ixT9tvubouFxFvTodsNT62DD3eV8dNhQjNYN0H8jSmOD5xGZ3cO-YnU00S3itAuVbVaCM_aQJlEbMB1AuPWizv3rKkbf2I2Xzh2vN481kYz_sstgMzAg208o=w1000-h1000-c-n",
+          "lat": 10.7694043,
+          "lng": 106.6960112,
+          "title": "Little HaNoi Egg Coffee (Yersin)"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782873502282,
+        "type": "map"
+      },
+      "-OwQXfD69BOD7fbUCOjm": {
+        "mapData": {
+          "description": "42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAELvlrxUmnXNBmnNgrqCSMFX4SkRpDrmAKscYnslBGK49ctGW5Bk_MEDdps24_rkcvyyeaGIPnVzZr1BIbThS9UQkfuZjl2G4jEG7TOFDTDsGsL0bTxtzxSUghwi5eKjBuZBwp6zA=w1000-h1000-c-n",
+          "lat": 10.777160499999999,
+          "lng": 106.70015479999999,
+          "title": "Hoff Coffee Brewers"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782873502628,
+        "type": "map"
+      },
+      "-OwQXfI2YYUIFvZa_qsT": {
+        "mapData": {
+          "description": "14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoDn8NWWjz_kdmyb9RH_7RqWKWegeiZOknX3c03K7lPKOIge-kqUxY3xFzzt1L-lJxX82zbZDHDEb4_Ix2PkgtOhvkwpC3DHMtYTWhcFxJOUA8ShXi3T3t0MBAdQ7wo80D-DS-OAcrcKQt=w1000-h1000-c-n",
+          "lat": 10.7696408,
+          "lng": 106.7040756,
+          "title": "Whisfee Café"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782873502943,
+        "type": "map"
+      },
+      "-OwQXfNgMc1kYoHqNc60": {
+        "mapData": {
+          "description": "33 Mạc Thị Bưởi, Sài Gòn, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEokfzcRNUMOV7GeBn9HNm0WAuIDtTXHuBXdGLKURuZyxVV-zF1jbGdJlbxIGsb3ABzGNNiV9kOrAChVuQNsUwAuoCQGwA0RSdJRY9MFwFBv1oqpQCya3KMt-8G4WddKz-OKlTtlcR6ZcQK=w1000-h1000-c-n",
+          "lat": 10.775248999999999,
+          "lng": 106.704888,
+          "title": "The Running Bean"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782873503304,
+        "type": "map"
+      },
+      "-OwQXfTveLw8e_hG2ep9": {
+        "mapData": {
+          "description": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+          "imageUri": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+          "lat": 10.772407999999999,
+          "lng": 106.6972096,
+          "title": "Soo Kafe"
+        },
+        "senderAvatar": "https://cdn-icons-png.flaticon.com/512/4712/4712027.png",
+        "senderName": "WeGo AI",
+        "senderUid": "wego_ai",
+        "timestamp": 1782873503703,
+        "type": "map"
+      }
+    },
+    "group_123": {
+      "-OsUXom0zMnfBs-EmfRe": {
+        "senderName": "Long",
+        "senderUid": "user_1",
+        "text": "hello",
+        "timestamp": 1778645692102
+      },
+      "-OsUYf1FxMeYxWqgKplx": {
+        "senderName": "An",
+        "senderUid": "user_2",
+        "text": "coffee time",
+        "timestamp": 1778645914339
+      },
+      "-OsU_B_ED8rblmMC3iKH": {
+        "senderName": "Long",
+        "senderUid": "user_1",
+        "text": "này",
+        "timestamp": 1778646313880
+      },
+      "-OsU__b8WxSPIHiK3psf": {
+        "senderName": "Long",
+        "senderUid": "user_1",
+        "text": "mấy giờ",
+        "timestamp": 1778646416412
+      }
+    }
+  },
+  "group_members": {
+    "2d48059f-664f-4b1e-9fda-760e9ce1633a": {
+      "YiOXwjcDV3WZukTRxZX89E86x3o1": true
+    },
+    "93335f6c-e019-4323-9185-4f43a647c643": {
+      "YiOXwjcDV3WZukTRxZX89E86x3o1": true,
+      "p3WQ2TVdNlb9m1DISjTnWzNsN4C3": true
+    },
+    "b80f2fcd-ca17-4a7a-aeb9-8b3d3ce50552": {
+      "p3WQ2TVdNlb9m1DISjTnWzNsN4C3": true
+    },
+    "edca12e0-1a76-404c-8657-8062f51f583d": {
+      "5zQo0rFmp2WNYR13knguOYjWzSL2": true,
+      "YiOXwjcDV3WZukTRxZX89E86x3o1": true,
+      "p3WQ2TVdNlb9m1DISjTnWzNsN4C3": true
+    }
+  },
+  "live_locations": {
+    "PJiUPlfHHbWK0PLAZ8NEgR0a2OX2": {
+      "firebaseUid": "PJiUPlfHHbWK0PLAZ8NEgR0a2OX2",
+      "lat": 10.8260652,
+      "lng": 106.8095511,
+      "name": "Ngu Chó",
+      "picture": "https://lh3.googleusercontent.com/a/ACg8ocLbDpxR1uZm4D_pc0Ca7gz1oktsXaRG21_ykd2UGZy2zDiKJA=s96-c",
+      "updatedAt": 1782134132989
+    },
+    "YiOXwjcDV3WZukTRxZX89E86x3o1": {
+      "firebaseUid": "YiOXwjcDV3WZukTRxZX89E86x3o1",
+      "lat": 10.8260388,
+      "lng": 106.8095153,
+      "name": "Ngọc Long Nguyễn",
+      "picture": "https://lh3.googleusercontent.com/a/ACg8ocKU57fEDhOQbAIWCk2mZxpsVzbySnDXRR7wbU_TwA_Q31VF78oS=s96-c",
+      "updatedAt": 1782377697617
+    }
+  },
+  "presence": {
+    "0N6PMnrEeqc1N2y1ZnEWVqRUdX62": {
+      "lastSeen": 1781839062270,
+      "online": false
+    },
+    "5zQo0rFmp2WNYR13knguOYjWzSL2": {
+      "lastSeen": 1783950295738,
+      "online": false
+    },
+    "PJiUPlfHHbWK0PLAZ8NEgR0a2OX2": {
+      "lastSeen": 1782134108199,
+      "online": true
+    },
+    "PgLatee7i5h60iicDrAs8RDzJgt2": {
+      "lastSeen": 1781612028879,
+      "online": false
+    },
+    "YiOXwjcDV3WZukTRxZX89E86x3o1": {
+      "lastSeen": 1782823145486,
+      "online": true
+    },
+    "p3WQ2TVdNlb9m1DISjTnWzNsN4C3": {
+      "lastSeen": 1783950929864,
+      "online": false
+    }
+  }
+}

@@ -1,0 +1,995 @@
+{
+  "p3WQ2TVdNlb9m1DISjTnWzNsN4C3": {
+    "user_id": "p3WQ2TVdNlb9m1DISjTnWzNsN4C3",
+    "name": "Ngọc Long Nguyễn",
+    "tags": [
+      "buffet",
+      "giá phải chăng",
+      "gần đây",
+      "hợp xu hướng",
+      "lãng mạn",
+      "nhiều đánh giá",
+      "nhà hàng nhật",
+      "nhà vệ sinh",
+      "phong cách anime/nhật",
+      "quán cà phê",
+      "quán nướng",
+      "quầy bar",
+      "quận 1",
+      "rating cao",
+      "sang trọng",
+      "thoải mái",
+      "thủ đức",
+      "trung tâm sài gòn",
+      "vincom mega mall grand park",
+      "wifi",
+      "yên tĩnh",
+      "ấm cúng"
+    ],
+    "preferred_categories": [
+      "quán cà phê",
+      "nhà hàng nhật",
+      "quán nướng",
+      "buffet"
+    ],
+    "preferred_locations": [
+      "quận 1",
+      "trung tâm sài gòn",
+      "thủ đức",
+      "vincom mega mall grand park"
+    ],
+    "preferred_amenities": [
+      "wifi",
+      "nhà vệ sinh",
+      "quầy bar"
+    ],
+    "preferred_atmosphere": [
+      "ấm cúng",
+      "yên tĩnh",
+      "lãng mạn",
+      "sang trọng",
+      "hợp xu hướng",
+      "thoải mái",
+      "phong cách anime/nhật"
+    ],
+    "constraints": [
+      "rating cao",
+      "nhiều đánh giá",
+      "gần đây",
+      "giá phải chăng"
+    ],
+    "negative_signals": [
+      "cà phê hầu gái thì hơi ngại dù phong cách anime hay nhật bản cũng hay"
+    ],
+    "selected_places": [
+      {
+        "name": "Uncle Nick's Cafe (& brunch)",
+        "address": "211/10 Nguyễn Trãi, Cầu Ông Lãnh, Hồ Chí Minh 70000, Vietnam",
+        "lat": 10.765619599999999,
+        "lng": 106.6883738,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEpf6bC6FiooKfAcmPpnlHzkcmHPVFVBQk1_evaq_YgN-aP_QxPQlNfbu7m-Z99qXpob38Xi6fdPupfVCtaoxuPg4j32bFuOh7uYZYnI8vXV2vOpF5nnTatdjm7GlN8Gyus5AoV=w1000-h1000-c-n",
+        "selected_at": "2026-06-03T12:42:47.886000Z"
+      },
+      {
+        "name": "SOSAKU SUSHI DAN",
+        "address": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+        "lat": 10.7654088,
+        "lng": 106.6902769,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+        "selected_at": "2026-06-07T09:26:40.420000Z"
+      },
+      {
+        "name": "Subin BBQ Giga Mall Thủ Đức",
+        "address": "Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Hồ Chí Minh 71300, Vietnam",
+        "lat": 10.8273647,
+        "lng": 106.7216358,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAES2Ddp_I8Z6KzwEloMSO8-dfxS6kIX8f5gH4SufxmTerK_6H5I8c59d3PcX9m8pqwkZCjZ_swqtKYqKHjFUxCwkIljCKdlvlW51SrzL6GGQqi67P4Qnbn4WPBfAOqNgXLhE2mWo6dOeHFo=w1000-h1000-c-n",
+        "selected_at": "2026-06-17T09:12:01.766000Z"
+      },
+      {
+        "name": "Little Cam Saigon",
+        "address": "64Bis Nguyễn Thị Minh Khai, Quận 1, Hồ Chí Minh, Vietnam",
+        "lat": 10.783399,
+        "lng": 106.69830479999999,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEKNWK0-QXJ0VOktaLO3w_L_q46_pr6cUzfDCbdCeGshei3d6oWTtLIpBxljnr0DsPGoiujhhRHQuGUNWXgGEk1cb6NYldQ3lr0EDuvuCdJT-f1ta6_s04hGr1Yw_sfmBA71RvF=w1000-h1000-c-n",
+        "selected_at": "2026-06-18T11:07:52.860000Z"
+      },
+      {
+        "name": "Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện",
+        "address": "7 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh, Vietnam",
+        "lat": 10.852604399999999,
+        "lng": 106.7669384,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIiNBKev482MsAEqXF08T-aM_tLW5Jv_73u1kHsOd2jR766Fu8STZ7wvM2i9qWFFrYsgF385Df8-BgpAT59axE0ePVPY1n15-zcrHuWiJxpZglxbSVTgfrba-Gk52R8ZIm4dxC2A=w1000-h1000-c-n",
+        "selected_at": "2026-06-20T12:32:05.992000Z"
+      },
+      {
+        "name": "Café Nhan",
+        "address": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+        "lat": 39.9246714,
+        "lng": -75.1732256,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+        "selected_at": "2026-06-20T12:46:31.833000Z"
+      },
+      {
+        "name": "Café Nhan",
+        "address": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+        "lat": 39.9246714,
+        "lng": -75.1732256,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+        "selected_at": "2026-06-20T12:50:01.282000Z"
+      },
+      {
+        "name": "SPICY BOX SAIGON CENTRE",
+        "address": "65d Lê Lợi, Sài Gòn, Hồ Chí Minh, Vietnam",
+        "lat": 10.7731883,
+        "lng": 106.70091939999999,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHy9ghh1YI49wABGvVZGyFRwmWoHNPml7-axA04bDWehwG70P--sbCSFMh95IPo77DL-VZqxy1Y7tRceH2LMYBRJ_ALjBLdnqRUbddHcb_thUBgGaF4ykosRvm_htzYw7pzCtDy=w1000-h1000-c-n",
+        "selected_at": "2026-06-21T08:27:07.182000Z"
+      },
+      {
+        "name": "Quán Nướng 123 Zo Ninh Bình",
+        "address": "34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam",
+        "lat": 20.258986699999998,
+        "lng": 105.9725584,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG0HyntqRxnTeI0cvrTT5M-iiQYd6iqhY3rEwnRQ3u_uqFSsf4sOf5_JH3vheWBHg3gYxUxp0fzNf-ZVrIA9ZpgaSEujzQMUsWEZxQSNjl3W5icrKQO-IB8RDc4RBfSeBDZ0ypWdw=w1000-h1000-c-n",
+        "selected_at": "2026-06-21T08:41:15.887000Z"
+      },
+      {
+        "name": "Soo Kafe",
+        "address": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+        "lat": 10.772407999999999,
+        "lng": 106.6972096,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+        "selected_at": "2026-06-30T10:56:12.636000Z"
+      },
+      {
+        "name": "Whisfee Café",
+        "address": "14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+        "lat": 10.7696408,
+        "lng": 106.7040756,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoDn8NWWjz_kdmyb9RH_7RqWKWegeiZOknX3c03K7lPKOIge-kqUxY3xFzzt1L-lJxX82zbZDHDEb4_Ix2PkgtOhvkwpC3DHMtYTWhcFxJOUA8ShXi3T3t0MBAdQ7wo80D-DS-OAcrcKQt=w1000-h1000-c-n",
+        "selected_at": "2026-06-30T13:14:32.923000Z"
+      },
+      {
+        "name": "SOSAKU SUSHI DAN",
+        "address": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+        "lat": 10.7654088,
+        "lng": 106.6902769,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+        "selected_at": "2026-06-07T09:46:41.863000Z"
+      },
+      {
+        "name": "Soo Kafe",
+        "address": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+        "lat": 10.772407999999999,
+        "lng": 106.6972096,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+        "selected_at": "2026-07-01T02:38:23.703000Z"
+      }
+    ],
+    "history": [
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-03T12:42:26.625000Z",
+        "user_messages": [
+          {
+            "text": "tôi muốn tìm quán cà phê quận 1",
+            "timestamp": "2026-06-03T12:42:26.625000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên yêu cầu tìm quán cà phê ở Quận 1, đây là một vài gợi ý nổi bật với rating cao và không gian đa dạng để bạn lựa chọn: 1. **Little HaNoi Egg Coffee (Yersin)** * **Rating:** 4.8/5 sao (5343 đánh giá) * **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1 * **Không gian:** Casual, ấm cúng, yên tĩnh, lãng mạn, hợp xu hướng. * **Tiện ích:** Có quầy bar, nhà vệ sinh. * **Điểm nổi bật:** Quán cà phê trứng nổi tiếng, được đánh giá rất cao với số lượng review khủng, không gian ấm cúng và trendy. Rất phù hợp cho những ai muốn trải nghiệm món cà phê trứng đặc trưng Hà Nội ngay giữa Sài Gòn. 2. **Uncle Nick's Cafe (& brunch)** * **Rating:** 4.9/5 sao (459 đánh giá) * **Địa chỉ:** 211/10 Nguyễn Trãi, Cầu Ông Lãnh, Quận 1 * **Không gian:** Casual, ấm cúng, yên tĩnh. * **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí. * **Điểm nổi bật:** Với rating gần như tuyệt đối, đây là lựa chọn lý tưởng nếu bạn tìm một nơi yên tĩnh, ấm cúng để làm việc hoặc thư giãn. Có Wi-Fi miễn phí là một điểm cộng lớn. 3. **Hoff Coffee Brewers** * **Rating:** 4.8/5 sao (340 đánh giá) * **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1 * **Không gian:** Casual, ấm cúng. * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Điểm nổi bật:** Một quán cà phê có rating rất cao, không gian ấm cúng và đầy đủ Wi-Fi miễn phí, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc. 4. **L'Usine Le Thanh Ton** * **Rating:** 4.6/5 sao (3359 đánh giá) * **Địa chỉ:** 19 Lê Thánh Tôn, Quận 1 * **Không gian:** Casual, ấm cúng, lãng mạn, hợp xu hướng, sang trọng. * **Tiện ích:** Có quầy bar, nhà vệ sinh (cả nam và nữ), Wi-Fi miễn phí. * **Điểm nổi bật:** Một địa điểm đa năng vừa là quán cà phê, vừa là cửa hàng thời trang/quà lưu niệm. Không gian sang trọng, trendy và có Wi-Fi miễn phí, rất phù hợp cho những ai muốn kết hợp mua sắm và thưởng thức cà phê. Chúc bạn tìm được quán cà phê ưng ý ở Quận 1!",
+            "timestamp": "2026-06-03T12:42:41.111000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Uncle Nick's Cafe (& brunch)",
+          "address": "211/10 Nguyễn Trãi, Cầu Ông Lãnh, Hồ Chí Minh 70000, Vietnam",
+          "lat": 10.765619599999999,
+          "lng": 106.6883738,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEpf6bC6FiooKfAcmPpnlHzkcmHPVFVBQk1_evaq_YgN-aP_QxPQlNfbu7m-Z99qXpob38Xi6fdPupfVCtaoxuPg4j32bFuOh7uYZYnI8vXV2vOpF5nnTatdjm7GlN8Gyus5AoV=w1000-h1000-c-n",
+          "selected_at": "2026-06-03T12:42:47.886000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán cà phê"
+          ],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "sang trọng",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-05T11:19:14.107000Z",
+        "user_messages": [
+          {
+            "text": "cà phê hầu gái thì hơi ngại dù phong cách anime hay nhật bản cũng hay",
+            "timestamp": "2026-06-05T11:19:14.107000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Bạn muốn tìm quán cà phê hầu gái ở khu vực cụ thể nào?",
+            "timestamp": "2026-06-05T11:20:02.220000Z"
+          }
+        ],
+        "selected_place": null,
+        "extracted_fields": {
+          "categories": [
+            "quán cà phê",
+            "nhà hàng nhật"
+          ],
+          "locations": [],
+          "amenities": [],
+          "atmosphere": [
+            "phong cách anime/nhật"
+          ],
+          "constraints": [],
+          "negative_signals": [
+            "cà phê hầu gái thì hơi ngại dù phong cách anime hay nhật bản cũng hay"
+          ]
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-05T11:20:20.012000Z",
+        "user_messages": [
+          {
+            "text": "trung tâm sài gòn",
+            "timestamp": "2026-06-05T11:20:20.012000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Bạn muốn tìm loại trung tâm nào ở Sài Gòn? Ví dụ: trung tâm thương mại, trung tâm hành chính, hay khu vực trung tâm thành phố?",
+            "timestamp": "2026-06-05T11:20:29.120000Z"
+          }
+        ],
+        "selected_place": null,
+        "extracted_fields": {
+          "categories": [],
+          "locations": [
+            "trung tâm sài gòn"
+          ],
+          "amenities": [],
+          "atmosphere": [],
+          "constraints": [],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-05T11:57:16.476000Z",
+        "user_messages": [
+          {
+            "text": "quán đồ nhật gần đây",
+            "timestamp": "2026-06-05T11:57:16.476000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Bạn muốn tìm quán đồ Nhật ở khu vực cụ thể nào?",
+            "timestamp": "2026-06-05T11:57:26.721000Z"
+          }
+        ],
+        "selected_place": null,
+        "extracted_fields": {
+          "categories": [
+            "nhà hàng nhật"
+          ],
+          "locations": [],
+          "amenities": [],
+          "atmosphere": [],
+          "constraints": [
+            "gần đây"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-05T12:35:42.374000Z",
+        "user_messages": [
+          {
+            "text": "ở quận 1",
+            "timestamp": "2026-06-05T12:35:42.374000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, Dựa trên dữ liệu Google Maps hiện có, mình không tìm thấy quán cafe hầu gái nào ở Quận 1. Có vẻ như loại hình cafe này chưa phổ biến hoặc chưa được liệt kê rõ ràng trên Google Maps tại khu vực này.",
+            "timestamp": "2026-06-05T12:36:05.475000Z"
+          }
+        ],
+        "selected_place": null,
+        "extracted_fields": {
+          "categories": [],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [],
+          "atmosphere": [
+            "phong cách anime/nhật"
+          ],
+          "constraints": [],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-07T09:26:05.552000Z",
+        "user_messages": [
+          {
+            "text": "quán đồ nhật gần trung tâm sài gòn",
+            "timestamp": "2026-06-07T09:26:05.552000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên yêu cầu tìm nhà hàng Nhật gần trung tâm Sài Gòn với rating cao, đây là một vài gợi ý nổi bật dành cho bạn: 1. **Nori - Modern Izakaya** * **Địa chỉ:** 114 - 114A Lý Tự Trọng, Bến Thành, Quận 1 (rất gần trung tâm). * **Rating:** 4.8/5 sao (2237 đánh giá). * **Không gian:** Ấm cúng (Cozy), Hiện đại (Trendy). * **Tiện ích:** Có quầy bar, Wi-Fi miễn phí. * **Điểm cộng:** Một lựa chọn tuyệt vời cho những ai thích phong cách Izakaya hiện đại, không gian trẻ trung và vị trí đắc địa. 2. **Mayonaka Sushi** * **Địa chỉ:** 175 Đề Thám, Bến Thành, Quận 1 (rất gần trung tâm). * **Rating:** 4.9/5 sao (1754 đánh giá). * **Không gian:** Ấm cúng (Cozy), Lãng mạn (Romantic). * **Tiện ích:** Có quầy bar, Wi-Fi miễn phí. * **Điểm cộng:** Rating cực cao và không gian lãng mạn, phù hợp cho các buổi hẹn hò hoặc bữa ăn ấm cúng. 3. **Matsuri Japanese Restaurant - Nguyễn Huệ** * **Địa chỉ:** 3 Nguyễn Huệ, Quận 1 (vị trí trung tâm đắc địa nhất). * **Rating:** 4.8/5 sao (1070 đánh giá). * **Không gian:** Ấm cúng (Cozy), Yên tĩnh (Quiet), Lãng mạn (Romantic), Sang trọng (Upscale). * **Tiện ích:** Có quầy bar, Wi-Fi miễn phí. * **Điểm cộng:** Nằm ngay phố đi bộ Nguyễn Huệ, không gian sang trọng, lý tưởng cho những dịp đặc biệt. 4. **Sorae Restaurant & Lounge** * **Địa chỉ:** Bitexco Financial Tower, 36 Hồ Tùng Mậu, Quận 1 (vị trí trung tâm, có view đẹp). * **Rating:** 4.5/5 sao (1331 đánh giá). * **Không gian:** Ấm cúng (Cozy), Yên tĩnh (Quiet), Lãng mạn (Romantic), Hiện đại (Trendy), Sang trọng (Upscale). * **Tiện ích:** Có quầy bar. * **Điểm cộng:** Nằm trên tòa nhà Bitexco, mang đến trải nghiệm ẩm thực Nhật Bản cao cấp với tầm nhìn tuyệt đẹp ra thành phố. 5. **Ikigai Sushi - 4A Cao Thắng** * **Địa chỉ:** 4A Cao Thắng, Bàn Cờ, Quận 3 (gần trung tâm, dễ di chuyển). * **Rating:** 4.9/5 sao (2956 đánh giá). * **Không gian:** Ấm cúng (Cozy), Lãng mạn (Romantic). * **Tiện ích:** Có quầy bar, Wi-Fi miễn phí. * **Điểm cộng:** Rating gần như tuyệt đối và số lượng đánh giá rất lớn, cho thấy sự yêu thích của thực khách. **Lưu ý:** Một số nhà hàng có thể đóng cửa vào buổi trưa hoặc có giờ mở cửa khác nhau, bạn nên kiểm tra lại giờ hoạt động trước khi đến nhé! Chúc bạn có một bữa ăn ngon miệng!",
+            "timestamp": "2026-06-07T09:26:33.257000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "SOSAKU SUSHI DAN",
+          "address": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "lat": 10.7654088,
+          "lng": 106.6902769,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+          "selected_at": "2026-06-07T09:26:40.420000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "nhà hàng nhật"
+          ],
+          "locations": [
+            "trung tâm sài gòn"
+          ],
+          "amenities": [
+            "wifi",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "sang trọng",
+            "hợp xu hướng",
+            "phong cách anime/nhật"
+          ],
+          "constraints": [
+            "rating cao",
+            "giá phải chăng"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "edca12e0-1a76-404c-8657-8062f51f583d",
+        "started_at": "2026-06-17T09:10:58.226000Z",
+        "user_messages": [
+          {
+            "text": "quán nướng thủ đức",
+            "timestamp": "2026-06-17T09:10:58.226000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên tìm kiếm \"quán nướng Thủ Đức\", đây là một vài gợi ý nổi bật dành cho bạn: **1. PO BBQ Buffet Lẩu Nướng 139k** * **Rating:** 4.9/5 sao (với 5577 đánh giá) - Đây là quán có số lượng đánh giá cao nhất và chất lượng được khẳng định. * **Địa chỉ:** 96 Tô Vĩnh Diện, Thủ Đức. * **Điểm nổi bật:** Là nhà hàng buffet lẩu nướng với mức giá rất phải chăng (139k). Không gian được mô tả là **thoải mái (Casual), ấm cúng (Cosy) và yên tĩnh (Quiet)**, rất phù hợp cho các buổi tụ tập bạn bè hoặc gia đình. Quán có đầy đủ tiện nghi như **nhà vệ sinh (bao gồm cả nhà vệ sinh trung tính giới tính) và Wi-Fi miễn phí**. * **Phù hợp cho:** Những ai muốn thưởng thức buffet nướng đa dạng với chi phí hợp lý và không gian dễ chịu. **2. Subin BBQ Giga Mall Thủ Đức** * **Rating:** 4.9/5 sao (với 2729 đánh giá) - Một lựa chọn tuyệt vời khác với lượng đánh giá rất cao. * **Địa chỉ:** Tầng trệt Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Thủ Đức. * **Điểm nổi bật:** Là nhà hàng nướng kiểu Hàn Quốc, nằm trong trung tâm thương mại Gigamall tiện lợi cho việc đi lại và gửi xe. Không gian **ấm cúng (Cosy)**, có **nhà vệ sinh và Wi-Fi miễn phí**. * **Phù hợp cho:** Những tín đồ của món nướng Hàn Quốc, hoặc những ai muốn kết hợp ăn uống với mua sắm, giải trí tại trung tâm thương mại. **3. Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức** * **Rating:** 4.9/5 sao (với 215 đánh giá) - Nếu bạn muốn thử món nướng đặc trưng hơn. * **Địa chỉ:** 541 Kha Vạn Cân, Thủ Đức. * **Điểm nổi bật:** Chuyên về nem nướng Nha Trang, một món ăn đặc sản được nhiều người yêu thích. Không gian **thoải mái (Casual)**, có **nhà vệ sinh và Wi-Fi miễn phí**. * **Phù hợp cho:** Những ai muốn thưởng thức nem nướng chuẩn vị Nha Trang. **Các lựa chọn khác (với ít đánh giá hơn):** * **Quán Nướng Bò Vui Đặng Văn Bi:** Rating 5/5 sao (3 đánh giá). Không gian thoải mái, có nhà vệ sinh. * **Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức:** Rating 5/5 sao (4 đánh giá). **Tóm lại:** Nếu bạn tìm một quán nướng buffet đa dạng, đông khách và được đánh giá cao, hãy chọn **PO BBQ Buffet Lẩu Nướng 139k**. Nếu bạn thích nướng Hàn Quốc và không ngại vào trung tâm thương mại, **Subin BBQ Giga Mall Thủ Đức** là lựa chọn lý tưởng. Nếu bạn muốn thưởng thức món nem nướng đặc trưng, **Nem Nướng Nha Trang Hùng Việt** là địa chỉ đáng cân nhắc. Chúc bạn có một bữa ăn ngon miệng!",
+            "timestamp": "2026-06-17T09:12:00.462000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Subin BBQ Giga Mall Thủ Đức",
+          "address": "Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Hồ Chí Minh 71300, Vietnam",
+          "lat": 10.8273647,
+          "lng": 106.7216358,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAES2Ddp_I8Z6KzwEloMSO8-dfxS6kIX8f5gH4SufxmTerK_6H5I8c59d3PcX9m8pqwkZCjZ_swqtKYqKHjFUxCwkIljCKdlvlW51SrzL6GGQqi67P4Qnbn4WPBfAOqNgXLhE2mWo6dOeHFo=w1000-h1000-c-n",
+          "selected_at": "2026-06-17T09:12:01.766000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán nướng"
+          ],
+          "locations": [
+            "thủ đức"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "giá phải chăng"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "edca12e0-1a76-404c-8657-8062f51f583d",
+        "started_at": "2026-06-18T11:07:32.646000Z",
+        "user_messages": [
+          {
+            "text": "quán cà phê quận 1",
+            "timestamp": "2026-06-18T11:07:32.646000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, ở Quận 1 có rất nhiều quán cà phê chất lượng. Dựa trên dữ liệu, đây là một vài gợi ý nổi bật dành cho bạn: 1. **Little HaNoi Egg Coffee (Yersin)** * **Rating:** 4.8/5 sao với hơn 5.300 lượt đánh giá. * **Điểm nổi bật:** Nổi tiếng với món cà phê trứng đặc trưng của Hà Nội. Không gian được mô tả là **ấm cúng, yên tĩnh, lãng mạn** và **hợp xu hướng**. Rất phù hợp nếu bạn muốn trải nghiệm một không gian độc đáo và thưởng thức món đồ uống đặc biệt. * **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1. * **Giờ mở cửa:** Hiện đang đóng cửa, sẽ mở lại lúc 7 giờ sáng thứ Sáu. 2. **Tonkin Specialty Coffee** * **Rating:** 4.8/5 sao với hơn 4.400 lượt đánh giá. * **Điểm nổi bật:** Là quán cà phê chuyên về cà phê đặc sản (Specialty Coffee). Không gian **ấm cúng, lãng mạn** và **hợp thời trang**. Quán có **Wi-Fi miễn phí** và nhà vệ sinh tiện nghi, rất thích hợp cho những ai muốn làm việc hoặc thư giãn. * **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành, Quận 1. * **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 9 giờ tối. 3. **Hoff Coffee Brewers** * **Rating:** 4.8/5 sao với 341 lượt đánh giá. * **Điểm nổi bật:** Không gian **thoải mái và ấm cúng**. Quán cũng cung cấp **Wi-Fi miễn phí** và có quầy bar nhỏ. * **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1. * **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 9 giờ tối. Chúc bạn tìm được quán cà phê ưng ý ở Quận 1 nhé!",
+            "timestamp": "2026-06-18T11:07:51.318000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Little Cam Saigon",
+          "address": "64Bis Nguyễn Thị Minh Khai, Quận 1, Hồ Chí Minh, Vietnam",
+          "lat": 10.783399,
+          "lng": 106.69830479999999,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEKNWK0-QXJ0VOktaLO3w_L_q46_pr6cUzfDCbdCeGshei3d6oWTtLIpBxljnr0DsPGoiujhhRHQuGUNWXgGEk1cb6NYldQ3lr0EDuvuCdJT-f1ta6_s04hGr1Yw_sfmBA71RvF=w1000-h1000-c-n",
+          "selected_at": "2026-06-18T11:07:52.860000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán cà phê"
+          ],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "93335f6c-e019-4323-9185-4f43a647c643",
+        "started_at": "2026-06-20T12:31:43.453000Z",
+        "user_messages": [
+          {
+            "text": "quán nướng thủ đức",
+            "timestamp": "2026-06-20T12:31:43.453000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, ở Thủ Đức có khá nhiều quán nướng ngon với rating cao. Dưới đây là một vài gợi ý nổi bật dựa trên đánh giá và số lượng review từ Google Maps: 1. **Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện** * **Rating:** 4.9/5 sao với **16.903 lượt đánh giá** – Đây là một trong những quán nướng buffet cực kỳ nổi tiếng và được yêu thích ở Thủ Đức, đảm bảo chất lượng và sự đa dạng. * **Địa chỉ:** 7 Tô Vĩnh Diện, Thủ Đức. * **Không gian:** Thoải mái (Casual). * **Tiện ích:** Có nhà vệ sinh. * **Giờ mở cửa:** Mở cửa đến 11 giờ tối. * Nếu bạn tìm một quán buffet nướng đa dạng món với mức giá phải chăng và không gian bình dân, đây là lựa chọn hàng đầu. 2. **PO BBQ Buffet Lẩu Nướng 139k** * **Rating:** 4.9/5 sao với **5.590 lượt đánh giá** – Một lựa chọn buffet lẩu nướng khác cũng rất được lòng thực khách. * **Địa chỉ:** 96 Tô Vĩnh Diện, Thủ Đức. * **Không gian:** Thoải mái (Casual), ấm cúng (Cosy) và yên tĩnh (Quiet) – Phù hợp cho những buổi tụ tập bạn bè hoặc gia đình muốn không gian dễ chịu hơn. * **Tiện ích:** Có nhà vệ sinh (bao gồm cả nhà vệ sinh trung tính), Wi-Fi miễn phí. * **Giờ mở cửa:** Mở cửa đến 11 giờ tối. * Quán này có thêm lẩu, rất thích hợp nếu bạn muốn kết hợp cả nướng và lẩu. 3. **Nem Nướng Nha Trang Hùng Việt - CN Thủ Đức** * **Rating:** 4.9/5 sao với **215 lượt đánh giá** – Nếu bạn là fan của nem nướng Nha Trang, đây là địa chỉ không thể bỏ qua. * **Địa chỉ:** 541 Kha Vạn Cân, Thủ Đức. * **Không gian:** Thoải mái (Casual). * **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Mở cửa đến 9:30 tối. * Chuyên về nem nướng, mang hương vị đặc trưng của Nha Trang. 4. **Gà Nướng Gadon | Gà nướng Thủ Đức | Đồ nướng ngon Thủ Đức** * **Rating:** 5/5 sao với 4 lượt đánh giá. * **Địa chỉ:** 59A Đ. Số 2, Thủ Đức. * **Giờ mở cửa:** Mở cửa đến 11 giờ tối. * Nếu bạn muốn thử món gà nướng đặc trưng, đây có thể là một lựa chọn mới mẻ với rating tuyệt đối, dù số lượng review còn ít. **Lưu ý:** Các quán buffet thường rất đông vào giờ cao điểm, bạn nên cân nhắc đặt bàn trước hoặc đi sớm để có trải nghiệm tốt nhất nhé!",
+            "timestamp": "2026-06-20T12:32:04.406000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện",
+          "address": "7 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh, Vietnam",
+          "lat": 10.852604399999999,
+          "lng": 106.7669384,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIiNBKev482MsAEqXF08T-aM_tLW5Jv_73u1kHsOd2jR766Fu8STZ7wvM2i9qWFFrYsgF385Df8-BgpAT59axE0ePVPY1n15-zcrHuWiJxpZglxbSVTgfrba-Gk52R8ZIm4dxC2A=w1000-h1000-c-n",
+          "selected_at": "2026-06-20T12:32:05.992000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán nướng"
+          ],
+          "locations": [
+            "thủ đức"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá",
+            "giá phải chăng"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "93335f6c-e019-4323-9185-4f43a647c643",
+        "started_at": "2026-06-20T12:46:18.011000Z",
+        "user_messages": [
+          {
+            "text": "quán nướng ở vincom mega mall grand park 88 phước thiện thành phố hồ chí minh",
+            "timestamp": "2026-06-20T12:46:18.011000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một địa điểm rất phù hợp với nhu cầu của bạn: **Tiệm Nướng NỌ** * **Địa chỉ:** 728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam * **Đánh giá:** 4.9/5 sao từ 7179 lượt đánh giá – Một con số cực kỳ ấn tượng, cho thấy chất lượng và sự yêu thích của khách hàng. * **Loại hình:** Nhà hàng nướng (Barbecue restaurant) – Đúng với yêu cầu của bạn. * **Không gian:** Quán có không khí \"Thoải mái\" (Casual) và \"Ấm cúng\" (Cozy), rất thích hợp cho những buổi tụ tập ăn uống. * **Tiện ích:** Có nhà vệ sinh (Restroom). * **Giờ mở cửa:** Hiện đang mở cửa và đóng lúc 11 PM. Với rating cao ngất ngưởng và số lượng review lớn, Tiệm Nướng NỌ chắc chắn là một lựa chọn tuyệt vời cho bạn nếu đang tìm kiếm một quán nướng chất lượng.",
+            "timestamp": "2026-06-20T12:46:30.167000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Café Nhan",
+          "address": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+          "lat": 39.9246714,
+          "lng": -75.1732256,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+          "selected_at": "2026-06-20T12:46:31.833000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán nướng"
+          ],
+          "locations": [
+            "vincom mega mall grand park"
+          ],
+          "amenities": [
+            "nhà vệ sinh"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "93335f6c-e019-4323-9185-4f43a647c643",
+        "started_at": "2026-06-20T12:49:47.479000Z",
+        "user_messages": [
+          {
+            "text": "quán nướng ở vincom mega mall grand park 88 phước thiện",
+            "timestamp": "2026-06-20T12:49:47.479000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một địa điểm rất phù hợp với nhu cầu của bạn: **Tiệm Nướng NỌ** * **Địa chỉ:** 728 Cách Mạng Tháng Tám, Tân Sơn Nhất, Hồ Chí Minh 700000, Vietnam * **Đánh giá:** 4.9/5 sao từ 7179 lượt đánh giá – Một con số cực kỳ ấn tượng, cho thấy chất lượng và sự yêu thích của khách hàng. * **Loại hình:** Nhà hàng nướng (Barbecue restaurant) – Đúng với yêu cầu của bạn. * **Không gian:** Quán có không khí \"Thoải mái\" (Casual) và \"Ấm cúng\" (Cozy), rất thích hợp cho những buổi tụ tập ăn uống. * **Tiện ích:** Có nhà vệ sinh (Restroom). * **Giờ mở cửa:** Hiện đang mở cửa và đóng lúc 11 PM. Với rating cao ngất ngưởng và số lượng review lớn, Tiệm Nướng NỌ chắc chắn là một lựa chọn tuyệt vời cho bạn nếu đang tìm kiếm một quán nướng chất lượng.",
+            "timestamp": "2026-06-20T12:49:59.521000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Café Nhan",
+          "address": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+          "lat": 39.9246714,
+          "lng": -75.1732256,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+          "selected_at": "2026-06-20T12:50:01.282000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán nướng"
+          ],
+          "locations": [
+            "vincom mega mall grand park"
+          ],
+          "amenities": [
+            "nhà vệ sinh"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "93335f6c-e019-4323-9185-4f43a647c643",
+        "started_at": "2026-06-21T08:23:34.180000Z",
+        "user_messages": [
+          {
+            "text": "quán buffet ở quận 1",
+            "timestamp": "2026-06-21T08:23:34.180000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên yêu cầu tìm quán buffet ở Quận 1 và dữ liệu Google Maps, đây là một số gợi ý nổi bật dành cho bạn: 1. **Saigon Café - International Seafood Buffet Restaurant** * **Rating:** 4.7/5 (1032 reviews) - Rất cao và được nhiều người đánh giá. * **Địa chỉ:** Sheraton Saigon Grand Opera Hotel, 88 Đồng Khởi, Quận 1. * **Điểm nổi bật:** Đây là một nhà hàng buffet hải sản quốc tế cao cấp, phù hợp cho những ai muốn trải nghiệm ẩm thực đa dạng trong không gian sang trọng. * **Không gian:** Ấm cúng, sang trọng (Cozy, Upscale). * **Tiện ích:** Nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Hiện đang đóng cửa, mở cửa lại lúc 6 PM. 2. **Hoang Yen Buffet Premier** * **Rating:** 4.6/5 (1556 reviews) - Số lượng đánh giá cực kỳ lớn, cho thấy sự phổ biến và tin cậy. * **Địa chỉ:** 174A Nguyễn Đình Chiểu, Quận 1. * **Điểm nổi bật:** Một lựa chọn buffet phổ biến với không gian lãng mạn và sang trọng, phù hợp cho các buổi hẹn hò hoặc tụ họp gia đình. * **Không gian:** Ấm cúng, lãng mạn, sang trọng (Cozy, Romantic, Upscale). * **Tiện ích:** Nhà vệ sinh. * **Giờ mở cửa:** Hiện đang đóng cửa, mở cửa lại lúc 6 PM. 3. **Latest Recipe** * **Rating:** 4.6/5 (183 reviews) * **Địa chỉ:** Le Méridien Saigon, 3C Tôn Đức Thắng, Quận 1. * **Điểm nổi bật:** Nằm trong khách sạn Le Méridien Saigon, mang đến trải nghiệm buffet cao cấp với không gian hiện đại và lãng mạn. Có quầy bar ngay tại chỗ. * **Không gian:** Ấm cúng, lãng mạn, hợp thời trang, sang trọng (Cozy, Romantic, Trendy, Upscale). * **Tiện ích:** Quầy bar tại chỗ, nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 10 PM. **Nếu bạn tìm kiếm buffet chay:** * **VƯỜN CHAY GIÁC DUYÊN - BUFFET LẨU CHAY| BUFFET CHAY QUẬN 1** * **Rating:** 4.7/5 (324 reviews) - Rating rất cao cho một nhà hàng chay. * **Địa chỉ:** 19 Trần Khắc Chân, Tân Định, Quận 1. * **Điểm nổi bật:** Chuyên buffet lẩu chay và các món chay đa dạng, là lựa chọn tuyệt vời cho những ai yêu thích ẩm thực chay. * **Không gian:** Thân mật, ấm cúng (Casual, Cozy). * **Tiện ích:** Nhà vệ sinh. * **Giờ mở cửa:** Đang mở cửa, đóng cửa lúc 10 PM. Chúc bạn có một bữa ăn ngon miệng!",
+            "timestamp": "2026-06-21T08:27:04.585000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "SPICY BOX SAIGON CENTRE",
+          "address": "65d Lê Lợi, Sài Gòn, Hồ Chí Minh, Vietnam",
+          "lat": 10.7731883,
+          "lng": 106.70091939999999,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHy9ghh1YI49wABGvVZGyFRwmWoHNPml7-axA04bDWehwG70P--sbCSFMh95IPo77DL-VZqxy1Y7tRceH2LMYBRJ_ALjBLdnqRUbddHcb_thUBgGaF4ykosRvm_htzYw7pzCtDy=w1000-h1000-c-n",
+          "selected_at": "2026-06-21T08:27:07.182000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "buffet"
+          ],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "lãng mạn",
+            "sang trọng",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "93335f6c-e019-4323-9185-4f43a647c643",
+        "started_at": "2026-06-21T08:40:51.425000Z",
+        "user_messages": [
+          {
+            "text": "quán nướng ở mall quận 1",
+            "timestamp": "2026-06-21T08:40:51.425000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Dựa trên tìm kiếm \"quán nướng\", tôi tìm thấy một số địa điểm được đánh giá rất cao. Dưới đây là những gợi ý tốt nhất, ưu tiên các quán có rating cao và nhiều đánh giá: 1. **THE KING BBQ AND GRILL** * **Rating:** 5/5 sao (129 đánh giá) * **Địa chỉ:** 12525 SW 128th St, Miami, FL 33186 (Mỹ) * **Không gian:** Thoải mái (Casual), Hợp thời trang (Trendy) * **Tiện ích:** Wi-Fi miễn phí * **Giờ mở cửa:** Đóng cửa, mở cửa lúc 5 PM * **Lý do đề xuất:** Đây là quán có số lượng đánh giá cao nhất và rating hoàn hảo, với không gian hiện đại và tiện ích Wi-Fi. 2. **Quán nướng Xèo Chill** * **Rating:** 5/5 sao (47 đánh giá) * **Địa chỉ:** 68 Ngách 44/460 Khương Đình, Khương Đình, Hà Nội 11410, Vietnam * **Không gian:** Thoải mái (Casual) * **Tiện ích:** Nhà vệ sinh * **Giờ mở cửa:** Đóng cửa, mở cửa lúc 5:30 PM * **Lý do đề xuất:** Một lựa chọn tuyệt vời tại Hà Nội với rating hoàn hảo và số lượng đánh giá đáng tin cậy, không gian thoải mái. 3. **Quán Nướng 123 Zo Ninh Bình** * **Rating:** 5/5 sao (4 đánh giá) * **Địa chỉ:** 34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam * **Không gian:** Thoải mái (Casual), Ấm cúng (Cozy) * **Tiện ích:** Nhà vệ sinh * **Giờ mở cửa:** Mở cửa 24 giờ * **Lý do đề xuất:** Nếu bạn ở Ninh Bình, đây là một lựa chọn có rating hoàn hảo, không gian ấm cúng và đặc biệt là mở cửa 24/7. **Lưu ý:** Các kết quả tìm kiếm có sự đa dạng về địa lý (từ Miami, Mỹ đến Hà Nội, Hồ Chí Minh, Cần Thơ, Ninh Bình ở Việt Nam). Bạn có thể chọn địa điểm phù hợp với vị trí của mình.",
+            "timestamp": "2026-06-21T08:41:12.232000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Quán Nướng 123 Zo Ninh Bình",
+          "address": "34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam",
+          "lat": 20.258986699999998,
+          "lng": 105.9725584,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG0HyntqRxnTeI0cvrTT5M-iiQYd6iqhY3rEwnRQ3u_uqFSsf4sOf5_JH3vheWBHg3gYxUxp0fzNf-ZVrIA9ZpgaSEujzQMUsWEZxQSNjl3W5icrKQO-IB8RDc4RBfSeBDZ0ypWdw=w1000-h1000-c-n",
+          "selected_at": "2026-06-21T08:41:15.887000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "quán nướng"
+          ],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "edca12e0-1a76-404c-8657-8062f51f583d",
+        "started_at": "2026-06-30T10:55:25.461000Z",
+        "user_messages": [
+          {
+            "text": "quận 1",
+            "timestamp": "2026-06-30T10:55:25.461000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên tìm kiếm \"quán cà phê ở quận 1\" và dữ liệu có sẵn, đây là một vài gợi ý nổi bật dành cho bạn: 1. **Little HaNoi Egg Coffee (Yersin)** * **Rating:** 4.8/5 sao (5415 đánh giá) * **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Quận 1 * **Điểm nổi bật:** Quán có không gian **ấm cúng, lãng mạn, yên tĩnh** và **phong cách trendy**. Đây là lựa chọn tuyệt vời nếu bạn muốn trải nghiệm cà phê trứng đặc trưng của Hà Nội ngay tại Sài Gòn. * **Tiện ích:** Có quầy bar và nhà vệ sinh. * **Giờ mở cửa:** Mở cửa đến 9:30 PM. 2. **Tonkin Specialty Coffee** * **Rating:** 4.8/5 sao (4504 đánh giá) * **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành, Quận 1 * **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và hiện đại**. Rất phù hợp cho những ai tìm kiếm một quán cà phê chất lượng cao với không gian thoải mái. * **Tiện ích:** Có **Wi-Fi miễn phí**, nhà vệ sinh (bao gồm nhà vệ sinh trung tính). * **Giờ mở cửa:** Mở cửa đến 9 PM. 3. **Hoff Coffee Brewers** * **Rating:** 4.8/5 sao (343 đánh giá) * **Địa chỉ:** 42bis Lý Tự Trọng, Quận 1 * **Điểm nổi bật:** Quán có không gian **ấm cúng và thoải mái**, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc. * **Tiện ích:** Có quầy bar, nhà vệ sinh và **Wi-Fi miễn phí**. * **Giờ mở cửa:** Mở cửa đến 9 PM. 4. **Soo Kafe** * **Rating:** 4.6/5 sao (1973 đánh giá) * **Địa chỉ:** 35 Phan Chu Trinh, Bến Thành, Quận 1 * **Điểm nổi bật:** Không gian **ấm cúng, yên tĩnh, lãng mạn** và **phong cách trending**. Đặc biệt, quán mở cửa khá muộn. * **Tiện ích:** Có quầy bar và nhà vệ sinh. * **Giờ mở cửa:** Mở cửa đến 11 PM. Chúc bạn tìm được quán cà phê ưng ý ở Quận 1!",
+            "timestamp": "2026-06-30T10:56:10.024000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Soo Kafe",
+          "address": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+          "lat": 10.772407999999999,
+          "lng": 106.6972096,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+          "selected_at": "2026-06-30T10:56:12.636000Z"
+        },
+        "extracted_fields": {
+          "categories": [],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "edca12e0-1a76-404c-8657-8062f51f583d",
+        "started_at": "2026-06-30T13:14:01.626000Z",
+        "user_messages": [
+          {
+            "text": "quận 1",
+            "timestamp": "2026-06-30T13:14:01.626000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, đây là một vài quán cà phê chất lượng ở Quận 1 mà bạn có thể tham khảo nhé: 1. **Little HaNoi Egg Coffee (Yersin)** * **Rating:** 4.8/5 sao với 5417 đánh giá – Một trong những quán được yêu thích nhất! * **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành. * **Điểm nổi bật:** Nổi tiếng với món cà phê trứng đặc trưng của Hà Nội. Không gian đa dạng, từ **ấm cúng, lãng mạn, yên tĩnh** đến **hợp xu hướng và thời thượng**, rất phù hợp cho nhiều mục đích. Quán có quầy bar và nhà vệ sinh. * **Giờ mở cửa:** Mở cửa đến 9:30 PM. 2. **Tonkin Specialty Coffee** * **Rating:** 4.8/5 sao với 4504 đánh giá – Cũng là một lựa chọn tuyệt vời với lượng đánh giá cao. * **Địa chỉ:** 91 Lý Tự Trọng, Bến Thành. * **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và hợp thời trang**. Đặc biệt, quán có **Wi-Fi miễn phí** và nhà vệ sinh riêng biệt, rất tiện lợi nếu bạn cần làm việc hoặc thư giãn. * **Giờ mở cửa:** Đóng cửa lúc 9 PM. 3. **Hoff Coffee Brewers** * **Rating:** 4.8/5 sao với 343 đánh giá. * **Địa chỉ:** 42bis Lý Tự Trọng. * **Điểm nổi bật:** Không gian **thoải mái, ấm cúng**, thích hợp cho những buổi gặp gỡ nhẹ nhàng hoặc làm việc. Quán cung cấp **Wi-Fi miễn phí**, có quầy bar và nhà vệ sinh. * **Giờ mở cửa:** Đóng cửa lúc 9 PM. 4. **Whisfee Café** * **Rating:** 4.8/5 sao với 321 đánh giá. * **Địa chỉ:** 14 Tôn Thất Đạm. * **Điểm nổi bật:** Không gian **ấm cúng, lãng mạn và thoải mái**. Quán có **Wi-Fi miễn phí**, quầy bar và nhà vệ sinh. Đặc biệt, quán mở cửa khá muộn, đến 11 PM. * **Giờ mở cửa:** Mở cửa đến 11 PM. Chúc bạn tìm được quán cà phê ưng ý!",
+            "timestamp": "2026-06-30T13:14:30.204000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Whisfee Café",
+          "address": "14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+          "lat": 10.7696408,
+          "lng": 106.7040756,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoDn8NWWjz_kdmyb9RH_7RqWKWegeiZOknX3c03K7lPKOIge-kqUxY3xFzzt1L-lJxX82zbZDHDEb4_Ix2PkgtOhvkwpC3DHMtYTWhcFxJOUA8ShXi3T3t0MBAdQ7wo80D-DS-OAcrcKQt=w1000-h1000-c-n",
+          "selected_at": "2026-06-30T13:14:32.923000Z"
+        },
+        "extracted_fields": {
+          "categories": [],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "bb5006bb-9ca5-4f08-bf65-0d399d2eb19f",
+        "started_at": "2026-06-07T09:45:29.968000Z",
+        "user_messages": [
+          {
+            "text": "quán đồ nhật gần trung tâm sài gòn",
+            "timestamp": "2026-06-07T09:45:29.968000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, dựa trên yêu cầu tìm nhà hàng Nhật gần trung tâm Sài Gòn với rating cao, đây là một vài gợi ý nổi bật dành cho bạn: 1. **Nori - Modern Izakaya** * **Địa chỉ:** 114 - 114A Lý Tự Trọng, Bến Thành, Quận 1 (rất trung tâm) * **Rating:** 4.8/5 sao (2237 đánh giá) * **Không gian:** Ấm cúng, hiện đại (Cozy, Trendy) * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Lưu ý:** Hiện đang đóng cửa, mở cửa lại lúc 6 giờ tối. * *Nori là lựa chọn tuyệt vời nếu bạn tìm một không gian hiện đại, trẻ trung và đồ ăn Nhật chất lượng cao ngay giữa trung tâm Sài Gòn.* 2. **Naked Sushi - Xuan Hoa** * **Địa chỉ:** Nam Kỳ Khởi Nghĩa, Xuân Hòa, Quận 3 (gần trung tâm) * **Rating:** 4.9/5 sao (2271 đánh giá) * **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng, hợp thời trang (Cozy, Quiet, Romantic, Trendy, Upscale) * **Tiện ích:** Có quầy bar, nhà vệ sinh. * **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 9:15 tối. * *Nếu bạn muốn một trải nghiệm ẩm thực Nhật Bản tinh tế, sang trọng và lãng mạn, Naked Sushi là một điểm đến lý tưởng với rating cực cao và không gian được đánh giá rất tốt.* 3. **Matsuri Japanese Restaurant - Nguyễn Huệ** * **Địa chỉ:** 3 Nguyễn Huệ, Sài Gòn, Quận 1 (vị trí đắc địa ngay phố đi bộ) * **Rating:** 4.8/5 sao (1070 đánh giá) * **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng (Cozy, Quiet, Romantic, Upscale) * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 10 giờ tối. * *Với vị trí không thể trung tâm hơn trên phố đi bộ Nguyễn Huệ, Matsuri mang đến không gian sang trọng, lãng mạn và chất lượng món ăn Nhật được đánh giá cao.* 4. **Ikigai Sushi - 4A Cao Thắng** * **Địa chỉ:** 4A Cao Thắng, Bàn Cờ, Quận 3 (gần trung tâm) * **Rating:** 4.9/5 sao (2956 đánh giá) * **Không gian:** Ấm cúng, lãng mạn (Cozy, Romantic) * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Lưu ý:** Hiện đang mở cửa, đóng cửa lúc 10 giờ tối. * *Ikigai Sushi có số lượng đánh giá rất lớn và rating gần như tuyệt đối, cho thấy sự yêu thích của thực khách. Đây là lựa chọn tuyệt vời cho những ai yêu thích sushi trong không gian ấm cúng.* 5. **Sorae Restaurant & Lounge** * **Địa chỉ:** Bitexco Financial Tower, 36 Hồ Tùng Mậu, Sài Gòn, Quận 1 (tòa nhà biểu tượng, có thể có view đẹp) * **Rating:** 4.5/5 sao (1331 đánh giá) * **Không gian:** Ấm cúng, yên tĩnh, lãng mạn, sang trọng, hợp thời trang (Cozy, Quiet, Romantic, Trendy, Upscale) * **Tiện ích:** Có quầy bar, nhà vệ sinh. * **Lưu ý:** Hiện đang đóng cửa, mở cửa lại lúc 5 giờ chiều. * *Nếu bạn muốn một trải nghiệm ẩm thực Nhật Bản đẳng cấp với không gian sang trọng và có thể ngắm nhìn thành phố từ trên cao, Sorae là một lựa chọn đáng cân nhắc.* Chúc bạn có một bữa ăn ngon miệng!",
+            "timestamp": "2026-06-07T09:46:22.158000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "SOSAKU SUSHI DAN",
+          "address": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+          "lat": 10.7654088,
+          "lng": 106.6902769,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+          "selected_at": "2026-06-07T09:46:41.863000Z"
+        },
+        "extracted_fields": {
+          "categories": [
+            "nhà hàng nhật"
+          ],
+          "locations": [
+            "trung tâm sài gòn"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "sang trọng",
+            "hợp xu hướng",
+            "phong cách anime/nhật"
+          ],
+          "constraints": [
+            "rating cao",
+            "giá phải chăng"
+          ],
+          "negative_signals": []
+        }
+      },
+      {
+        "type": "recommendation_round",
+        "group_id": "edca12e0-1a76-404c-8657-8062f51f583d",
+        "started_at": "2026-07-01T02:38:02.834000Z",
+        "user_messages": [
+          {
+            "text": "quận 1",
+            "timestamp": "2026-07-01T02:38:02.834000Z"
+          }
+        ],
+        "bot_responses": [
+          {
+            "text": "Chào bạn, đây là một vài gợi ý quán cà phê chất lượng ở Quận 1 dựa trên dữ liệu Google Maps: 1. **Little HaNoi Egg Coffee (Yersin)** * **Rating:** 4.8/5 (5418 reviews) * **Địa chỉ:** Yersin/119/5 Phạm Ngũ Lão, Bến Thành, Hồ Chí Minh * **Điểm nổi bật:** Quán nổi tiếng với cà phê trứng chuẩn vị Hà Nội, được đánh giá rất cao và có lượng review khủng. Không gian quán ấm cúng, yên tĩnh, lãng mạn và rất hợp xu hướng. * **Không khí:** Casual, Cozy, Quiet, Romantic, Trending, Trendy * **Tiện ích:** Có quầy bar, nhà vệ sinh. * **Giờ mở cửa:** Mở cửa đến 9:30 PM 2. **The Running Bean** * **Rating:** 4.7/5 (3101 reviews) * **Địa chỉ:** 33 Mạc Thị Bưởi, Sài Gòn, Hồ Chí Minh * **Điểm nổi bật:** Một quán cà phê có không gian sang trọng, hiện đại nhưng vẫn ấm cúng và yên tĩnh. Rất phù hợp cho những ai muốn tìm một nơi vừa thưởng thức cà phê ngon, vừa có thể làm việc hoặc trò chuyện. Quán còn phục vụ brunch. * **Không khí:** Casual, Cozy, Quiet, Romantic, Trendy, Upscale * **Tiện ích:** Có nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Mở cửa đến 10 PM 3. **Hoff Coffee Brewers** * **Rating:** 4.8/5 (343 reviews) * **Địa chỉ:** 42bis Lý Tự Trọng, Sài Gòn, Hồ Chí Minh * **Điểm nổi bật:** Một lựa chọn tuyệt vời với rating cao và không gian ấm cúng. Quán cung cấp đầy đủ tiện ích cần thiết cho một buổi cà phê thư giãn hoặc làm việc. * **Không khí:** Casual, Cozy * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Mở cửa đến 9 PM 4. **Whisfee Café** * **Rating:** 4.8/5 (321 reviews) * **Địa chỉ:** 14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh * **Điểm nổi bật:** Quán cà phê này cũng có rating rất cao, không gian ấm cúng và lãng mạn. Đặc biệt, đây còn là một \"Art cafe\" nên có thể có những điểm nhấn nghệ thuật thú vị. * **Không khí:** Casual, Cozy, Romantic * **Tiện ích:** Có quầy bar, nhà vệ sinh, Wi-Fi miễn phí. * **Giờ mở cửa:** Mở cửa đến 11 PM Chúc bạn tìm được quán cà phê ưng ý!",
+            "timestamp": "2026-07-01T02:38:21.580000Z"
+          }
+        ],
+        "selected_place": {
+          "name": "Soo Kafe",
+          "address": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+          "lat": 10.772407999999999,
+          "lng": 106.6972096,
+          "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+          "selected_at": "2026-07-01T02:38:23.703000Z"
+        },
+        "extracted_fields": {
+          "categories": [],
+          "locations": [
+            "quận 1"
+          ],
+          "amenities": [
+            "wifi",
+            "nhà vệ sinh",
+            "quầy bar"
+          ],
+          "atmosphere": [
+            "ấm cúng",
+            "yên tĩnh",
+            "lãng mạn",
+            "sang trọng",
+            "hợp xu hướng",
+            "thoải mái"
+          ],
+          "constraints": [
+            "rating cao",
+            "nhiều đánh giá"
+          ],
+          "negative_signals": []
+        }
+      }
+    ],
+    "liked_places": [
+      {
+        "name": "Uncle Nick's Cafe (& brunch)",
+        "address": "211/10 Nguyễn Trãi, Cầu Ông Lãnh, Hồ Chí Minh 70000, Vietnam",
+        "lat": 10.765619599999999,
+        "lng": 106.6883738,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEpf6bC6FiooKfAcmPpnlHzkcmHPVFVBQk1_evaq_YgN-aP_QxPQlNfbu7m-Z99qXpob38Xi6fdPupfVCtaoxuPg4j32bFuOh7uYZYnI8vXV2vOpF5nnTatdjm7GlN8Gyus5AoV=w1000-h1000-c-n",
+        "selected_at": "2026-06-03T12:42:47.886000Z"
+      },
+      {
+        "name": "SOSAKU SUSHI DAN",
+        "address": "278 Bùi Viện, Bến Thành, Hồ Chí Minh 700000, Vietnam",
+        "lat": 10.7654088,
+        "lng": 106.6902769,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFXQzV7R4ZbJo5uG2ShrNQ3xEghm1aUjlSb2WiCh950dXHhuQ224OrPkTrIuuan7zPvyJln3jlrzZaEMv2QTlcrdjrVZb1EtTp1MygAxhi9Cd9fvCmudvUFqINmi-QG0baej93n2T7iD6Ln=w1000-h1000-c-n",
+        "selected_at": "2026-06-07T09:26:40.420000Z"
+      },
+      {
+        "name": "Subin BBQ Giga Mall Thủ Đức",
+        "address": "Gigamall Shopping Center, 242 Đ. Phạm Văn Đồng, Hiệp Bình, Hồ Chí Minh 71300, Vietnam",
+        "lat": 10.8273647,
+        "lng": 106.7216358,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAES2Ddp_I8Z6KzwEloMSO8-dfxS6kIX8f5gH4SufxmTerK_6H5I8c59d3PcX9m8pqwkZCjZ_swqtKYqKHjFUxCwkIljCKdlvlW51SrzL6GGQqi67P4Qnbn4WPBfAOqNgXLhE2mWo6dOeHFo=w1000-h1000-c-n",
+        "selected_at": "2026-06-17T09:12:01.766000Z"
+      },
+      {
+        "name": "Little Cam Saigon",
+        "address": "64Bis Nguyễn Thị Minh Khai, Quận 1, Hồ Chí Minh, Vietnam",
+        "lat": 10.783399,
+        "lng": 106.69830479999999,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEKNWK0-QXJ0VOktaLO3w_L_q46_pr6cUzfDCbdCeGshei3d6oWTtLIpBxljnr0DsPGoiujhhRHQuGUNWXgGEk1cb6NYldQ3lr0EDuvuCdJT-f1ta6_s04hGr1Yw_sfmBA71RvF=w1000-h1000-c-n",
+        "selected_at": "2026-06-18T11:07:52.860000Z"
+      },
+      {
+        "name": "Buffet nướng Ông Mập 159k - CN Tô Vĩnh Diện",
+        "address": "7 Tô Vĩnh Diện, Thủ Đức, Hồ Chí Minh, Vietnam",
+        "lat": 10.852604399999999,
+        "lng": 106.7669384,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGIiNBKev482MsAEqXF08T-aM_tLW5Jv_73u1kHsOd2jR766Fu8STZ7wvM2i9qWFFrYsgF385Df8-BgpAT59axE0ePVPY1n15-zcrHuWiJxpZglxbSVTgfrba-Gk52R8ZIm4dxC2A=w1000-h1000-c-n",
+        "selected_at": "2026-06-20T12:32:05.992000Z"
+      },
+      {
+        "name": "Café Nhan",
+        "address": "1606 W Passyunk Ave, Philadelphia, PA 19145",
+        "lat": 39.9246714,
+        "lng": -75.1732256,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF7PO76QWBagkPv3VbUuEDEgQ6aM3f-tD-od7Ub5-Edy51_5ZYoW9rb86be4LMfc29xSTH-HD5juSpH_xLzze_-hKZ6YhA-h1BytwJZr5JyvBTlxauEasSmT1C_l-0WPopHJo8=w1000-h1000-c-n",
+        "selected_at": "2026-06-20T12:46:31.833000Z"
+      },
+      {
+        "name": "SPICY BOX SAIGON CENTRE",
+        "address": "65d Lê Lợi, Sài Gòn, Hồ Chí Minh, Vietnam",
+        "lat": 10.7731883,
+        "lng": 106.70091939999999,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHy9ghh1YI49wABGvVZGyFRwmWoHNPml7-axA04bDWehwG70P--sbCSFMh95IPo77DL-VZqxy1Y7tRceH2LMYBRJ_ALjBLdnqRUbddHcb_thUBgGaF4ykosRvm_htzYw7pzCtDy=w1000-h1000-c-n",
+        "selected_at": "2026-06-21T08:27:07.182000Z"
+      },
+      {
+        "name": "Quán Nướng 123 Zo Ninh Bình",
+        "address": "34 Nguyễn Văn Giản, Hoa Lư, Ninh Bình, Vietnam",
+        "lat": 20.258986699999998,
+        "lng": 105.9725584,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG0HyntqRxnTeI0cvrTT5M-iiQYd6iqhY3rEwnRQ3u_uqFSsf4sOf5_JH3vheWBHg3gYxUxp0fzNf-ZVrIA9ZpgaSEujzQMUsWEZxQSNjl3W5icrKQO-IB8RDc4RBfSeBDZ0ypWdw=w1000-h1000-c-n",
+        "selected_at": "2026-06-21T08:41:15.887000Z"
+      },
+      {
+        "name": "Soo Kafe",
+        "address": "35 Phan Chu Trinh, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+        "lat": 10.772407999999999,
+        "lng": 106.6972096,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAF9eOWObKJBFAsS9Hw0J59hkY6TKhMXzzf1suBbFGKkHWoCASOywtG31tBanlQeHviZd9v2PM_wgsZYFvwtRSJRexJ39JnCVKD1FnsTJ2yXSw06-jCxJvU0trkRHokXQ5DDXQjVJg=w1000-h1000-c-n",
+        "selected_at": "2026-06-30T10:56:12.636000Z"
+      },
+      {
+        "name": "Whisfee Café",
+        "address": "14 Tôn Thất Đạm, Sài Gòn, Hồ Chí Minh 700000, Vietnam",
+        "lat": 10.7696408,
+        "lng": 106.7040756,
+        "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGoDn8NWWjz_kdmyb9RH_7RqWKWegeiZOknX3c03K7lPKOIge-kqUxY3xFzzt1L-lJxX82zbZDHDEb4_Ix2PkgtOhvkwpC3DHMtYTWhcFxJOUA8ShXi3T3t0MBAdQ7wo80D-DS-OAcrcKQt=w1000-h1000-c-n",
+        "selected_at": "2026-06-30T13:14:32.923000Z"
+      }
+    ]
+  }
+}
