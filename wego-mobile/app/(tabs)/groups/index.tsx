@@ -1,10 +1,10 @@
-import { useRouter } from 'expo-router';
-import { getAuth } from "firebase/auth";
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Bell, ChevronRight, Plus, Search } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     FlatList,
     Image,
+    RefreshControl,
     SafeAreaView,
     StatusBar,
     StyleSheet,
@@ -14,6 +14,8 @@ import {
     View,
 } from 'react-native';
 import LoadingIcon from '../../../components/loadingScreen/LoadingIcon';
+// 👇 chỉnh lại path này cho đúng với vị trí thật của groupAPI.ts trong project của bạn
+import { getUserGroups, GroupResponse } from '../../../apis/groupAPI';
 
 const GREEN = process.env.EXPO_PUBLIC_GREEN_MAIN
 
@@ -26,16 +28,6 @@ type Group = {
     statusDot?: 'active' | 'online' | 'meeting' | 'session' | 'event';
 };
 
-type MyGroupResponse = {
-    id: string;
-    title: string;
-    description: string;
-    memberCount: number;
-    host: boolean;
-    groupPhoto: string;
-    status: string;
-};
-
 const STATUS_COLORS: Record<string, string> = {
     active: '#22c55e',
     online: '#3b82f6',
@@ -43,6 +35,17 @@ const STATUS_COLORS: Record<string, string> = {
     session: '#a855f7',
     event: '#f97316',
 };
+
+function mapGroupResponse(g: GroupResponse): Group {
+    return {
+        id: g.id,
+        name: g.title,
+        members: g.memberCount,
+        status: g.host ? 'You are host' : 'Member',
+        avatar: g.groupPhoto,
+        statusDot: g.host ? 'active' : 'online',
+    };
+}
 
 function GroupItem({ item, onPress }: { item: Group; onPress: () => void }) {
     return (
@@ -80,73 +83,45 @@ function GroupItem({ item, onPress }: { item: Group; onPress: () => void }) {
     );
 }
 
-type RootStackParamList = {
-    Groups: undefined;
-    GroupMembers: {
-        groupId: string;
-        groupName: string;
-        memberCount: number;
-        activeCount: number;
-    };
-};
-
 export default function GroupsScreen() {
     const [query, setQuery] = useState('');
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
-        fetchMyGroups();
-    }, []);
-
-    const fetchMyGroups = async () => {
+    const fetchMyGroups = useCallback(async (isRefresh = false) => {
         try {
-            setLoading(true);
-
-            const user = getAuth().currentUser;
-
-            if (!user) {
-                console.log("No user logged in");
-                return;
+            if (isRefresh) {
+                setRefreshing(true);
+            } else {
+                setLoading(true);
             }
 
-            const token = await user.getIdToken();
-
-            const response = await fetch(
-                `${process.env.EXPO_PUBLIC_API_URL}/api/groups/my`,
-                {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Fetch groups failed");
-            }
-
-            const data: MyGroupResponse[] = await response.json();
-
-            const mapped: Group[] = data.map((g) => ({
-                id: g.id,
-                name: g.title,
-                members: g.memberCount,
-                status: g.host ? 'You are host' : 'Member',
-                avatar: g.groupPhoto,
-                statusDot: g.host ? 'active' : 'online',
-            }));
-
-            setGroups(mapped);
-
+            const data = await getUserGroups();
+            setGroups(data.map(mapGroupResponse));
         } catch (error) {
             console.log("FETCH GROUP ERROR:", error);
         } finally {
-            setLoading(false);
+            if (isRefresh) {
+                setRefreshing(false);
+            } else {
+                setLoading(false);
+            }
         }
-    };
+    }, []);
+
+    // Refetch every time this screen comes into focus — this covers the
+    // initial mount AND coming back from CreateGroup/GroupMembers/etc.
+    useFocusEffect(
+        useCallback(() => {
+            fetchMyGroups();
+        }, [fetchMyGroups])
+    );
+
+    const onRefresh = useCallback(() => {
+        fetchMyGroups(true);
+    }, [fetchMyGroups]);
 
     const filtered = groups.filter((g) =>
         (g.name ?? '').toLowerCase().includes((query ?? '').toLowerCase())
@@ -225,6 +200,14 @@ export default function GroupsScreen() {
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor={GREEN ? `#${GREEN}` : '#22c55e'}
+                            colors={[GREEN ? `#${GREEN}` : '#22c55e']}
+                        />
+                    }
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
                             <Text style={styles.emptyText}>No groups found</Text>

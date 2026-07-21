@@ -1,8 +1,19 @@
 import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { ArrowLeft, Clock, MapPin, UserPlus, XCircle } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Platform,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 // Định nghĩa kiểu dữ liệu cho Notification
 type NotificationItem = {
@@ -18,13 +29,17 @@ type NotificationItem = {
 export default function NotificationsScreen() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter()
 
-  useEffect(() => {
-    fetchInvitations();
-  }, []);
-  const fetchInvitations = async () => {
+  const fetchInvitations = useCallback(async (isRefresh = false) => {
     try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
       const token =
         await getAuth().currentUser?.getIdToken();
 
@@ -47,9 +62,21 @@ export default function NotificationsScreen() {
         error
       );
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchInvitations();
+  }, [fetchInvitations]);
+
+  const onRefresh = useCallback(() => {
+    fetchInvitations(true);
+  }, [fetchInvitations]);
 
   const acceptInvite = async (
     memberId: string
@@ -183,96 +210,119 @@ export default function NotificationsScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Section Title */}
-        <Text style={styles.sectionTitle}>TODAY</Text>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#22C55E" />
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#22C55E"
+              colors={['#22C55E']}
+            />
+          }
+        >
+          {/* Section Title */}
+          <Text style={styles.sectionTitle}>TODAY</Text>
 
-        {/* List thông báo */}
-        {notifications.map((item) => (
-          <View
-            key={item.memberId}
-            style={styles.notificationCard}
-          >
-            <View style={styles.row}>
-
-              <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: "#EBF3FF" }
-                ]}
-              >
-                <UserPlus
-                  size={22}
-                  color="#22C55E"
-                />
-              </View>
-
-              <View style={styles.textContainer}>
-
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>
-                    Group Invitation
-                  </Text>
-
-                  <Text style={styles.timeText}>
-                    Pending
-                  </Text>
-                </View>
-
-                <Text style={styles.descText}>
-                  You have been invited to join{" "}
-                  <Text style={styles.highlightText}>
-                    {item.groupTitle}
-                  </Text>
-                </Text>
-
-                <View style={styles.buttonGroup}>
-                  <TouchableOpacity
-                    style={[
-                      styles.btn,
-                      styles.btnAccept,
-                    ]}
-                    onPress={() =>
-                      acceptInvite(
-                        item.memberId
-                      )
-                    }
-                  >
-                    <Text
-                      style={
-                        styles.btnTextAccept
-                      }
-                    >
-                      Accept
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[
-                      styles.btn,
-                      styles.btnDecline,
-                    ]}
-                    onPress={() =>
-                      rejectInvite(
-                        item.memberId
-                      )
-                    }
-                  >
-                    <Text
-                      style={
-                        styles.btnTextDecline
-                      }
-                    >
-                      Decline
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-              </View>
+          {notifications.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>No notifications</Text>
             </View>
-          </View>
-        ))}
-      </ScrollView>
+          ) : (
+            /* List thông báo */
+            notifications.map((item) => (
+              <View
+                key={item.memberId}
+                style={styles.notificationCard}
+              >
+                <View style={styles.row}>
+
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: "#EBF3FF" }
+                    ]}
+                  >
+                    <UserPlus
+                      size={22}
+                      color="#22C55E"
+                    />
+                  </View>
+
+                  <View style={styles.textContainer}>
+
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardTitle}>
+                        Group Invitation
+                      </Text>
+
+                      <Text style={styles.timeText}>
+                        Pending
+                      </Text>
+                    </View>
+
+                    <Text style={styles.descText}>
+                      You have been invited to join{" "}
+                      <Text style={styles.highlightText}>
+                        {item.groupTitle}
+                      </Text>
+                    </Text>
+
+                    <View style={styles.buttonGroup}>
+                      <TouchableOpacity
+                        style={[
+                          styles.btn,
+                          styles.btnAccept,
+                        ]}
+                        onPress={() =>
+                          acceptInvite(
+                            item.memberId
+                          )
+                        }
+                      >
+                        <Text
+                          style={
+                            styles.btnTextAccept
+                          }
+                        >
+                          Accept
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={[
+                          styles.btn,
+                          styles.btnDecline,
+                        ]}
+                        onPress={() =>
+                          rejectInvite(
+                            item.memberId
+                          )
+                        }
+                      >
+                        <Text
+                          style={
+                            styles.btnTextDecline
+                          }
+                        >
+                          Decline
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                  </View>
+                </View>
+              </View>
+            ))
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -286,6 +336,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingTop: 60,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#94A3B8',
+    fontWeight: '500',
   },
   // Header styles
   header: {

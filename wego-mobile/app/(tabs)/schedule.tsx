@@ -4,10 +4,11 @@ import LoadingIcon from '../../components/loadingScreen/LoadingIcon';
 import { LatLng } from '@/types/location';
 import { useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -221,22 +222,40 @@ export default function ScheduleScreen() {
   const [activeTab, setActiveTab] = useState('Upcoming');
   const [schedules, setSchedules] = useState<ScheduleResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const fetchSchedules = async () => {
+  const fetchSchedules = useCallback(async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const data = await getMySchedules();
       console.log('Schedule Log: ', data)
       setSchedules(data);
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSchedules();
-  }, []);
+  }, [fetchSchedules]);
+
+  const onRefresh = useCallback(() => {
+    fetchSchedules(true);
+  }, [fetchSchedules]);
+
+  // onRefresh prop passed down to EventCard's "Done" action expects () => Promise<void>
+  const refreshSchedules = useCallback(async () => {
+    await fetchSchedules();
+  }, [fetchSchedules]);
 
   const now = new Date();
 
@@ -281,6 +300,14 @@ export default function ScheduleScreen() {
         style={styles.scroll}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#22c55e"
+            colors={['#22c55e']}
+          />
+        }
       >
         {loading ? (
           <View style={styles.emptyState}>
@@ -296,7 +323,7 @@ export default function ScheduleScreen() {
               key={date}
               date={date}
               events={events}
-              onRefresh={fetchSchedules}
+              onRefresh={refreshSchedules}
               activeTab={activeTab}
             />
           ))
