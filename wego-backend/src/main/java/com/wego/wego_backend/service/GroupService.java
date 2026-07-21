@@ -741,7 +741,7 @@ public class GroupService {
     }
 
     @Transactional
-    public AiChatResponse sendChecklistToAi(UUID groupId) {
+    public AiChatResponse sendChecklistToAi(UUID groupId, String firebaseUid) {
 
         List<GroupAiChecklist> checklist =
                 aiChecklistRepository
@@ -764,7 +764,8 @@ public class GroupService {
         AiChatResponse response =
                 aiPlaceService.chat(
                         groupId.toString(),
-                        prompt
+                        prompt,
+                        firebaseUid
                 );
 
         long end = System.currentTimeMillis();

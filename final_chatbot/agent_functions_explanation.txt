@@ -1,0 +1,630 @@
+GIAI THICH CAC FUNCTION TRONG agent.py
+=====================================
+
+Tong quan
+---------
+
+File agent.py la phan xu ly chinh cua chatbot recommend dia diem.
+No nhan tin nhan nguoi dung, phan tich nhu cau, goi SerpAPI Google Maps de lay dia diem that,
+sap xep ket qua theo rating/reviews/profile/so thich hien tai, roi dung Gemini de tao cau tra loi.
+
+Luong chinh:
+
+User message
+-> load user profile
+-> them HumanMessage vao state
+-> chay LangGraph:
+   summarize_memory
+   -> analyze_and_extract
+   -> neu thieu thong tin: provide_additional_info
+   -> neu du thong tin: fetch_real_data_from_api -> provide_additional_info
+-> cap nhat profile neu user co tin hieu so thich/luu dia diem
+-> tra ve response + state
+
+
+1. get_llm()
+------------
+
+Tao va cache mot instance Gemini:
+
+ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    temperature=0
+)
+
+Bien _llm la global cache. Lan dau goi thi tao model, cac lan sau dung lai.
+Muc dich la tranh khoi tao LLM nhieu lan.
+
+
+2. get_search_query(extraction)
+-------------------------------
+
+Lay query tim kiem tu object AgentExtraction.
+
+Thu tu uu tien:
+1. Neu co rewritten_query thi dung rewritten_query.
+2. Neu khong, lay extracted_json.search_parameters.q.
+3. Neu van khong co thi tra None.
+
+Ham nay giup cac phan sau khong can quan tam query nam o field nao.
+
+
+3. get_place_type(place)
+------------------------
+
+Lay loai dia diem tu response SerpAPI.
+
+Neu place["types"] la list thi noi lai thanh chuoi.
+Vi du:
+["restaurant", "japanese"] -> "restaurant, japanese"
+
+Neu khong co types, fallback sang place["type"].
+
+
+4. profile_keywords(profile_summary)
+------------------------------------
+
+Tach keyword tu profile nguoi dung.
+
+Ham se:
+- lowercase profile_summary
+- tach tu bang regex
+- bo cac tu khong co nhieu y nghia nhu tags, profile, nguoi, dung
+- chi giu tu co do dai >= 3
+
+Ket qua duoc dung trong rank_places() de cong diem cho dia diem phu hop profile.
+
+
+5. safe_float(value, default=0.0)
+---------------------------------
+
+Ep du lieu sang float mot cach an toan.
+
+Vi du:
+safe_float("4.5") -> 4.5
+safe_float(None) -> 0.0
+safe_float("abc") -> 0.0
+
+Dung cho rating tu API vi du lieu API co the bi thieu hoac sai kieu.
+
+
+6. safe_int(value, default=0)
+-----------------------------
+
+Ep du lieu sang int mot cach an toan.
+
+Vi du:
+safe_int("1,234") -> 1234
+safe_int("4.0") -> 4
+safe_int(None) -> 0
+
+Dung cho so luong reviews.
+
+
+7. compact_place_for_prompt(place)
+----------------------------------
+
+Rut gon mot dia diem truoc khi dua vao prompt LLM.
+
+Chi giu cac field can thiet:
+- name
+- address
+- rating
+- reviews
+- hours
+- type
+- atmosphere
+- amenities
+
+Bo cac field nang hoac khong can cho LLM nhu thumbnail, lat, lng, placeId.
+Muc dich la giam token prompt.
+
+
+8. compact_places_for_prompt(places, limit=3)
+---------------------------------------------
+
+Rut gon danh sach dia diem bang compact_place_for_prompt().
+
+Mac dinh chi lay 3 dia diem dau:
+places[:3]
+
+Frontend/API van co the nhan danh sach day du hon, nhung LLM chi can top 3 de viet cau tra loi.
+
+
+9. compact_json(data)
+---------------------
+
+Convert dict sang JSON string gon:
+
+json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+
+Diem hay:
+- Giu tieng Viet khong bi escape.
+- Khong indent de tiet kiem token.
+
+
+10. short_profile_summary(profile_summary)
+------------------------------------------
+
+Rut ngan profile truoc khi dua vao prompt.
+
+Neu profile dai, ham chi lay toi da 8 dong dau.
+Neu khong co profile thi tra:
+"Khong co profile nguoi dung"
+
+
+11. normalize_user_text(text)
+-----------------------------
+
+Chuan hoa cau user nhap:
+- Bo @bot
+- Gop nhieu khoang trang thanh mot
+- Strip dau/cuoi
+
+Vi du:
+"@bot   quan ca phe   quan 1" -> "quan ca phe quan 1"
+
+Dung truoc khi regex detect category/location.
+
+
+12. extract_pattern_labels(text, patterns)
+------------------------------------------
+
+Ham regex dung chung.
+
+Input:
+- text: cau can phan tich
+- patterns: list tuple (label, regex)
+
+Neu regex match thi tra label tuong ung.
+
+Vi du:
+extract_pattern_labels("tim cafe quan 1", CATEGORY_PATTERNS)
+-> ["quan ca phe"]
+
+
+13. extract_recent_locations(messages)
+--------------------------------------
+
+Lay location tu vai human message gan nhat.
+
+Ham ghep noi dung 4 message gan nhat cua user roi chay LOCATION_PATTERNS.
+
+Muc dich la ho tro hoi thoai nhieu luot.
+
+Vi du:
+User: tim quan ca phe
+Bot: Ban muon tim khu vuc nao?
+User: quan 1
+
+Agent co the lay "quan 1" tu context gan day.
+
+
+14. build_serp_search_query(user_message, messages)
+---------------------------------------------------
+
+Tao query rong de gui SerpAPI.
+
+Ham lam:
+1. Chuan hoa text.
+2. Tim category bang CATEGORY_PATTERNS.
+3. Neu khong co category thi tra (None, None), de fallback sang LLM.
+4. Tim location trong cau hien tai.
+5. Neu khong co location thi tim trong message gan day.
+6. Neu van khong co location thi tra cau hoi: "Ban muon tim o khu vuc nao?"
+7. Neu du category + location thi tra query kieu:
+   "quan ca phe quan 1"
+
+Diem quan trong:
+Ham khong nhoi preference mem nhu wifi, am cung, rating cao vao search query.
+Nhung preference nay se duoc dung de rank sau.
+
+
+15. current_preference_keywords(user_message)
+---------------------------------------------
+
+Tach preference hien tai cua user.
+
+Vi du:
+"tim quan cafe yen tinh co wifi"
+-> ["wifi", "yen tinh"]
+
+Dung trong rank_places().
+
+
+16. preference_matches_place_text(preference, place_text)
+---------------------------------------------------------
+
+Kiem tra preference co match voi text cua dia diem khong.
+
+No dung lai PREFERENCE_PATTERNS nen co the match da ngon ngu.
+
+Vi du user noi "am cung", nhung SerpAPI tra atmosphere la "Cozy" thi van match.
+
+
+17. quick_search_extraction(user_message, messages)
+---------------------------------------------------
+
+Tang xu ly nhanh, khong can goi LLM.
+
+No goi build_serp_search_query().
+
+Co 3 truong hop:
+
+1. Thieu location:
+   Tra AgentExtraction voi is_clear=False va clarification_question.
+
+2. Du category + location:
+   Tra AgentExtraction voi is_clear=True va rewritten_query.
+
+3. Rule khong hieu:
+   Tra None, de analyze_and_extract() fallback sang LLM.
+
+
+18. should_extract_profile(user_message, last_results)
+------------------------------------------------------
+
+Quyet dinh co nen goi LLM de cap nhat profile khong.
+
+Ham nay giup tranh viec moi message deu goi LLM.
+
+Neu user noi cac tin hieu nhu:
+- luu
+- save
+- thich
+- chon
+- chot
+- so 1
+- so 2
+- so 3
+- quan nay
+
+thi chi update neu co last_results.
+
+Neu user noi cac so thich nhu:
+- minh thich yen tinh
+- uu tien wifi
+- gia re
+- rating cao
+
+thi cho phep update profile.
+
+
+19. rank_places(places, profile_summary, user_message=None)
+----------------------------------------------------------
+
+Sap xep dia diem theo do phu hop.
+
+Cong thuc diem dai khai:
+
+rating
++ review_score
++ profile_match_score
++ current_preference_score
+
+Trong do:
+- rating: diem Google Maps
+- review_score: so review, gioi han toi da 1.5 diem
+- profile_match_score: cong diem neu dia diem match keyword trong profile
+- current_preference_score: cong nhieu hon neu match preference trong cau hien tai
+
+Sau do sort giam dan.
+
+Noi ngan gon:
+Search thi rong, rank thi ca nhan hoa.
+
+
+20. place_reference_index(user_message)
+---------------------------------------
+
+Doc cau user de xem ho dang nhac toi dia diem thu may.
+
+Vi du:
+"luu quan so 2" -> 1
+
+Vi index Python bat dau tu 0.
+
+Ham hieu cac cum nhu:
+- quan dau
+- dia diem dau
+- so 1
+- thu 2
+- so 3
+- first
+- second
+- third
+
+
+21. resolve_liked_place_reference(user_message, liked_place, last_results)
+--------------------------------------------------------------------------
+
+Neu user noi kieu:
+"luu quan so 2"
+
+thi ham nay lay dung dia diem thu 2 trong last_results.
+
+Neu liked_place da co reason, ham giu lai reason do va gan vao dia diem da chon.
+
+
+22. summarize_memory(state)
+---------------------------
+
+Node dau tien trong LangGraph.
+
+Neu so message <= 6 thi khong lam gi:
+return {}
+
+Neu nhieu hon 6 message:
+1. Lay cac message cu, giu lai 2 message gan nhat.
+2. Goi LLM de tom tat conversation cu.
+3. Tao RemoveMessage de xoa message cu khoi state.
+4. Tra ve summary moi + danh sach message can remove.
+
+Muc tieu la giu context gon, tranh prompt qua dai.
+
+
+23. analyze_and_extract(state)
+------------------------------
+
+Node phan tich cau hoi user.
+
+No lam theo 2 tang:
+
+1. Goi quick_search_extraction().
+   Neu rule-based hieu duoc thi tra current_extraction ngay.
+
+2. Neu rule khong hieu, goi Gemini voi structured output AgentExtraction.
+
+LLM se quyet dinh:
+- Cau hoi da du ro chua.
+- Neu chua ro thi can hoi them gi.
+- Neu du ro thi rewrite query ngan gon cho SerpAPI.
+
+Vi du:
+"tim nha hang Nhat lang man gan trung tam"
+
+co the rewrite thanh:
+"nha hang Nhat trung tam Sai Gon"
+
+
+24. fetch_real_data_from_api(state)
+-----------------------------------
+
+Node goi SerpAPI Google Maps.
+
+Flow:
+1. Lay current_extraction.
+2. Neu is_clear=False thi khong search.
+3. Lay query bang get_search_query().
+4. Neu thieu query hoac thieu SERP_API_KEY, tra loi loi.
+5. Goi https://serpapi.com/search.json voi:
+   - engine = google_maps
+   - q = query
+   - api_key = SERP_API_KEY
+6. Lay local_results, neu khong co thi thu place_results.
+7. Normalize tung dia diem thanh format rieng:
+   - placeId
+   - name
+   - address
+   - lat
+   - lng
+   - rating
+   - reviews
+   - hours
+   - atmosphere
+   - amenities
+   - thumbnail
+   - type
+8. Bo dia diem khong co GPS.
+9. Rank bang rank_places().
+10. Lay top 5.
+11. Tra ve real_api_response va cap nhat last_results.
+
+
+25. provide_additional_info(state)
+----------------------------------
+
+Node tao cau tra loi cuoi.
+
+Co 3 truong hop:
+
+1. Neu thieu thong tin:
+   Tra cau hoi clarification, vi du:
+   "Ban muon tim o khu vuc nao?"
+
+2. Neu da search nhung khong co ket qua:
+   Tra thong bao khong tim duoc dia diem phu hop.
+
+3. Neu co ket qua:
+   Goi LLM de viet cau tra loi dua tren du lieu Google Maps that.
+
+Prompt yeu cau LLM:
+- Tom tat yeu cau user.
+- Goi y it nhat 2-3 dia diem.
+- Co ten, dia chi, rating, ly do phu hop.
+- Dung profile neu lien quan.
+- Khong bia du lieu.
+
+
+26. should_continue(state)
+--------------------------
+
+Router cua LangGraph.
+
+Neu extraction ton tai va is_clear=False:
+return "ask_user"
+
+Nguoc lai:
+return "search"
+
+No quyet dinh graph di toi provide_additional_info ngay hay di qua fetch_real_data_from_api.
+
+
+27. extract_profile_signals(user_message, last_results=None)
+------------------------------------------------------------
+
+Dung LLM de rut thong tin profile tu cau user.
+
+Output la ProfileExtraction, gom:
+- should_update
+- tags
+- liked_place
+- update_reason
+
+Vi du user noi:
+"minh thich quan yen tinh co wifi"
+
+thi co the extract:
+tags = ["yen tinh", "wifi"]
+
+Neu user noi:
+"luu quan so 2"
+
+thi dung last_results de xac dinh dung dia diem can luu.
+
+Sau khi LLM tra ve, ham con goi resolve_liked_place_reference() de chac chan reference kieu "so 2" duoc map dung.
+
+
+28. profile_summary_text(profile)
+---------------------------------
+
+Bien profile dang dict thanh text ngan cho prompt.
+
+Neu profile co tags:
+
+Tags:
+- wifi
+- yen tinh
+
+Neu co liked places:
+
+Liked places:
+- Highlands Coffee (gan nha, yen tinh)
+
+Chi lay toi da 3 liked places dau.
+
+Neu trong thi tra:
+"Khong co profile nguoi dung"
+
+
+29. update_profile_with_extraction(profile, extraction, user_message)
+---------------------------------------------------------------------
+
+Cap nhat profile that dua tren ket qua ProfileExtraction.
+
+Neu should_update=False thi thoat ngay.
+
+Neu co tags:
+merge_profile_tags(profile, extraction.tags)
+
+Neu co liked place:
+add_liked_place(profile, extraction.liked_place)
+
+Neu co update reason:
+add_profile_history(profile, extraction.update_reason, "preference")
+
+Neu khong co reason:
+add_profile_history(profile, user_message, "interaction")
+
+Cuoi cung:
+save_user_profile(profile)
+
+
+30. run_agent(current_state, user_message, user_id)
+---------------------------------------------------
+
+Ham entry point chinh cua file.
+
+No lam toan bo quy trinh:
+
+1. Load profile user:
+   profile = get_user_profile(user_id)
+
+2. Convert profile thanh summary text:
+   current_state["profile_summary"] = profile_summary_text(profile)
+
+3. Dam bao co last_results.
+
+4. Them message user vao state:
+   state["messages"].append(HumanMessage(content=user_message))
+
+5. Chay graph:
+   state = agent_app.invoke(state)
+
+6. Lay message cuoi cung cua bot.
+
+7. Neu can, cap nhat profile bang:
+   extract_profile_signals()
+   update_profile_with_extraction()
+
+8. Neu thieu thong tin, tra:
+
+{
+    "status": "NEED_MORE_INFO",
+    "message": last_message,
+    "places": []
+}
+
+9. Neu hoan tat, tra:
+
+{
+    "status": "COMPLETED",
+    "message": last_message,
+    "places": real_data["local_results"]
+}
+
+va kem state moi.
+
+
+Cac class/model quan trong
+--------------------------
+
+GpsCoordinates:
+Chua latitude va longitude.
+
+LocalResult:
+Mo ta mot dia diem tu SerpAPI.
+
+SearchParameters:
+Chua q va location.
+
+SerpApiResponse:
+Chua search_parameters va local_results.
+
+AgentExtraction:
+Ket qua phan tich intent user:
+- is_clear
+- rewritten_query
+- clarification_question
+- extracted_json
+
+ProfileExtraction:
+Ket qua rut trich thong tin profile:
+- should_update
+- tags
+- liked_place
+- update_reason
+
+AgentState:
+State dung trong LangGraph:
+- messages
+- summary
+- current_extraction
+- real_api_response
+- profile_summary
+- last_results
+
+
+Tom tat ngan
+------------
+
+agent.py la mot pipeline recommend dia diem co memory:
+
+Hieu cau hoi
+-> hoi them neu thieu
+-> rewrite query gon
+-> goi Google Maps qua SerpAPI
+-> chuan hoa du lieu
+-> rank theo rating/reviews/profile/preference
+-> dung LLM viet cau tra loi
+-> luu lai so thich user neu co tin hieu

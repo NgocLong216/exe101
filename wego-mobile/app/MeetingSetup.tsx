@@ -209,7 +209,6 @@ export default function MeetingSetup() {
         pathname: "/(tabs)/schedule",
       });
     } catch (error) {
-      console.error("Schedule meeting failed", error);
       Alert.alert("Set Meeting Failed", "Failed to schedule meeting");
     }
   };

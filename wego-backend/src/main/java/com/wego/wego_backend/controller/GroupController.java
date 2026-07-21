@@ -203,20 +203,26 @@ public class GroupController {
     @PostMapping("/{groupId}/chat")
     public AiChatResponse chat(
             @PathVariable UUID groupId,
-            @RequestBody AiChatRequest req
+            @RequestBody AiChatRequest req,
+            Authentication authentication
     ) {
 
         return aiPlaceService.chat(
                 groupId.toString(),
-                req.getMessage()
+                req.getMessage(),
+                authentication.getName()
         );
     }
 
     @PostMapping("/{groupId}/chat-checklist")
     public AiChatResponse chatChecklist(
-            @PathVariable UUID groupId
+            @PathVariable UUID groupId,
+            Authentication authentication
     ) {
-        return groupService.sendChecklistToAi(groupId);
+        return groupService.sendChecklistToAi(
+                groupId,
+                authentication.getName()
+        );
     }
 
     @GetMapping("/places/{placeId}")

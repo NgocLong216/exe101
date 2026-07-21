@@ -41,6 +41,23 @@ export default function PersonalAiChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const hasScrolledToLatestRef = useRef(false);
+
+  useEffect(() => {
+    hasScrolledToLatestRef.current = false;
+  }, [groupId]);
+
+  useEffect(() => {
+    if (messages.length === 0 || hasScrolledToLatestRef.current) return;
+
+    // Đợi danh sách lịch sử render xong rồi mới nhảy tới tin nhắn mới nhất.
+    const timer = setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: false });
+      hasScrolledToLatestRef.current = true;
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [messages.length]);
 
   useEffect(() => {
     const user = getAuth().currentUser;

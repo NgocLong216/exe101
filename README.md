@@ -128,12 +128,36 @@ npm run dev
 
 ### AI
 
+Chạy đồng thời hai AI service. Spring backend sẽ tự đọc gói của tài khoản đã
+xác thực: `FREE` dùng service cổng 8000, còn `PLUS`/`PREMIUM` chưa hết hạn dùng
+service cổng 8001.
+
+Terminal 1 - chatbot Free:
+
 ```bash
 cd chatbot
 venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app:app --reload --port 8000
 ```
+
+Terminal 2 - chatbot Premium:
+
+```bash
+cd final_chatbot
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8001
+```
+
+Có thể đổi địa chỉ hai service bằng biến môi trường
+`AI_FREE_SERVICE_URL` và `AI_PREMIUM_SERVICE_URL`.
+
+Spring backend đọc lịch sử thật tại
+`personal_ai_chats/{firebaseUid}/{sessionId}` trong Firebase Realtime Database,
+tổng hợp profile và lưu vào bảng `user_ai_profiles` trên PostgreSQL/Supabase.
+Profile này được truyền cho `final_chatbot`; Python service không ghi profile
+vào Firebase.
 
 ---
 

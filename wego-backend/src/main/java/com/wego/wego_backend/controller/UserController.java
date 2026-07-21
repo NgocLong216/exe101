@@ -3,6 +3,7 @@ package com.wego.wego_backend.controller;
 import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.repository.UserRepository;
 import com.wego.wego_backend.service.UserService;
+import com.wego.wego_backend.service.UserAiProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final UserAiProfileService userAiProfileService;
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(
@@ -36,6 +38,15 @@ public class UserController {
 
         return ResponseEntity.ok(
                 userService.getMyProfile(firebaseUid)
+        );
+    }
+
+    @GetMapping("/me/ai-profile")
+    public ResponseEntity<?> getMyAiProfile(Authentication authentication) {
+        return ResponseEntity.ok(
+                userAiProfileService.syncFromPersonalChats(
+                        authentication.getName()
+                )
         );
     }
 
