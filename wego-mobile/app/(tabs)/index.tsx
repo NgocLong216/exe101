@@ -140,8 +140,6 @@ export default function HomeScreen() {
       let cancelled = false;
   
       const run = async () => {
-        setInitializing(true); // 👈 bắt đầu load
-  
         setLocationError(null);
         const enabled = await AsyncStorage.getItem("locationSharing");
         if (cancelled) return;

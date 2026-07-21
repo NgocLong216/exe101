@@ -140,12 +140,11 @@ export default function MeetingSetup() {
   const [showGroupDropdown, setShowGroupDropdown] = useState(false);
 
   const router = useRouter()
-  const { placeId, placeName, lat, lng, prevRoute } = useLocalSearchParams<{
+  const { placeId, placeName, lat, lng } = useLocalSearchParams<{
     placeId: string;
     placeName: string;
     lat: string;
     lng: string;
-    prevRoute: string
   }>();
 
   const hours = Array.from({ length: 24 }, (_, i) =>
@@ -206,7 +205,7 @@ export default function MeetingSetup() {
         placeId,
       });
 
-      router.push({
+      router.dismissTo({
         pathname: "/(tabs)/schedule",
       });
     } catch (error) {

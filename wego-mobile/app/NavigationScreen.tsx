@@ -389,7 +389,20 @@ export default function NavigationScreen() {
                     style={styles.closeBtn}
                     onPress={() => {
                         locationSubRef.current?.remove();
-                        router.back();
+                        if (router.canGoBack()) {
+                            router.back();
+                            return;
+                        }
+
+                        router.dismissTo({
+                            pathname: "/",
+                            params: {
+                                lat,
+                                lng,
+                                placeName,
+                                prevRoute: "/PlaceDetail",
+                            },
+                        });
                     }}
                 >
                     <Ionicons name="close" size={22} color="#1E293B" />

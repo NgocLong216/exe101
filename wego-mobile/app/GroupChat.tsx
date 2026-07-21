@@ -848,14 +848,21 @@ export default function GroupChatScreen() {
         <View style={styles.headerLeft}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.push({
-              pathname: '/(tabs)/groups/GroupMembers',
-              params: {
-                groupId: String(groupId),
-                groupName: String(groupName),
-                groupPhoto: String(groupPhoto),
-              },
-            })}
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+                return;
+              }
+
+              router.dismissTo({
+                pathname: '/(tabs)/groups/GroupMembers',
+                params: {
+                  groupId: String(groupId),
+                  groupName: String(groupName),
+                  groupPhoto: String(groupPhoto),
+                },
+              });
+            }}
           >
             <ArrowLeft size={24} color="#1E293B" />
           </TouchableOpacity>
