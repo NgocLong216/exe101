@@ -32,6 +32,9 @@ public class Payment {
     private Status status = Status.PENDING;
 
     private Long momoTransactionId;
+    private String provider;
+    private String providerTransactionId;
+    private String paymentLinkId;
     private Integer resultCode;
     private String resultMessage;
     private LocalDateTime createdAt;

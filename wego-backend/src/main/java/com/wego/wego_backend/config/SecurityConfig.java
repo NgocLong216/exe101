@@ -26,7 +26,8 @@ public class SecurityConfig {
     public static final String[] PUBLIC_ENDPOINTS = {
             "/api/auth/**",
             "/api/public/**",
-            "/api/payments/momo/ipn"
+            "/api/payments/momo/ipn",
+            "/api/payments/payos/webhook"
     };
 
     @Bean

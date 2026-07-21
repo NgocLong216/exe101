@@ -20,7 +20,7 @@ async function authenticatedFetch(path: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const message = await response.text();
-    throw new Error(message || 'Payment request failed.');
+    throw new Error(message || `Payment request failed (HTTP ${response.status}).`);
   }
   return response;
 }
@@ -28,6 +28,17 @@ async function authenticatedFetch(path: string, options: RequestInit = {}) {
 export async function createMomoPayment(): Promise<{ orderId: string; payUrl: string }> {
   const response = await authenticatedFetch('/api/payments/momo', { method: 'POST' });
   return response.json();
+}
+
+export async function createPayosPayment(): Promise<{ orderCode: string; checkoutUrl: string; qrCode: string }> {
+  const response = await authenticatedFetch('/api/payments/payos/create', { method: 'POST' });
+  return response.json();
+}
+
+export async function getPayosPaymentStatus(orderCode: string): Promise<PaymentStatus> {
+  const response = await authenticatedFetch(`/api/payments/${encodeURIComponent(orderCode)}/status`);
+  const body = await response.json();
+  return body.status;
 }
 
 export async function getPaymentStatus(orderId: string): Promise<PaymentStatus> {
