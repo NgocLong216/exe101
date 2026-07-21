@@ -16,6 +16,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: `#${GREEN}`,
         headerShown: false,
+        freezeOnBlur: true,
         tabBarButton: HapticTab,
         tabBarStyle: {
           position: 'absolute',

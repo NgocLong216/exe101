@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, BackHandler, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { WebView } from "react-native-webview";
 import GroupChoose from "./GroupChoose";
 
@@ -560,6 +560,39 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
     setDestination(null);
   };
 
+  const returnToPlaceDetail = () => {
+    setIsBottomSheetOpen(false);
+    clearDestinationAndRoute();
+    showTabBar();
+
+    // The map stays mounted underneath PlaceDetail. Reset both the native
+    // route params and the WebView flags so it is interactive when revisited.
+    webRef.current?.injectJavaScript(`
+      window.locationSelectionLocked = false;
+      window.mapReadOnly = false;
+      true;
+    `);
+    router.setParams({
+      placeId: undefined,
+      placeName: undefined,
+      lat: undefined,
+      lng: undefined,
+      prevRoute: undefined,
+    });
+
+    router.push({
+      pathname: "/PlaceDetail",
+      params: {
+        placeId,
+        placeName,
+        lat,
+        lng,
+        prevRoute: "/(tabs)/schedule",
+        groupId: activeGroupId,
+      },
+    });
+  };
+
   return (
 
     <View style={styles.container}>
@@ -567,6 +600,7 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
       <WebView
         ref={webRef}
         source={webViewSource}
+        onTouchStart={Keyboard.dismiss}
         originWhitelist={["*"]}
         javaScriptEnabled
         domStorageEnabled
@@ -603,8 +637,12 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => {
-            clearDestinationAndRoute();
-            router.back();
+            if (isBottomSheetOpen) {
+              bottomSheetRef.current?.close();
+              return;
+            }
+
+            returnToPlaceDetail();
           }}
         >
           <Ionicons
@@ -685,12 +723,14 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
         onOpen={() => setIsBottomSheetOpen(true)}
         onClose={() => {
           const shouldReturnToPlaceDetail = isDirectionMode && isBottomSheetOpen;
-          setIsBottomSheetOpen(false);
-          clearDestinationAndRoute();
 
           if (shouldReturnToPlaceDetail) {
-            router.back();
+            returnToPlaceDetail();
+            return;
           }
+
+          setIsBottomSheetOpen(false);
+          clearDestinationAndRoute();
         }}
         isDirectionMode={isDirectionMode}
         lat={lat}

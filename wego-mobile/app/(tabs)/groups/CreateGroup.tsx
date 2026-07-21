@@ -82,7 +82,7 @@ export default function CreateGroupScreen() {
 
             Alert.alert("Success", "Create group success");
 
-            router.push({
+            router.dismissTo({
                 pathname: '/(tabs)/groups',
             });
 
@@ -118,9 +118,14 @@ export default function CreateGroupScreen() {
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.backButton}
-                        onPress={() => router.push({
-                            pathname: '/(tabs)/groups',
-                        })}
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                                return;
+                            }
+
+                            router.dismissTo('/(tabs)/groups');
+                        }}
                     >
                         <ArrowLeft size={24} color="#1E293B" />
                     </TouchableOpacity>

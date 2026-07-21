@@ -165,11 +165,14 @@ export default function NotificationsScreen() {
       <View style={styles.header}>
         <TouchableOpacity style={
           styles.backButton}
-          onPress={() =>
-            router.push({
-              pathname: '/(tabs)/groups'
-            })
-          }
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+              return;
+            }
+
+            router.dismissTo('/(tabs)/groups');
+          }}
           activeOpacity={0.7}>
           <ArrowLeft size={24} color="#1E293B" />
         </TouchableOpacity>

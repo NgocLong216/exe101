@@ -3,6 +3,7 @@ import type { LocationResult } from "@/types/location";
 import React, { useEffect, useRef, useState } from "react";
 import {
     FlatList,
+    Keyboard,
     StyleSheet,
     Text,
     TextInput,
@@ -66,6 +67,7 @@ export default function SearchBar({ onSelectLocation }: Props) {
     }
 
     const handleSelect = async (place : any) => {
+        Keyboard.dismiss();
         detailRequestRef.current?.abort();
         const controller = new AbortController();
         detailRequestRef.current = controller;

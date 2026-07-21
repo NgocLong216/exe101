@@ -522,11 +522,14 @@ export default function GroupMembersScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: '/(tabs)/groups'
-            })
-          }
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+              return;
+            }
+
+            router.dismissTo('/(tabs)/groups');
+          }}
           style={styles.backBtn}
           activeOpacity={0.7}
         >

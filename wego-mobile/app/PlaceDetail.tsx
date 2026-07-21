@@ -190,18 +190,17 @@ export default function PlaceDetailScreen() {
                             <TouchableOpacity
                                 style={styles.circleHeaderBtn}
                                 onPress={() => {
-
-                                    if (prevRoute === "/GroupChat" || prevRoute === "/PersonalAiChat") {
-                                        router.back();
-
+                                    if (prevRoute === "/(tabs)/schedule") {
+                                        router.dismissTo("/(tabs)/schedule");
                                         return;
                                     }
 
-                                    if (prevRoute) {
-                                        router.push({
-                                            pathname: prevRoute as any,
-                                        });
+                                    if (router.canGoBack()) {
+                                        router.back();
+                                        return;
                                     }
+
+                                    router.dismissTo((prevRoute || "/") as any);
                                 }}
                             >
                                 <ArrowLeft size={22} color="#FFFFFF" />
@@ -481,7 +480,7 @@ export default function PlaceDetailScreen() {
 
                         // Nếu đi từ ScheduleMeet sang
                         if (prevRoute === "/(tabs)/schedule") {
-                            router.push({
+                            router.dismissTo({
                                 pathname: "/",
                                 params: {
                                     placeId,
