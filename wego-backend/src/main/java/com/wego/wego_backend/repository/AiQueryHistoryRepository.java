@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface AiQueryHistoryRepository
         extends JpaRepository<AiQueryHistory, UUID> {
     List<AiQueryHistory> findAllByOrderByCreatedAtDesc();
+    void deleteBySenderFirebaseUid(String firebaseUid);
 }

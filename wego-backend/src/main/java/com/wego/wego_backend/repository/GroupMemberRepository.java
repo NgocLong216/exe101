@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface GroupMemberRepository extends JpaRepository<GroupMember, UUID> {
     List<GroupMember> findByUserFirebaseUid(String firebaseUid);
+    void deleteByUserFirebaseUid(String firebaseUid);
     boolean existsByGroupIdAndUserFirebaseUid(UUID groupId, String userFirebaseUid);
     List<GroupMember> findByUserFirebaseUidAndStatus(
             String userFirebaseUid,

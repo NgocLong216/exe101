@@ -1,6 +1,7 @@
 import { updateLocationSharing } from '@/apis/locationAPI';
 import { updateNotificationSetting } from '@/apis/notificationAPI';
 import { getCurrentUserProfile, hasActivePlus } from '@/apis/userAPI';
+import { deleteMyAccount } from '@/apis/accountAPI';
 import { useAuth } from '@/auth0/AuthContext';
 import { auth, db } from '@/firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +14,8 @@ import { ref, remove } from "firebase/database";
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
+  ActivityIndicator,
+  Alert,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -35,7 +38,47 @@ export default function SettingsScreen() {
   const [locationSharing, setLocationSharing] = useState(true);
   const [isPlus, setIsPlus] = useState(false);
   const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const { user, logout, loading } = useAuth()
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      'Delete account?',
+      'This permanently deletes your profile, Personal AI history, memberships, payments, and groups you own. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete permanently',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Final confirmation',
+              'Are you absolutely sure you want to delete your WeGo account?',
+              [
+                { text: 'Keep account', style: 'cancel' },
+                {
+                  text: 'Yes, delete it',
+                  style: 'destructive',
+                  onPress: async () => {
+                    setDeletingAccount(true);
+                    try {
+                      await deleteMyAccount();
+                      await logout();
+                      router.replace('/login');
+                    } catch (error) {
+                      Alert.alert('Deletion failed', error instanceof Error ? error.message : 'Please try again.');
+                    } finally {
+                      setDeletingAccount(false);
+                    }
+                  },
+                },
+              ],
+            );
+          },
+        },
+      ],
+    );
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -333,6 +376,20 @@ export default function SettingsScreen() {
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.deleteAccountBtn}
+          activeOpacity={0.85}
+          onPress={confirmDeleteAccount}
+          disabled={deletingAccount}
+        >
+          {deletingAccount
+            ? <ActivityIndicator color="#b91c1c" />
+            : <Ionicons name="trash-outline" size={18} color="#b91c1c" />}
+          <Text style={styles.deleteAccountText}>
+            {deletingAccount ? 'Deleting account…' : 'Delete Account'}
+          </Text>
+        </TouchableOpacity>
+
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
@@ -477,6 +534,23 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#ef4444',
     fontWeight: '600',
+    fontSize: 15,
+  },
+  deleteAccountBtn: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 12,
+    paddingVertical: 13,
+    backgroundColor: '#fff',
+  },
+  deleteAccountText: {
+    color: '#b91c1c',
+    fontWeight: '700',
     fontSize: 15,
   },
 });
