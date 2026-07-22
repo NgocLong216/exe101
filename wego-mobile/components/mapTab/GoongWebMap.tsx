@@ -786,17 +786,12 @@ export default function GoongWebMap({ latitude, longitude }: Props) {
           </View>
         )}
 
-        {!isDirectionMode && activeGroupId && !isBottomSheetOpen && (
+        {!isDirectionMode && !isBottomSheetOpen && (
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Open personal AI chat"
             style={styles.aiChatButton}
-            onPress={() =>
-              router.push({
-                pathname: "/PersonalAiChat",
-                params: { groupId: activeGroupId },
-              })
-            }
+            onPress={() => router.push("/PersonalAiChat")}
           >
             <Ionicons name="sparkles" size={24} color="#FFFFFF" />
           </TouchableOpacity>

@@ -50,6 +50,25 @@ public class UserController {
         );
     }
 
+    @GetMapping("/me/hobbies")
+    public ResponseEntity<?> getMyHobbies(Authentication authentication) {
+        return ResponseEntity.ok(
+                userService.getHobbyPreferences(authentication.getName())
+        );
+    }
+
+    @PutMapping("/me/hobbies")
+    public ResponseEntity<?> saveMyHobbies(
+            @RequestBody HobbyPreferencesRequest request,
+            Authentication authentication
+    ) {
+        String firebaseUid = authentication.getName();
+        Map<String, Object> preferences =
+                userService.saveHobbyPreferences(firebaseUid, request);
+        userAiProfileService.invalidate(firebaseUid);
+        return ResponseEntity.ok(preferences);
+    }
+
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateMyProfile(
 

@@ -1,5 +1,6 @@
 import { updateLocationSharing } from '@/apis/locationAPI';
 import { updateNotificationSetting } from '@/apis/notificationAPI';
+import { getCurrentUserProfile, hasActivePlus } from '@/apis/userAPI';
 import { useAuth } from '@/auth0/AuthContext';
 import { auth, db } from '@/firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,8 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Href, router } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { ref, remove } from "firebase/database";
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   Linking,
@@ -31,7 +33,23 @@ const TERMS_OF_SERVICE_URL = "https://wego-ten.vercel.app/term.html";
 export default function SettingsScreen() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [locationSharing, setLocationSharing] = useState(true);
+  const [isPlus, setIsPlus] = useState(false);
+  const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
   const { user, logout, loading } = useAuth()
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getCurrentUserProfile()
+        .then((profile) => {
+          if (!active) return;
+          setIsPlus(hasActivePlus(profile));
+          setPlanExpiresAt(profile.planExpiresAt || null);
+        })
+        .catch((error) => console.warn('Could not load plan', error));
+      return () => { active = false; };
+    }, [])
+  );
 
   const registerForPushNotifications = async () => {
     if (!Device.isDevice) return false;
@@ -229,7 +247,9 @@ export default function SettingsScreen() {
           <RowItem
             icon="sparkles-outline"
             label="Plan & Billing"
-            subtitle="Free plan"
+            subtitle={isPlus
+              ? `WeGo Plus${planExpiresAt ? ` · expires ${new Date(planExpiresAt).toLocaleDateString()}` : ''}`
+              : 'Free plan'}
             rightElement={<Ionicons name="chevron-forward" size={18} color="#d1d5db" />}
             onPress={() => router.push('/UpdatePlan' as Href)}
           />

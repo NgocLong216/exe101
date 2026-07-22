@@ -4,12 +4,15 @@ import com.wego.wego_backend.dto.LatLng;
 import com.wego.wego_backend.dto.SuggestedPlaceResponse;
 import com.wego.wego_backend.dto.UpdateProfileRequest;
 import com.wego.wego_backend.dto.UserProfileResponse;
+import com.wego.wego_backend.dto.HobbyPreferencesRequest;
 import com.wego.wego_backend.entity.User;
 import com.wego.wego_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +26,65 @@ public class UserService {
     private final FirebaseLocationService firebaseLocationService;
     private final GoongDirectionsService directionsService;
     private final SerpApiPlacesService placesService;
+    private final ObjectMapper objectMapper;
+
+    public Map<String, Object> getHobbyPreferences(String firebaseUid) {
+        User user = userRepository.findById(firebaseUid)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Map<String, Object> preferences = parseHobbyPreferences(user);
+        preferences.put("completed", Boolean.TRUE.equals(user.getHobbyOnboardingCompleted()));
+        return preferences;
+    }
+
+    @Transactional
+    public Map<String, Object> saveHobbyPreferences(
+            String firebaseUid,
+            HobbyPreferencesRequest request
+    ) {
+        User user = userRepository.findById(firebaseUid)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Map<String, Object> preferences = new LinkedHashMap<>();
+        preferences.put("destinations", sanitizePreferences(request.getDestinations()));
+        preferences.put("vibes", sanitizePreferences(request.getVibes()));
+        try {
+            user.setHobbyPreferencesJson(objectMapper.writeValueAsString(preferences));
+        } catch (Exception exception) {
+            throw new RuntimeException("Could not save hobby preferences", exception);
+        }
+        user.setHobbyOnboardingCompleted(true);
+        userRepository.save(user);
+        preferences.put("completed", true);
+        return preferences;
+    }
+
+    public Map<String, Object> parseHobbyPreferences(User user) {
+        if (user.getHobbyPreferencesJson() == null || user.getHobbyPreferencesJson().isBlank()) {
+            Map<String, Object> empty = new LinkedHashMap<>();
+            empty.put("destinations", new ArrayList<>());
+            empty.put("vibes", new ArrayList<>());
+            return empty;
+        }
+        try {
+            return objectMapper.readValue(
+                    user.getHobbyPreferencesJson(),
+                    new TypeReference<>() {}
+            );
+        } catch (Exception exception) {
+            throw new RuntimeException("Invalid stored hobby preferences", exception);
+        }
+    }
+
+    private List<String> sanitizePreferences(List<String> values) {
+        if (values == null) return new ArrayList<>();
+        return values.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(value -> !value.isBlank())
+                .map(value -> value.toLowerCase(Locale.ROOT))
+                .distinct()
+                .limit(20)
+                .toList();
+    }
 
     public List<UserProfileResponse> searchUsers(String keyword) {
 
@@ -34,7 +96,9 @@ public class UserService {
                         user.getFirebaseUid(),
                         user.getName(),
                         user.getEmail(),
-                        user.getAvatar()
+                        user.getAvatar(),
+                        user.getPlan(),
+                        user.getPlanExpiresAt()
                 ))
                 .collect(Collectors.toList());
     }
@@ -48,7 +112,9 @@ public class UserService {
                 user.getFirebaseUid(),
                 user.getName(),
                 user.getEmail(),
-                user.getAvatar()
+                user.getAvatar(),
+                user.getPlan(),
+                user.getPlanExpiresAt()
         );
     }
 

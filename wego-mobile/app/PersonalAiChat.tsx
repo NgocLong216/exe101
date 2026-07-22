@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { off, onValue, push, ref, set } from "firebase/database";
 import { ArrowLeft, Bot, Send, Sparkles } from "lucide-react-native";
@@ -35,8 +35,9 @@ type ChatMessage = {
   }[];
 };
 
+const PERSONAL_SESSION_ID = "personal";
+
 export default function PersonalAiChat() {
-  const { groupId } = useLocalSearchParams<{ groupId: string }>();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [thinking, setThinking] = useState(false);
@@ -45,7 +46,7 @@ export default function PersonalAiChat() {
 
   useEffect(() => {
     hasScrolledToLatestRef.current = false;
-  }, [groupId]);
+  }, []);
 
   useEffect(() => {
     if (messages.length === 0 || hasScrolledToLatestRef.current) return;
@@ -61,14 +62,14 @@ export default function PersonalAiChat() {
 
   useEffect(() => {
     const user = getAuth().currentUser;
-    if (!user || !groupId) {
+    if (!user) {
       setMessages([]);
       return;
     }
 
     const messagesRef = ref(
       db,
-      `personal_ai_chats/${user.uid}/${groupId}`
+      `personal_ai_chats/${user.uid}/${PERSONAL_SESSION_ID}`
     );
 
     onValue(messagesRef, (snapshot) => {
@@ -89,17 +90,17 @@ export default function PersonalAiChat() {
     });
 
     return () => off(messagesRef);
-  }, [groupId]);
+  }, []);
 
   const saveChatMessage = async (
     message: Omit<ChatMessage, "id">
   ) => {
     const user = getAuth().currentUser;
-    if (!user || !groupId) throw new Error("User or group is missing");
+    if (!user) throw new Error("User is missing");
 
     const messagesRef = ref(
       db,
-      `personal_ai_chats/${user.uid}/${groupId}`
+      `personal_ai_chats/${user.uid}/${PERSONAL_SESSION_ID}`
     );
     const newMessageRef = push(messagesRef);
 
@@ -110,7 +111,7 @@ export default function PersonalAiChat() {
 
   const sendMessage = async () => {
     const question = input.trim();
-    if (!question || thinking || !groupId) return;
+    if (!question || thinking) return;
 
     setInput("");
     setThinking(true);
@@ -124,7 +125,7 @@ export default function PersonalAiChat() {
 
       const token = await getAuth().currentUser?.getIdToken();
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/groups/${groupId}/chat`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/ai/personal/chat`,
         {
           method: "POST",
           headers: {
@@ -210,7 +211,6 @@ export default function PersonalAiChat() {
                           lng: String(place.lng ?? ""),
                           placeId: place.placeId || "",
                           prevRoute: "/PersonalAiChat",
-                          groupId: String(groupId),
                         },
                       })
                     }

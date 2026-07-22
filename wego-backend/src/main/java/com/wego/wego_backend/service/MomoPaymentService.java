@@ -30,6 +30,7 @@ public class MomoPaymentService {
     private final com.wego.wego_backend.repository.UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final UserAiProfileService userAiProfileService;
 
     @Value("${momo.partner-code:}") private String partnerCode;
     @Value("${momo.access-key:}") private String accessKey;
@@ -136,6 +137,7 @@ public class MomoPaymentService {
                     user.setPlan("PLUS");
                     user.setPlanExpiresAt((currentExpiry != null && currentExpiry.isAfter(now) ? currentExpiry : now).plusDays(30));
                     userRepository.save(user);
+                    userAiProfileService.syncFromPersonalChats(user.getFirebaseUid());
                 });
             } else {
                 payment.setStatus(Payment.Status.FAILED);

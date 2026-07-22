@@ -139,6 +139,15 @@ export default function LoginScreen() {
       const inviteCode =
         await getInviteCode();
 
+      if (!loginData.hobbyOnboardingCompleted) {
+        if (inviteCode) await clearInviteCode();
+        router.replace({
+          pathname: '/HobbyPreferences',
+          params: inviteCode ? { next: `/invite/${inviteCode}` } : {},
+        });
+        return;
+      }
+
       if (inviteCode) {
 
         await clearInviteCode();
