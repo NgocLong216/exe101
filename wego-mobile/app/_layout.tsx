@@ -72,6 +72,7 @@ export default function RootLayout() {
               screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="login" />
+              <Stack.Screen name="HobbyPreferences" />
               <Stack.Screen name="(tabs)" />
               <Stack.Screen
                 name="invite/[inviteCode]"

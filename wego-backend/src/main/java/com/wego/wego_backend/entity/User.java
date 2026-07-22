@@ -45,4 +45,12 @@ public class User {
     private String plan = "FREE";
 
     private LocalDateTime planExpiresAt;
+
+    // Database default keeps existing users onboarded during schema migration;
+    // newly constructed User objects still start at false.
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean hobbyOnboardingCompleted = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String hobbyPreferencesJson;
 }

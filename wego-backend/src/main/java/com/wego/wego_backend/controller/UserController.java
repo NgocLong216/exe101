@@ -4,6 +4,7 @@ import com.wego.wego_backend.dto.*;
 import com.wego.wego_backend.repository.UserRepository;
 import com.wego.wego_backend.service.UserService;
 import com.wego.wego_backend.service.UserAiProfileService;
+import com.wego.wego_backend.service.AccountDeletionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserAiProfileService userAiProfileService;
+    private final AccountDeletionService accountDeletionService;
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(
@@ -48,6 +50,31 @@ public class UserController {
                         authentication.getName()
                 )
         );
+    }
+
+    @GetMapping("/me/hobbies")
+    public ResponseEntity<?> getMyHobbies(Authentication authentication) {
+        return ResponseEntity.ok(
+                userService.getHobbyPreferences(authentication.getName())
+        );
+    }
+
+    @PutMapping("/me/hobbies")
+    public ResponseEntity<?> saveMyHobbies(
+            @RequestBody HobbyPreferencesRequest request,
+            Authentication authentication
+    ) {
+        String firebaseUid = authentication.getName();
+        Map<String, Object> preferences =
+                userService.saveHobbyPreferences(firebaseUid, request);
+        userAiProfileService.invalidate(firebaseUid);
+        return ResponseEntity.ok(preferences);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(Authentication authentication) {
+        accountDeletionService.deleteAccount(authentication.getName());
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { getCurrentUserProfile, hasActivePlus } from '@/apis/userAPI';
+import { useFocusEffect } from '@react-navigation/native';
 import { Href, router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -43,7 +45,25 @@ const plans: {
 
 export default function UpdatePlanScreen() {
   const [selectedPlan, setSelectedPlan] = useState<PlanId>('plus');
+  const [currentPlan, setCurrentPlan] = useState<PlanId>('free');
+  const [planExpiresAt, setPlanExpiresAt] = useState<string | null>(null);
   const selected = plans.find((plan) => plan.id === selectedPlan)!;
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getCurrentUserProfile()
+        .then((profile) => {
+          if (!active) return;
+          const plan: PlanId = hasActivePlus(profile) ? 'plus' : 'free';
+          setCurrentPlan(plan);
+          setSelectedPlan(plan);
+          setPlanExpiresAt(profile.planExpiresAt || null);
+        })
+        .catch((error) => console.warn('Could not load current plan', error));
+      return () => { active = false; };
+    }, [])
+  );
 
   const continueWithPlan = () => {
     if (selectedPlan === 'free') {
@@ -80,7 +100,11 @@ export default function UpdatePlanScreen() {
           <Ionicons name="sparkles" size={28} color={GREEN} />
         </View>
         <Text style={styles.title}>Choose the plan that fits you</Text>
-        <Text style={styles.subtitle}>Upgrade anytime. Your current plan is Free.</Text>
+        <Text style={styles.subtitle}>
+          {currentPlan === 'plus'
+            ? `Your current plan is WeGo Plus${planExpiresAt ? ` until ${new Date(planExpiresAt).toLocaleDateString()}` : ''}.`
+            : 'Upgrade anytime. Your current plan is Free.'}
+        </Text>
 
         <View style={styles.planList}>
           {plans.map((plan) => {
@@ -98,6 +122,10 @@ export default function UpdatePlanScreen() {
                   <View style={styles.popularBadge}>
                     <Text style={styles.popularText}>RECOMMENDED</Text>
                   </View>
+                ) : null}
+
+                {plan.id === currentPlan ? (
+                  <Text style={styles.currentPlanText}>CURRENT PLAN</Text>
                 ) : null}
 
                 <View style={styles.planHeader}>
@@ -198,6 +226,7 @@ const styles = StyleSheet.create({
     marginBottom: 13,
   },
   popularText: { color: '#fff', fontSize: 10, fontWeight: '800', letterSpacing: 0.7 },
+  currentPlanText: { marginBottom: 10, color: GREEN, fontSize: 11, fontWeight: '900', letterSpacing: 0.8 },
   planHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 14 },
   planHeading: { flex: 1 },
   planName: { fontSize: 19, fontWeight: '800', color: TEXT },

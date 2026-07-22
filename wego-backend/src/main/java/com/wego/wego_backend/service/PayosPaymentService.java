@@ -35,6 +35,7 @@ public class PayosPaymentService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final UserAiProfileService userAiProfileService;
 
     @Value("${payos.client-id:}") private String clientId;
     @Value("${payos.api-key:}") private String apiKey;
@@ -127,6 +128,7 @@ public class PayosPaymentService {
                 user.setPlan("PLUS");
                 user.setPlanExpiresAt((expiry != null && expiry.isAfter(now) ? expiry : now).plusDays(30));
                 userRepository.save(user);
+                userAiProfileService.syncFromPersonalChats(user.getFirebaseUid());
             });
         });
         return true;

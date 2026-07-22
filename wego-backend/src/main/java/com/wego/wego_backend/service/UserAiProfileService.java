@@ -50,6 +50,11 @@ public class UserAiProfileService {
     private final FirebaseDatabase firebaseDatabase;
     private final UserAiProfileRepository profileRepository;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
+
+    public void invalidate(String firebaseUid) {
+        profileRepository.deleteById(firebaseUid);
+    }
 
     @Transactional
     public Map<String, Object> syncFromPersonalChats(String firebaseUid) {
@@ -136,12 +141,27 @@ public class UserAiProfileService {
 
         int fromIndex = Math.max(0, userMessages.size() - 20);
         Map<String, Object> profile = emptyProfile(firebaseUid);
+        Map<String, Object> hobbies = userService.getHobbyPreferences(firebaseUid);
+        addStringValues(tags, hobbies.get("destinations"));
+        addStringValues(tags, hobbies.get("vibes"));
         profile.put("tags", new ArrayList<>(tags));
+        profile.put("hobby_preferences", Map.of(
+                "destinations", hobbies.getOrDefault("destinations", List.of()),
+                "vibes", hobbies.getOrDefault("vibes", List.of())
+        ));
         profile.put("recent_requests", new ArrayList<>(userMessages.subList(
                 fromIndex,
                 userMessages.size()
         )));
         return profile;
+    }
+
+    private void addStringValues(Set<String> target, Object values) {
+        if (!(values instanceof List<?> list)) return;
+        list.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .forEach(target::add);
     }
 
     private Map<String, Object> emptyProfile(String firebaseUid) {
