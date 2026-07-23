@@ -1,7 +1,7 @@
 import { GroupResponse, getUserGroups } from "@/apis/groupAPI";
 import { scheduleMeet } from "@/apis/scheduleAPI";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronDown, ChevronLeft, ChevronRight, Clock } from "lucide-react-native";
+import { ChevronDown, ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -138,6 +138,7 @@ export default function MeetingSetup() {
   const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
   const [showGroupDropdown, setShowGroupDropdown] = useState(false);
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
 
   const router = useRouter()
   const { placeId, placeName, lat, lng } = useLocalSearchParams<{
@@ -178,6 +179,22 @@ export default function MeetingSetup() {
     setSelectedDate(selected);
   };
 
+  const navigateToCreateGroup = () => {
+    setShowGroupDropdown(false);
+    router.push("/(tabs)/groups/CreateGroup");
+  };
+
+  const handleGroupSelectionPress = () => {
+    if (!groupsLoaded) return;
+
+    if (groups.length === 0) {
+      navigateToCreateGroup();
+      return;
+    }
+
+    setShowGroupDropdown((isOpen) => !isOpen);
+  };
+
   const handleConfirm = async () => {
     try {
       if (!selectedDate) {
@@ -215,12 +232,18 @@ export default function MeetingSetup() {
 
   useEffect(() => {
     const fetchGroups = async () => {
-      const groupData = await getUserGroups();
+      try {
+        const groupData = await getUserGroups();
 
-      setGroups(groupData);
+        setGroups(groupData);
 
-      if (groupData.length > 0) {
-        setSelectedGroupId(groupData[0].id);
+        if (groupData.length > 0) {
+          setSelectedGroupId(groupData[0].id);
+        }
+      } catch {
+        Alert.alert("Groups Unavailable", "Failed to load your groups");
+      } finally {
+        setGroupsLoaded(true);
       }
     };
 
@@ -271,7 +294,8 @@ export default function MeetingSetup() {
           <Text style={styles.sectionTitle}>Select Group</Text>
           <TouchableOpacity
             style={styles.dropdownButton}
-            onPress={() => setShowGroupDropdown(!showGroupDropdown)}
+            onPress={handleGroupSelectionPress}
+            disabled={!groupsLoaded}
           >
             <View style={styles.dropdownLeft}>
               {/* Wave icon */}
@@ -280,7 +304,9 @@ export default function MeetingSetup() {
               </View>
               <Text style={styles.dropdownText}>
                 {groups.find(g => g.id === selectedGroupId)?.title ??
-                  "Select a group"}
+                  (groupsLoaded && groups.length === 0
+                    ? "Create a group"
+                    : "Select a group")}
               </Text>
             </View>
             <ChevronDown
@@ -312,6 +338,15 @@ export default function MeetingSetup() {
                   </Text>
                 </TouchableOpacity>
               ))}
+              <TouchableOpacity
+                style={[styles.dropdownItem, styles.createGroupItem]}
+                onPress={navigateToCreateGroup}
+              >
+                <Plus size={18} color={COLORS.primary} strokeWidth={2.5} />
+                <Text style={styles.createGroupItemText}>
+                  Create a new group
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -619,6 +654,17 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
   dropdownItemTextSelected: {
+    fontWeight: "600",
+    color: COLORS.primary,
+  },
+  createGroupItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderBottomWidth: 0,
+  },
+  createGroupItemText: {
+    fontSize: 14,
     fontWeight: "600",
     color: COLORS.primary,
   },
