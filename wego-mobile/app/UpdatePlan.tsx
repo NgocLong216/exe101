@@ -39,7 +39,7 @@ const plans: {
     name: 'WeGo Plus',
     price: '30,000₫',
     description: 'More tools for groups that are always on the go. Includes 30 days of access.',
-    features: ['Everything in Free', 'Unlimited group history', 'AI trip checklists', 'Priority support'],
+    features: ['Everything in Free', 'More Provip Personalize AI'],
   },
 ];
 
