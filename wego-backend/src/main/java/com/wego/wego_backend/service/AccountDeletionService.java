@@ -59,7 +59,14 @@ public class AccountDeletionService {
         firebaseDatabase.getReference("presence")
                 .child(firebaseUid).removeValueAsync();
 
-        userRepository.deleteById(firebaseUid);
+        userRepository.findById(firebaseUid).ifPresent(user -> {
+            user.setStatus(false);
+            user.setFcmToken(null);
+            user.setExpoPushToken(null);
+            user.setPlan("FREE");
+            user.setPlanExpiresAt(null);
+            userRepository.save(user);
+        });
 
         try {
             firebaseAuth.deleteUser(firebaseUid);

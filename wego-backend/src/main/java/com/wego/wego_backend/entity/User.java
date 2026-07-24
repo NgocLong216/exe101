@@ -53,4 +53,7 @@ public class User {
 
     @Column(columnDefinition = "TEXT")
     private String hobbyPreferencesJson;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean status = true;
 }

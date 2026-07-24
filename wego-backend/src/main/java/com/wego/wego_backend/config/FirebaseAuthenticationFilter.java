@@ -50,6 +50,11 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                             return userRepository.save(u);
                         });
 
+                if (Boolean.FALSE.equals(user.getStatus())) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 firebaseUid,

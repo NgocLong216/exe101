@@ -63,6 +63,12 @@ public class GoogleAuthService {
                 .orElseThrow();
 
         return userRepository.findByFirebaseUid(firebaseUid)
+                .map(user -> {
+                    if (Boolean.FALSE.equals(user.getStatus())) {
+                        throw new IllegalStateException("Account has been deleted");
+                    }
+                    return user;
+                })
                 .orElseGet(() -> {
                     User u = new User();
                     u.setFirebaseUid(firebaseUid);

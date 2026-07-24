@@ -89,7 +89,7 @@ public class UserService {
     public List<UserProfileResponse> searchUsers(String keyword) {
 
         List<User> users = userRepository
-                .findByNameContainingIgnoreCase(keyword);
+                .findByNameContainingIgnoreCaseAndStatusTrue(keyword);
 
         return users.stream()
                 .map(user -> new UserProfileResponse(
